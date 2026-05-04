@@ -80,7 +80,7 @@ function Home() {
               style={{ width: "150px", height: "150px", objectFit: "contain", marginBottom: "10px" }}
             />
             <h3 style={{ fontSize: "16px", fontWeight: "600", marginBottom: "10px" }}>{item}</h3>
-            <Link to="/login">
+            <Link to={`/login?item=${encodeURIComponent(item)}`}>
               <button style={{
                 width: "100%",
                 padding: "8px",

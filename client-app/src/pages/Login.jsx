@@ -8,11 +8,11 @@ function Login() {
   const selectedItem = params.get("item"); // e.g. "Washing Board"
 
   async function handleLogin(e) {
-    e.preventDefault();
-    // TODO: add real authentication here
-    // On success:
-    navigate(`/dashboard?item=${encodeURIComponent(selectedItem)}`);
-  }
+  e.preventDefault();
+  const email = e.target.email.value; // grab email input
+  // TODO: add real authentication
+  navigate(`/dashboard?item=${encodeURIComponent(selectedItem)}&email=${encodeURIComponent(email)}`);
+}
 
   return (
     <div>

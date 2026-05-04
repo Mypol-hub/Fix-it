@@ -79,10 +79,10 @@ function Home() {
 };
 
   return (
-    <div>
-      <header style={{ marginBottom: "30px", textAlign: "center" }}>
-  <h1 style={{ fontSize: "2rem", margin: 0 }}>Khaleel Electronics Repair Shop</h1>
-</header>
+    <div style={{ padding: "20px" }}>
+  <header style={{ marginBottom: "20px", textAlign: "center" }}>
+    <h1>Khaleel Electronics Repair Shop</h1>
+  </header>
 
       <main style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))", gap: "20px" }}>
         {items.map((item, index) => (

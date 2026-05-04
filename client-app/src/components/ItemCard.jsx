@@ -26,29 +26,16 @@ function ItemCard({ itemName, imageUrl }) {
   }
 
   return (
-    <div style={{ marginBottom: "20px" }}>
+    <div>
       {itemName && (
-        <div style={{ border: "1px solid #ddd", padding: "10px", borderRadius: "6px" }}>
+        <div>
           <h4>{itemName}</h4>
           {imageUrl && <img src={imageUrl} alt={itemName} style={{ maxWidth: "100%" }} />}
         </div>
       )}
-
-      {/* Upload form */}
-      <form onSubmit={handleUpload} style={{ marginTop: "15px" }}>
-        <input
-          type="text"
-          placeholder="Item Name"
-          value={newItemName}
-          onChange={(e) => setNewItemName(e.target.value)}
-          required
-        />
-        <input
-          type="text"
-          placeholder="Image URL"
-          value={newImageUrl}
-          onChange={(e) => setNewImageUrl(e.target.value)}
-        />
+      <form onSubmit={handleUpload}>
+        <input value={newItemName} onChange={(e) => setNewItemName(e.target.value)} placeholder="Item Name" required />
+        <input value={newImageUrl} onChange={(e) => setNewImageUrl(e.target.value)} placeholder="Image URL" />
         <button type="submit">Upload Item</button>
       </form>
       {message && <p>{message}</p>}

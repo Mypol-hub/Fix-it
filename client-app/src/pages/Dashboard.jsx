@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import RequestForm from "../pages/RequestForm";
 import RepairStatus from "../components/RepairStatus";
 import ItemCard from "../components/ItemCard";
+import Navbar from "../components/Navbar";
 
 function Dashboard() {
   const [feedbacks, setFeedbacks] = useState([]);

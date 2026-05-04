@@ -11,6 +11,45 @@ function Dashboard() {
   const [feedbackEmail, setFeedbackEmail] = useState("");
   const [feedbackText, setFeedbackText] = useState("");
 
+  // Define fetchRequests OUTSIDE useEffect
+  async function fetchRequests() {
+    try {
+      const res = await fetch("/.netlify/functions/getRequests");
+      const data = await res.json();
+      setRequests(data.requests || []);
+    } catch (err) {
+      console.error("Error fetching requests:", err);
+    }
+  }
+
+  // Same for feedbacks and items if you want to reuse them
+  async function fetchFeedbacks() {
+    try {
+      const res = await fetch("/.netlify/functions/getFeedbacks");
+      const data = await res.json();
+      setFeedbacks(data.feedbacks || []);
+    } catch (err) {
+      console.error("Error fetching feedbacks:", err);
+    }
+  }
+
+  async function fetchItems() {
+    try {
+      const res = await fetch("/.netlify/functions/getItems");
+      const data = await res.json();
+      setItems(data.items || []);
+    } catch (err) {
+      console.error("Error fetching items:", err);
+    }
+  }
+
+  // Call them once when component mounts
+  useEffect(() => {
+    fetchFeedbacks();
+    fetchRequests();
+    fetchItems();
+  }, []);
+  
   useEffect(() => {
     async function fetchFeedbacks() {
       try {
@@ -21,31 +60,6 @@ function Dashboard() {
         console.error("Error fetching feedbacks:", err);
       }
     }
-
-    async function fetchRequests() {
-      try {
-        const res = await fetch("/.netlify/functions/getRequests");
-        const data = await res.json();
-        setRequests(data.requests || []);
-      } catch (err) {
-        console.error("Error fetching requests:", err);
-      }
-    }
-
-    async function fetchItems() {
-      try {
-        const res = await fetch("/.netlify/functions/getItems");
-        const data = await res.json();
-        setItems(data.items || []);
-      } catch (err) {
-        console.error("Error fetching items:", err);
-      }
-    }
-
-    fetchFeedbacks();
-    fetchRequests();
-    fetchItems();
-  }, []);
 
   // Upload new item (calls uploadItem.js)
   async function handleUploadItem(itemName, imageUrl) {

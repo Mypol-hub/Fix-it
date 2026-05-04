@@ -11,53 +11,100 @@ function Login() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="w-full max-w-md bg-white p-6 rounded-lg shadow-md">
-        <h2 className="text-2xl font-bold text-center mb-4">Client Login</h2>
-        <p className="text-center text-gray-600 mb-6">
-          Please log in to provide professional feedback on your repair request.
-        </p>
+    <div>
+      <Navbar />
+      <div
+        style={{
+          minHeight: "100vh",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          backgroundColor: "#f5f5f5",
+          padding: "20px"
+        }}
+      >
+        <div
+          style={{
+            width: "100%",
+            maxWidth: "400px",
+            backgroundColor: "white",
+            padding: "20px",
+            borderRadius: "8px",
+            boxShadow: "2px 2px 8px rgba(0,0,0,0.1)"
+          }}
+        >
+          <h2 style={{ textAlign: "center", fontSize: "22px", fontWeight: "bold", marginBottom: "10px" }}>
+            Client Login
+          </h2>
+          <p style={{ textAlign: "center", color: "#666", marginBottom: "20px" }}>
+            Please log in to provide professional feedback on your repair request.
+          </p>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
-            <input
-              type="email"
-              name="email"
-              placeholder="Enter your email"
-              required
-              className="w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
+          <form onSubmit={handleSubmit}>
+            <div style={{ marginBottom: "15px" }}>
+              <label style={{ display: "block", marginBottom: "5px", fontSize: "14px" }}>Email</label>
+              <input
+                type="email"
+                name="email"
+                placeholder="Enter your email"
+                required
+                style={{
+                  width: "100%",
+                  padding: "10px",
+                  border: "1px solid #ccc",
+                  borderRadius: "4px"
+                }}
+              />
+            </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
-            <input
-              type="password"
-              name="password"
-              placeholder="Enter your password"
-              required
-              className="w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
+            <div style={{ marginBottom: "15px" }}>
+              <label style={{ display: "block", marginBottom: "5px", fontSize: "14px" }}>Password</label>
+              <input
+                type="password"
+                name="password"
+                placeholder="Enter your password"
+                required
+                style={{
+                  width: "100%",
+                  padding: "10px",
+                  border: "1px solid #ccc",
+                  borderRadius: "4px"
+                }}
+              />
+            </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Feedback</label>
-            <textarea
-              name="feedback"
-              placeholder="Describe your repair issue or feedback"
-              required
-              className="w-full border border-gray-300 rounded-md p-2 h-24 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
+            <div style={{ marginBottom: "15px" }}>
+              <label style={{ display: "block", marginBottom: "5px", fontSize: "14px" }}>Feedback</label>
+              <textarea
+                name="feedback"
+                placeholder="Describe your repair issue or feedback"
+                required
+                style={{
+                  width: "100%",
+                  padding: "10px",
+                  border: "1px solid #ccc",
+                  borderRadius: "4px",
+                  minHeight: "80px"
+                }}
+              />
+            </div>
 
-          <button
-            type="submit"
-            className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition-colors"
-          >
-            Login &amp; Submit
-          </button>
-        </form>
+            <button
+              type="submit"
+              style={{
+                width: "100%",
+                padding: "12px",
+                backgroundColor: "#003366",
+                color: "white",
+                border: "none",
+                borderRadius: "4px",
+                cursor: "pointer"
+              }}
+            >
+              Login & Submit
+            </button>
+          </form>
+        </div>
       </div>
     </div>
   );

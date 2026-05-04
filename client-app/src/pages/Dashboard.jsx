@@ -1,23 +1,30 @@
 import { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import RequestForm from "../pages/RequestForm";
 import RepairStatus from "../components/RepairStatus";
 import ItemCard from "../components/ItemCard";
 import Navbar from "../components/Navbar";
 
 function Dashboard() {
+  const navigate = useNavigate();
   const [feedbacks, setFeedbacks] = useState([]);
   const [requests, setRequests] = useState([]);
   const [items, setItems] = useState([]);
-  const [feedbackEmail, setFeedbackEmail] = useState(clientEmail || "");
+  const [feedbackEmail, setFeedbackEmail] = useState("");
   const [feedbackText, setFeedbackText] = useState("");
-  const savedEmail = localStorage.getItem("clientEmail");
 
-  // ✅ Read item param from URL
+  // ✅ Read item + email from URL
   const location = useLocation();
-const params = new URLSearchParams(location.search);
-const selectedItem = params.get("item");
-const clientEmail = params.get("email"); // new
+  const params = new URLSearchParams(location.search);
+  const selectedItem = params.get("item");
+  const clientEmail = params.get("email") || localStorage.getItem("clientEmail");
+
+  // ✅ Protect Dashboard: redirect if no email
+  useEffect(() => {
+    if (!clientEmail) {
+      navigate("/login");
+    }
+  }, [clientEmail, navigate]);
 
   async function fetchRequests() {
     try {
@@ -79,15 +86,15 @@ const clientEmail = params.get("email"); // new
         Submit a new repair request, upload item pictures, or provide feedback below.
       </p>
 
-      {/* Request Form with auto‑filled item */}
+      {/* Request Form with auto‑filled item + email */}
       <div style={cardStyle}>
         <RequestForm
-  onRequestSubmitted={fetchRequests}
-  prefilledItem={selectedItem}
-  prefilledEmail={savedEmail}
-/>
+          onRequestSubmitted={fetchRequests}
+          prefilledItem={selectedItem}
+          prefilledEmail={clientEmail}
+        />
       </div>
-      
+
       {/* Repair Status Section */}
       <div style={cardStyle}>
         <RepairStatus requests={requests} />
@@ -128,14 +135,12 @@ const clientEmail = params.get("email"); // new
             try {
               const res = await fetch("/.netlify/functions/submitFeedback", {
                 method: "POST",
-                body: JSON.stringify({ email: feedbackEmail, feedback: feedbackText }),
+                body: JSON.stringify({ email: feedbackEmail || clientEmail, feedback: feedbackText }),
               });
               const data = await res.json();
               alert(data.message || data.error);
 
-              // Refresh feedbacks after submission
               fetchFeedbacks();
-
               setFeedbackEmail("");
               setFeedbackText("");
             } catch (err) {
@@ -147,7 +152,7 @@ const clientEmail = params.get("email"); // new
           <input
             type="email"
             placeholder="Your email"
-            value={feedbackEmail}
+            value={feedbackEmail || clientEmail || ""}
             onChange={(e) => setFeedbackEmail(e.target.value)}
             required
             style={{ display: "block", marginBottom: "10px", width: "100%" }}

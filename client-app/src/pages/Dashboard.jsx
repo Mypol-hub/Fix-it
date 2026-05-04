@@ -8,6 +8,8 @@ function Dashboard() {
   const [feedbacks, setFeedbacks] = useState([]);
   const [requests, setRequests] = useState([]);
   const [items, setItems] = useState([]);
+  const [feedbackEmail, setFeedbackEmail] = useState("");
+  const [feedbackText, setFeedbackText] = useState("");
 
   useEffect(() => {
     async function fetchFeedbacks() {

@@ -7,6 +7,7 @@ import Navbar from "../components/Navbar";
 function Dashboard() {
   const [feedbacks, setFeedbacks] = useState([]);
   const [requests, setRequests] = useState([]);
+  const [items, setItems] = useState([]);
 
   useEffect(() => {
     async function fetchFeedbacks() {
@@ -29,9 +30,39 @@ function Dashboard() {
       }
     }
 
+    async function fetchItems() {
+      try {
+        const res = await fetch("/.netlify/functions/getItems");
+        const data = await res.json();
+        setItems(data.items || []);
+      } catch (err) {
+        console.error("Error fetching items:", err);
+      }
+    }
+
     fetchFeedbacks();
     fetchRequests();
+    fetchItems();
   }, []);
+
+  // Upload new item (calls uploadItem.js)
+  async function handleUploadItem(itemName, imageUrl) {
+    try {
+      const res = await fetch("/.netlify/functions/uploadItem", {
+        method: "POST",
+        body: JSON.stringify({ item_name: itemName, image_url: imageUrl }),
+      });
+      const data = await res.json();
+      console.log("Upload result:", data);
+
+      // Refresh items after upload
+      const refreshed = await fetch("/.netlify/functions/getItems");
+      const refreshedData = await refreshed.json();
+      setItems(refreshedData.items || []);
+    } catch (err) {
+      console.error("Error uploading item:", err);
+    }
+  }
 
   return (
     <div
@@ -65,104 +96,59 @@ function Dashboard() {
       </p>
 
       {/* Request Form */}
-      <div
-        style={{
-          maxWidth: "600px",
-          margin: "0 auto 25px auto",
-          backgroundColor: "white",
-          padding: "20px",
-          borderRadius: "10px",
-          boxShadow: "2px 2px 10px rgba(0,0,0,0.1)"
-        }}
-      >
+      <div style={cardStyle}>
         <RequestForm />
       </div>
 
       {/* Repair Status Section */}
-      <div
-        style={{
-          maxWidth: "600px",
-          margin: "0 auto 25px auto",
-          backgroundColor: "white",
-          padding: "20px",
-          borderRadius: "10px",
-          boxShadow: "2px 2px 10px rgba(0,0,0,0.1)"
-        }}
-      >
+      <div style={cardStyle}>
         <RepairStatus requests={requests} />
       </div>
 
       {/* Item Picture Upload Section */}
-      <div
-        style={{
-          maxWidth: "600px",
-          margin: "0 auto 25px auto",
-          backgroundColor: "white",
-          padding: "20px",
-          borderRadius: "10px",
-          boxShadow: "2px 2px 10px rgba(0,0,0,0.1)"
-        }}
-      >
-        <h3
+      <div style={cardStyle}>
+        <h3 style={sectionTitle}>Upload Item Pictures</h3>
+        {items.length === 0 ? (
+          <p style={{ color: "#888", textAlign: "center" }}>No items uploaded yet.</p>
+        ) : (
+          items.map((item) => (
+            <ItemCard
+              key={item.id}
+              itemName={item.item_name}
+              imageUrl={item.image_url}
+            />
+          ))
+        )}
+        {/* Example upload button (replace with your form/UI) */}
+        <button
+          onClick={() =>
+            handleUploadItem("Washing Machine Board", "https://example.com/washing.jpg")
+          }
           style={{
-            fontSize: "20px",
-            fontWeight: "600",
-            color: "#0055aa",
-            marginBottom: "15px"
+            marginTop: "15px",
+            padding: "10px 15px",
+            backgroundColor: "#0055aa",
+            color: "white",
+            border: "none",
+            borderRadius: "6px",
+            cursor: "pointer"
           }}
         >
-          Upload Item Pictures
-        </h3>
-        <ItemCard itemName="Washing Machine Board" />
+          Upload Example Item
+        </button>
       </div>
 
       {/* Feedback Section */}
-      <div
-        style={{
-          maxWidth: "600px",
-          margin: "0 auto",
-          backgroundColor: "white",
-          padding: "20px",
-          borderRadius: "10px",
-          boxShadow: "2px 2px 10px rgba(0,0,0,0.1)"
-        }}
-      >
-        <h3
-          style={{
-            fontSize: "20px",
-            fontWeight: "600",
-            color: "#0055aa",
-            marginBottom: "15px"
-          }}
-        >
-          Your Feedback
-        </h3>
+      <div style={cardStyle}>
+        <h3 style={sectionTitle}>Your Feedback</h3>
         {feedbacks.length === 0 ? (
           <p style={{ color: "#888", textAlign: "center" }}>No feedback submitted yet.</p>
         ) : (
           <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
             {feedbacks.map((fb, idx) => (
-              <li
-                key={idx}
-                style={{
-                  border: "1px solid #ddd",
-                  borderRadius: "6px",
-                  padding: "10px",
-                  backgroundColor: "#f0f8ff",
-                  marginBottom: "10px"
-                }}
-              >
+              <li key={idx} style={feedbackItemStyle}>
                 <p style={{ fontSize: "14px", color: "#333" }}>{fb.feedback}</p>
-                <span
-                  style={{
-                    fontSize: "12px",
-                    color: "#777",
-                    display: "block",
-                    marginTop: "5px"
-                  }}
-                >
-                  {fb.email}
-                </span>
+                <span style={feedbackMetaStyle}>{fb.email}</span>
               </li>
             ))}
           </ul>
@@ -171,5 +157,37 @@ function Dashboard() {
     </div>
   );
 }
+
+// Shared styles
+const cardStyle = {
+  maxWidth: "600px",
+  margin: "0 auto 25px auto",
+  backgroundColor: "white",
+  padding: "20px",
+  borderRadius: "10px",
+  boxShadow: "2px 2px 10px rgba(0,0,0,0.1)"
+};
+
+const sectionTitle = {
+  fontSize: "20px",
+  fontWeight: "600",
+  color: "#0055aa",
+  marginBottom: "15px"
+};
+
+const feedbackItemStyle = {
+  border: "1px solid #ddd",
+  borderRadius: "6px",
+  padding: "10px",
+  backgroundColor: "#f0f8ff",
+  marginBottom: "10px"
+};
+
+const feedbackMetaStyle = {
+  fontSize: "12px",
+  color: "#777",
+  display: "block",
+  marginTop: "5px"
+};
 
 export default Dashboard;

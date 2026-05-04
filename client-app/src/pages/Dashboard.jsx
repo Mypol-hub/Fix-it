@@ -13,13 +13,13 @@ function Dashboard() {
   const [feedbackEmail, setFeedbackEmail] = useState("");
   const [feedbackText, setFeedbackText] = useState("");
 
-  // ✅ Read item + email from URL
+  // ✅ Read item + email
   const location = useLocation();
   const params = new URLSearchParams(location.search);
   const selectedItem = params.get("item");
   const clientEmail = params.get("email") || localStorage.getItem("clientEmail");
 
-  // ✅ Protect Dashboard: redirect if no email
+  // ✅ Protect Dashboard: redirect if not logged in
   useEffect(() => {
     if (!clientEmail) {
       navigate("/login");

@@ -22,21 +22,16 @@ function RequestForm({ onRequestSubmitted, prefilledItem, prefilledEmail }) {
       const data = await res.json();
       setMessage(data.message || "Request submitted!");
 
-      // Clear form
+      // Clear only name + description, keep email/item
       setCustomerName("");
       setProblemDescription("");
-
-      // Keep email and item prefilled
-      setEmail(prefilledEmail || "");
-      setItemName(prefilledItem || "");
-
-      // Refresh requests in Dashboard
-      if (onRequestSubmitted) {
-        onRequestSubmitted();
-      }
     } catch (err) {
       setMessage("Error submitting request");
       console.error(err);
+    }
+
+    if (onRequestSubmitted) {
+      onRequestSubmitted();
     }
   }
 

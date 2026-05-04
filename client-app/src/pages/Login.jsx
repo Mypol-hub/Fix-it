@@ -1,14 +1,19 @@
 import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
+import { useLocation, useNavigate } from "react-router-dom";
 
 function Login() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const params = new URLSearchParams(location.search);
+  const selectedItem = params.get("item"); // e.g. "Washing Board"
 
-  const handleSubmit = (e) => {
+  async function handleLogin(e) {
     e.preventDefault();
-    // TODO: connect this to backend authentication later
-    navigate("/dashboard");
-  };
+    // On success:
+    navigate(`/dashboard?item=${encodeURIComponent(selectedItem)}`);
+  }
+}
 
   return (
     <div>

@@ -1,9 +1,9 @@
 import { useState } from "react";
 
-function RequestForm({ onRequestSubmitted }) {
+function RequestForm({ onRequestSubmitted, prefilledItem, prefilledEmail }) {
   const [customerName, setCustomerName] = useState("");
-  const [email, setEmail] = useState("");
-  const [itemName, setItemName] = useState("");
+  const [email, setEmail] = useState(prefilledEmail || "");
+  const [itemName, setItemName] = useState(prefilledItem || "");
   const [problemDescription, setProblemDescription] = useState("");
   const [message, setMessage] = useState("");
 
@@ -24,11 +24,13 @@ function RequestForm({ onRequestSubmitted }) {
 
       // Clear form
       setCustomerName("");
-      setEmail("");
-      setItemName("");
       setProblemDescription("");
 
-      // Trigger Dashboard refresh
+      // Keep email and item prefilled
+      setEmail(prefilledEmail || "");
+      setItemName(prefilledItem || "");
+
+      // Refresh requests in Dashboard
       if (onRequestSubmitted) {
         onRequestSubmitted();
       }
@@ -40,10 +42,30 @@ function RequestForm({ onRequestSubmitted }) {
 
   return (
     <form onSubmit={handleSubmit}>
-      <input value={customerName} onChange={(e) => setCustomerName(e.target.value)} placeholder="Name" required />
-      <input value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email" required />
-      <input value={itemName} onChange={(e) => setItemName(e.target.value)} placeholder="Item Name" required />
-      <textarea value={problemDescription} onChange={(e) => setProblemDescription(e.target.value)} placeholder="Problem Description" />
+      <input
+        value={customerName}
+        onChange={(e) => setCustomerName(e.target.value)}
+        placeholder="Name"
+        required
+      />
+      <input
+        type="email"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        placeholder="Email"
+        required
+      />
+      <input
+        value={itemName}
+        onChange={(e) => setItemName(e.target.value)}
+        placeholder="Item Name"
+        required
+      />
+      <textarea
+        value={problemDescription}
+        onChange={(e) => setProblemDescription(e.target.value)}
+        placeholder="Problem Description"
+      />
       <button type="submit">Submit Request</button>
       {message && <p>{message}</p>}
     </form>

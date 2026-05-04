@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import RequestForm from "../pages/RequestForm";
 import RepairStatus from "../components/RepairStatus";
+import ItemCard from "../components/ItemCard";
 
 function Dashboard() {
   const [feedbacks, setFeedbacks] = useState([]);
@@ -35,7 +36,7 @@ function Dashboard() {
     <div className="min-h-screen bg-gray-50 p-6">
       <h2 className="text-2xl font-bold text-center mb-4">Your Dashboard</h2>
       <p className="text-center text-gray-600 mb-6">
-        Submit a new repair request or provide feedback below.
+        Submit a new repair request, upload item pictures, or provide feedback below.
       </p>
 
       {/* Request Form */}
@@ -46,6 +47,14 @@ function Dashboard() {
       {/* Repair Status Section */}
       <div className="max-w-lg mx-auto bg-white p-6 rounded-lg shadow-md mb-8">
         <RepairStatus requests={requests} />
+      </div>
+
+      {/* Item Picture Upload Section */}
+      <div className="max-w-lg mx-auto bg-white p-6 rounded-lg shadow-md mb-8">
+        <h3 className="text-xl font-semibold mb-4">Upload Item Pictures</h3>
+        {/* Example usage of ItemCard for one item */}
+        <ItemCard itemName="Washing Machine Board" />
+        {/* You can render multiple ItemCards dynamically if needed */}
       </div>
 
       {/* Feedback Section */}

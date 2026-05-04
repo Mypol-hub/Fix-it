@@ -1,3 +1,5 @@
+import Navbar from "../components/Navbar";
+
 function RequestForm() {
   return (
     <form className="max-w-lg mx-auto p-6 bg-white shadow-md rounded-md space-y-4">

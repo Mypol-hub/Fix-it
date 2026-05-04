@@ -99,7 +99,7 @@ function Dashboard() {
 
       {/* Request Form */}
       <div style={cardStyle}>
-        <RequestForm />
+        <RequestForm onRequestSubmitted={fetchRequests} />
       </div>
 
       {/* Repair Status Section */}

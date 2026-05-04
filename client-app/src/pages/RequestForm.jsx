@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-function RequestForm() {
+function RequestForm({ onRequestSubmitted }) {
   const [customerName, setCustomerName] = useState("");
   const [email, setEmail] = useState("");
   const [itemName, setItemName] = useState("");
@@ -21,10 +21,17 @@ function RequestForm() {
       });
       const data = await res.json();
       setMessage(data.message || "Request submitted!");
+
+      // Clear form
       setCustomerName("");
       setEmail("");
       setItemName("");
       setProblemDescription("");
+
+      // Trigger Dashboard refresh
+      if (onRequestSubmitted) {
+        onRequestSubmitted();
+      }
     } catch (err) {
       setMessage("Error submitting request");
       console.error(err);

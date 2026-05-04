@@ -21,7 +21,6 @@ function RequestForm() {
       });
       const data = await res.json();
       setMessage(data.message || "Request submitted!");
-      // Clear form
       setCustomerName("");
       setEmail("");
       setItemName("");
@@ -34,32 +33,10 @@ function RequestForm() {
 
   return (
     <form onSubmit={handleSubmit}>
-      <input
-        type="text"
-        placeholder="Your Name"
-        value={customerName}
-        onChange={(e) => setCustomerName(e.target.value)}
-        required
-      />
-      <input
-        type="email"
-        placeholder="Your Email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        required
-      />
-      <input
-        type="text"
-        placeholder="Item Name"
-        value={itemName}
-        onChange={(e) => setItemName(e.target.value)}
-        required
-      />
-      <textarea
-        placeholder="Problem Description"
-        value={problemDescription}
-        onChange={(e) => setProblemDescription(e.target.value)}
-      />
+      <input value={customerName} onChange={(e) => setCustomerName(e.target.value)} placeholder="Name" required />
+      <input value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email" required />
+      <input value={itemName} onChange={(e) => setItemName(e.target.value)} placeholder="Item Name" required />
+      <textarea value={problemDescription} onChange={(e) => setProblemDescription(e.target.value)} placeholder="Problem Description" />
       <button type="submit">Submit Request</button>
       {message && <p>{message}</p>}
     </form>

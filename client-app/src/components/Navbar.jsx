@@ -5,7 +5,7 @@ export default function Navbar() {
       <div>
         <a href="/" style={{ marginRight: "10px", color: "white" }}>Home</a>
         <a href="/login" style={{ marginRight: "10px", color: "white" }}>Login</a>
-        <a href="/dashboard" style={{ color: "white" }}>Dashboard</a>
+        
       </div>
     </nav>
   );

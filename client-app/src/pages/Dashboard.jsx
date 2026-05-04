@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
-import RequestForm from "./RequestForm";
+import RequestForm from "../pages/RequestForm";
+import RepairStatus from "../components/RepairStatus";
 
 function Dashboard() {
   const [feedbacks, setFeedbacks] = useState([]);
+  const [requests, setRequests] = useState([]);
 
   useEffect(() => {
     async function fetchFeedbacks() {
@@ -14,7 +16,19 @@ function Dashboard() {
         console.error("Error fetching feedbacks:", err);
       }
     }
+
+    async function fetchRequests() {
+      try {
+        const res = await fetch("/.netlify/functions/getRequests");
+        const data = await res.json();
+        setRequests(data.requests || []);
+      } catch (err) {
+        console.error("Error fetching requests:", err);
+      }
+    }
+
     fetchFeedbacks();
+    fetchRequests();
   }, []);
 
   return (
@@ -24,9 +38,14 @@ function Dashboard() {
         Submit a new repair request or provide feedback below.
       </p>
 
-      {/* Request Form inside Dashboard */}
+      {/* Request Form */}
       <div className="max-w-lg mx-auto bg-white p-6 rounded-lg shadow-md mb-8">
         <RequestForm />
+      </div>
+
+      {/* Repair Status Section */}
+      <div className="max-w-lg mx-auto bg-white p-6 rounded-lg shadow-md mb-8">
+        <RepairStatus requests={requests} />
       </div>
 
       {/* Feedback Section */}

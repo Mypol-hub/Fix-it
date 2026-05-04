@@ -11,6 +11,7 @@ function Dashboard() {
   const [items, setItems] = useState([]);
   const [feedbackEmail, setFeedbackEmail] = useState(clientEmail || "");
   const [feedbackText, setFeedbackText] = useState("");
+  const savedEmail = localStorage.getItem("clientEmail");
 
   // ✅ Read item param from URL
   const location = useLocation();
@@ -80,7 +81,11 @@ const clientEmail = params.get("email"); // new
 
       {/* Request Form with auto‑filled item */}
       <div style={cardStyle}>
-        <RequestForm onRequestSubmitted={fetchRequests} prefilledItem={selectedItem} prefilledEmail={clientEmail} />
+        <RequestForm
+  onRequestSubmitted={fetchRequests}
+  prefilledItem={selectedItem}
+  prefilledEmail={savedEmail}
+/>
       </div>
       
       {/* Repair Status Section */}

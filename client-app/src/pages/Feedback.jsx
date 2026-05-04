@@ -4,31 +4,45 @@ import Navbar from "../components/Navbar";
 export default function Feedback() {
   const [email, setEmail] = useState("");
   const [feedback, setFeedback] = useState("");
+  const [message, setMessage] = useState("");
 
   async function handleSubmit(e) {
     e.preventDefault();
-    const res = await fetch("/.netlify/functions/submitRequest", {
-      method: "POST",
-      body: JSON.stringify({ email, feedback }),
-    });
-    const data = await res.json();
-    alert(data.message || data.error);
+    try {
+      const res = await fetch("/.netlify/functions/submitFeedback", {
+        method: "POST",
+        body: JSON.stringify({ email, feedback }),
+      });
+      const data = await res.json();
+      setMessage(data.message || data.error);
+      setEmail("");
+      setFeedback("");
+    } catch (err) {
+      setMessage("Error submitting feedback");
+      console.error(err);
+    }
   }
 
   return (
-    <form onSubmit={handleSubmit}>
-      <input
-        type="email"
-        placeholder="Your email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-      />
-      <textarea
-        placeholder="Your feedback"
-        value={feedback}
-        onChange={(e) => setFeedback(e.target.value)}
-      />
-      <button type="submit">Send</button>
-    </form>
+    <div>
+      <Navbar />
+      <form onSubmit={handleSubmit}>
+        <input
+          type="email"
+          placeholder="Your email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+        />
+        <textarea
+          placeholder="Your feedback"
+          value={feedback}
+          onChange={(e) => setFeedback(e.target.value)}
+          required
+        />
+        <button type="submit">Send</button>
+      </form>
+      {message && <p>{message}</p>}
+    </div>
   );
 }

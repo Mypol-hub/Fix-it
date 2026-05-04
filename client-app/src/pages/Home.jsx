@@ -55,7 +55,7 @@ function Home() {
   "Eppy Lady": "/images/eppy-lady.png",
   "Gaz Cookers": "/images/gaz-cooker.jpg",
   "Gaz Heater": "/images/gaz-heater.jpg",
-  "Hair Dryers": "/images/hair-dryer.png",
+  "Hair Dryers": "/images/hair-dryer.jpg",
   "Hand Mixer": "/images/hand-mixer.jpg",
   "Handy Phone": "/images/handy-phone.jpg",
   "Industrial Board": "/images/industrial-board.png",

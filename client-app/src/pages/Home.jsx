@@ -51,25 +51,46 @@ function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <header className="py-6 bg-blue-600 text-white text-center shadow-md">
-        <h1 className="text-3xl font-bold">Khaleel Electronics Repair Shop</h1>
+    <div>
+      <Navbar />
+      <header style={{ padding: "20px", backgroundColor: "#003366", color: "white", textAlign: "center" }}>
+        <h1 style={{ fontSize: "28px", fontWeight: "bold" }}>Khaleel Electronics Repair Shop</h1>
       </header>
 
-      <main className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 p-6">
+      <main style={{
+        display: "grid",
+        gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))",
+        gap: "20px",
+        padding: "20px"
+      }}>
         {items.map((item, index) => (
           <div
             key={index}
-            className="border rounded-lg shadow-sm p-4 text-center bg-white hover:shadow-md transition"
+            style={{
+              border: "1px solid #ccc",
+              borderRadius: "8px",
+              padding: "10px",
+              textAlign: "center",
+              backgroundColor: "white",
+              boxShadow: "2px 2px 6px rgba(0,0,0,0.1)"
+            }}
           >
             <img
               src={images[item] || "https://via.placeholder.com/150?text=No+Image"}
               alt={item}
-              className="mx-auto mb-4 h-32 w-32 object-contain"
+              style={{ width: "150px", height: "150px", objectFit: "contain", marginBottom: "10px" }}
             />
-            <h3 className="text-lg font-semibold mb-2">{item}</h3>
+            <h3 style={{ fontSize: "16px", fontWeight: "600", marginBottom: "10px" }}>{item}</h3>
             <Link to="/login">
-              <button className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition">
+              <button style={{
+                width: "100%",
+                padding: "8px",
+                backgroundColor: "#003366",
+                color: "white",
+                border: "none",
+                borderRadius: "4px",
+                cursor: "pointer"
+              }}>
                 Repair
               </button>
             </Link>

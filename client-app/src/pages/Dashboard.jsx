@@ -139,24 +139,78 @@ function Dashboard() {
       </div>
 
       {/* Feedback Section */}
-      <div style={cardStyle}>
-        <h3 style={sectionTitle}>Your Feedback</h3>
-        {feedbacks.length === 0 ? (
-          <p style={{ color: "#888", textAlign: "center" }}>No feedback submitted yet.</p>
-        ) : (
-          <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
-            {feedbacks.map((fb, idx) => (
-              <li key={idx} style={feedbackItemStyle}>
-                <p style={{ fontSize: "14px", color: "#333" }}>{fb.feedback}</p>
-                <span style={feedbackMetaStyle}>{fb.email}</span>
-              </li>
-            ))}
-          </ul>
-        )}
-      </div>
-    </div>
-  );
-}
+<div style={cardStyle}>
+  <h3 style={sectionTitle}>Your Feedback</h3>
+
+  {/* Feedback Form */}
+  <form
+    onSubmit={async (e) => {
+      e.preventDefault();
+      try {
+        const res = await fetch("/.netlify/functions/submitFeedback", {
+          method: "POST",
+          body: JSON.stringify({ email: feedbackEmail, feedback: feedbackText }),
+        });
+        const data = await res.json();
+        alert(data.message || data.error);
+
+        // Refresh feedbacks after submission
+        const refreshed = await fetch("/.netlify/functions/getFeedbacks");
+        const refreshedData = await refreshed.json();
+        setFeedbacks(refreshedData.feedbacks || []);
+
+        setFeedbackEmail("");
+        setFeedbackText("");
+      } catch (err) {
+        console.error("Error submitting feedback:", err);
+      }
+    }}
+    style={{ marginBottom: "20px" }}
+  >
+    <input
+      type="email"
+      placeholder="Your email"
+      value={feedbackEmail}
+      onChange={(e) => setFeedbackEmail(e.target.value)}
+      required
+      style={{ display: "block", marginBottom: "10px", width: "100%" }}
+    />
+    <textarea
+      placeholder="Your feedback"
+      value={feedbackText}
+      onChange={(e) => setFeedbackText(e.target.value)}
+      required
+      style={{ display: "block", marginBottom: "10px", width: "100%" }}
+    />
+    <button
+      type="submit"
+      style={{
+        padding: "10px 15px",
+        backgroundColor: "#0055aa",
+        color: "white",
+        border: "none",
+        borderRadius: "6px",
+        cursor: "pointer"
+      }}
+    >
+      Submit Feedback
+    </button>
+  </form>
+
+  {/* Feedback List */}
+  {feedbacks.length === 0 ? (
+    <p style={{ color: "#888", textAlign: "center" }}>No feedback submitted yet.</p>
+  ) : (
+    <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
+      {feedbacks.map((fb, idx) => (
+        <li key={idx} style={feedbackItemStyle}>
+          <p style={{ fontSize: "14px", color: "#333" }}>{fb.feedback}</p>
+          <span style={feedbackMetaStyle}>{fb.email}</span>
+        </li>
+      ))}
+    </ul>
+  )}
+</div>
 
 // Shared styles
 const cardStyle = {

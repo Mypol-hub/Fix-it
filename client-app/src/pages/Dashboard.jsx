@@ -11,7 +11,7 @@ function Dashboard() {
   const [feedbackEmail, setFeedbackEmail] = useState("");
   const [feedbackText, setFeedbackText] = useState("");
 
-  // Define fetchRequests OUTSIDE useEffect
+  // Fetch functions defined outside useEffect
   async function fetchRequests() {
     try {
       const res = await fetch("/.netlify/functions/getRequests");
@@ -22,7 +22,6 @@ function Dashboard() {
     }
   }
 
-  // Same for feedbacks and items if you want to reuse them
   async function fetchFeedbacks() {
     try {
       const res = await fetch("/.netlify/functions/getFeedbacks");
@@ -49,17 +48,6 @@ function Dashboard() {
     fetchRequests();
     fetchItems();
   }, []);
-  
-  useEffect(() => {
-    async function fetchFeedbacks() {
-      try {
-        const res = await fetch("/.netlify/functions/getFeedbacks");
-        const data = await res.json();
-        setFeedbacks(data.feedbacks || []);
-      } catch (err) {
-        console.error("Error fetching feedbacks:", err);
-      }
-    }
 
   // Upload new item (calls uploadItem.js)
   async function handleUploadItem(itemName, imageUrl) {
@@ -72,42 +60,19 @@ function Dashboard() {
       console.log("Upload result:", data);
 
       // Refresh items after upload
-      const refreshed = await fetch("/.netlify/functions/getItems");
-      const refreshedData = await refreshed.json();
-      setItems(refreshedData.items || []);
+      fetchItems();
     } catch (err) {
       console.error("Error uploading item:", err);
     }
   }
 
   return (
-    <div
-      style={{
-        minHeight: "100vh",
-        backgroundColor: "#f5f5f5",
-        padding: "20px"
-      }}
-    >
+    <div style={{ minHeight: "100vh", backgroundColor: "#f5f5f5", padding: "20px" }}>
       <Navbar />
-      <h2
-        style={{
-          textAlign: "center",
-          fontSize: "26px",
-          fontWeight: "bold",
-          color: "#003366",
-          marginBottom: "10px"
-        }}
-      >
+      <h2 style={{ textAlign: "center", fontSize: "26px", fontWeight: "bold", color: "#003366", marginBottom: "10px" }}>
         Your Dashboard
       </h2>
-      <p
-        style={{
-          textAlign: "center",
-          color: "#555",
-          marginBottom: "25px",
-          fontSize: "15px"
-        }}
-      >
+      <p style={{ textAlign: "center", color: "#555", marginBottom: "25px", fontSize: "15px" }}>
         Submit a new repair request, upload item pictures, or provide feedback below.
       </p>
 
@@ -128,18 +93,11 @@ function Dashboard() {
           <p style={{ color: "#888", textAlign: "center" }}>No items uploaded yet.</p>
         ) : (
           items.map((item) => (
-            <ItemCard
-              key={item.id}
-              itemName={item.item_name}
-              imageUrl={item.image_url}
-            />
+            <ItemCard key={item.id} itemName={item.item_name} imageUrl={item.image_url} />
           ))
         )}
-        {/* Example upload button (replace with your form/UI) */}
         <button
-          onClick={() =>
-            handleUploadItem("Washing Machine Board", "https://example.com/washing.jpg")
-          }
+          onClick={() => handleUploadItem("Washing Machine Board", "https://example.com/washing.jpg")}
           style={{
             marginTop: "15px",
             padding: "10px 15px",
@@ -147,7 +105,7 @@ function Dashboard() {
             color: "white",
             border: "none",
             borderRadius: "6px",
-            cursor: "pointer"
+            cursor: "pointer",
           }}
         >
           Upload Example Item
@@ -155,78 +113,76 @@ function Dashboard() {
       </div>
 
       {/* Feedback Section */}
-<div style={cardStyle}>
-  <h3 style={sectionTitle}>Your Feedback</h3>
+      <div style={cardStyle}>
+        <h3 style={sectionTitle}>Your Feedback</h3>
+        <form
+          onSubmit={async (e) => {
+            e.preventDefault();
+            try {
+              const res = await fetch("/.netlify/functions/submitFeedback", {
+                method: "POST",
+                body: JSON.stringify({ email: feedbackEmail, feedback: feedbackText }),
+              });
+              const data = await res.json();
+              alert(data.message || data.error);
 
-  {/* Feedback Form */}
-  <form
-    onSubmit={async (e) => {
-      e.preventDefault();
-      try {
-        const res = await fetch("/.netlify/functions/submitFeedback", {
-          method: "POST",
-          body: JSON.stringify({ email: feedbackEmail, feedback: feedbackText }),
-        });
-        const data = await res.json();
-        alert(data.message || data.error);
+              // Refresh feedbacks after submission
+              fetchFeedbacks();
 
-        // Refresh feedbacks after submission
-        const refreshed = await fetch("/.netlify/functions/getFeedbacks");
-        const refreshedData = await refreshed.json();
-        setFeedbacks(refreshedData.feedbacks || []);
+              setFeedbackEmail("");
+              setFeedbackText("");
+            } catch (err) {
+              console.error("Error submitting feedback:", err);
+            }
+          }}
+          style={{ marginBottom: "20px" }}
+        >
+          <input
+            type="email"
+            placeholder="Your email"
+            value={feedbackEmail}
+            onChange={(e) => setFeedbackEmail(e.target.value)}
+            required
+            style={{ display: "block", marginBottom: "10px", width: "100%" }}
+          />
+          <textarea
+            placeholder="Your feedback"
+            value={feedbackText}
+            onChange={(e) => setFeedbackText(e.target.value)}
+            required
+            style={{ display: "block", marginBottom: "10px", width: "100%" }}
+          />
+          <button
+            type="submit"
+            style={{
+              padding: "10px 15px",
+              backgroundColor: "#0055aa",
+              color: "white",
+              border: "none",
+              borderRadius: "6px",
+              cursor: "pointer",
+            }}
+          >
+            Submit Feedback
+          </button>
+        </form>
 
-        setFeedbackEmail("");
-        setFeedbackText("");
-      } catch (err) {
-        console.error("Error submitting feedback:", err);
-      }
-    }}
-    style={{ marginBottom: "20px" }}
-  >
-    <input
-      type="email"
-      placeholder="Your email"
-      value={feedbackEmail}
-      onChange={(e) => setFeedbackEmail(e.target.value)}
-      required
-      style={{ display: "block", marginBottom: "10px", width: "100%" }}
-    />
-    <textarea
-      placeholder="Your feedback"
-      value={feedbackText}
-      onChange={(e) => setFeedbackText(e.target.value)}
-      required
-      style={{ display: "block", marginBottom: "10px", width: "100%" }}
-    />
-    <button
-      type="submit"
-      style={{
-        padding: "10px 15px",
-        backgroundColor: "#0055aa",
-        color: "white",
-        border: "none",
-        borderRadius: "6px",
-        cursor: "pointer"
-      }}
-    >
-      Submit Feedback
-    </button>
-  </form>
-
-  {/* Feedback List */}
-  {feedbacks.length === 0 ? (
-    <p style={{ color: "#888", textAlign: "center" }}>No feedback submitted yet.</p>
-  ) : (
-    <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
-      {feedbacks.map((fb, idx) => (
-        <li key={idx} style={feedbackItemStyle}>
-          <p style={{ fontSize: "14px", color: "#333" }}>{fb.feedback}</p>
-          <span style={feedbackMetaStyle}>{fb.email}</span>
-        </li>
-      ))}
-    </ul>
-  )}
-</div>
+        {feedbacks.length === 0 ? (
+          <p style={{ color: "#888", textAlign: "center" }}>No feedback submitted yet.</p>
+        ) : (
+          <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
+            {feedbacks.map((fb, idx) => (
+              <li key={idx} style={feedbackItemStyle}>
+                <p style={{ fontSize: "14px", color: "#333" }}>{fb.feedback}</p>
+                <span style={feedbackMetaStyle}>{fb.email}</span>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+    </div>
+  );
+}
 
 // Shared styles
 const cardStyle = {
@@ -235,14 +191,14 @@ const cardStyle = {
   backgroundColor: "white",
   padding: "20px",
   borderRadius: "10px",
-  boxShadow: "2px 2px 10px rgba(0,0,0,0.1)"
+  boxShadow: "2px 2px 10px rgba(0,0,0,0.1)",
 };
 
 const sectionTitle = {
   fontSize: "20px",
   fontWeight: "600",
   color: "#0055aa",
-  marginBottom: "15px"
+  marginBottom: "15px",
 };
 
 const feedbackItemStyle = {
@@ -250,14 +206,14 @@ const feedbackItemStyle = {
   borderRadius: "6px",
   padding: "10px",
   backgroundColor: "#f0f8ff",
-  marginBottom: "10px"
+  marginBottom: "10px",
 };
 
 const feedbackMetaStyle = {
   fontSize: "12px",
   color: "#777",
   display: "block",
-  marginTop: "5px"
+  marginTop: "5px",
 };
 
 export default Dashboard;

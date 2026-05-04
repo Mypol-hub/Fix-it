@@ -12,7 +12,6 @@ function Login() {
 
   return (
     <div>
-      <Navbar />
       <div
         style={{
           minHeight: "100vh",

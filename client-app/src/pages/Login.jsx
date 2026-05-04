@@ -9,9 +9,13 @@ function Login() {
 
   async function handleLogin(e) {
   e.preventDefault();
-  const email = e.target.email.value; // grab email input
-  // TODO: add real authentication
-  navigate(`/dashboard?item=${encodeURIComponent(selectedItem)}&email=${encodeURIComponent(email)}`);
+  const email = e.target.email.value;
+
+  // Save email locally
+  localStorage.setItem("clientEmail", email);
+
+  // Redirect with item param
+  navigate(`/dashboard?item=${encodeURIComponent(selectedItem)}`);
 }
 
   return (

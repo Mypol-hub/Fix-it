@@ -1,7 +1,13 @@
+import { useNavigate } from "react-router-dom";
+
 function Login() {
+  const navigate = useNavigate();
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    alert("Feedback submitted! (Connect this to backend later)");
+    // TODO: connect this to backend authentication later
+    // For now, just redirect after "successful" login
+    navigate("/dashboard");
   };
 
   return (
@@ -11,15 +17,32 @@ function Login() {
 
       <form onSubmit={handleSubmit}>
         <label>Email</label>
-        <input type="email" name="email" placeholder="Enter your email" required style={{ width: "100%", minWidth: "350px", marginBottom: "10px" }} />
+        <input
+          type="email"
+          name="email"
+          placeholder="Enter your email"
+          required
+          style={{ width: "100%", minWidth: "350px", marginBottom: "10px", padding: "10px" }}
+        />
 
         <label>Password</label>
-        <input type="password" name="password" placeholder="Enter your password" required style={{ width: "100%", minWidth: "350px", marginBottom: "10px" }} />
+        <input
+          type="password"
+          name="password"
+          placeholder="Enter your password"
+          required
+          style={{ width: "100%", minWidth: "350px", marginBottom: "10px", padding: "10px" }}
+        />
 
         <label>Feedback</label>
-        <textarea name="feedback" placeholder="Describe your repair issue or feedback" required style={{ width: "100%", minWidth: "350px", marginBottom: "10px" }} />
+        <textarea
+          name="feedback"
+          placeholder="Describe your repair issue or feedback"
+          required
+          style={{ width: "100%", minWidth: "350px", marginBottom: "10px", padding: "10px" }}
+        />
 
-        <button type="submit" style={{ width: "100%", padding: "10px" }}>Login & Submit</button>
+        <button type="submit" style={{ width: "100%", padding: "12px" }}>Login & Submit</button>
       </form>
     </div>
   );

@@ -9,13 +9,14 @@ function Dashboard() {
   const [feedbacks, setFeedbacks] = useState([]);
   const [requests, setRequests] = useState([]);
   const [items, setItems] = useState([]);
-  const [feedbackEmail, setFeedbackEmail] = useState("");
+  const [feedbackEmail, setFeedbackEmail] = useState(clientEmail || "");
   const [feedbackText, setFeedbackText] = useState("");
 
   // ✅ Read item param from URL
   const location = useLocation();
-  const params = new URLSearchParams(location.search);
-  const selectedItem = params.get("item"); // e.g. "Washing Board"
+const params = new URLSearchParams(location.search);
+const selectedItem = params.get("item");
+const clientEmail = params.get("email"); // new
 
   async function fetchRequests() {
     try {
@@ -79,9 +80,9 @@ function Dashboard() {
 
       {/* Request Form with auto‑filled item */}
       <div style={cardStyle}>
-        <RequestForm onRequestSubmitted={fetchRequests} prefilledItem={selectedItem} />
+        <RequestForm onRequestSubmitted={fetchRequests} prefilledItem={selectedItem} prefilledEmail={clientEmail} />
       </div>
-
+      
       {/* Repair Status Section */}
       <div style={cardStyle}>
         <RepairStatus requests={requests} />

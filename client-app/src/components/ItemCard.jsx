@@ -1,61 +1,59 @@
 import { useState } from "react";
 
-export default function ItemCard({ itemName }) {
-  const [file, setFile] = useState(null);
-  const [uploadedUrl, setUploadedUrl] = useState("");
+function ItemCard({ itemName, imageUrl }) {
+  const [newItemName, setNewItemName] = useState("");
+  const [newImageUrl, setNewImageUrl] = useState("");
+  const [message, setMessage] = useState("");
 
   async function handleUpload(e) {
     e.preventDefault();
-    if (!file) return;
-
-    // Example: send file to backend
-    const formData = new FormData();
-    formData.append("file", file);
-    formData.append("itemName", itemName);
-
-    const res = await fetch("/.netlify/functions/uploadItemImage", {
-      method: "POST",
-      body: formData,
-    });
-    const data = await res.json();
-    setUploadedUrl(data.url); // backend should return the stored image URL
+    try {
+      const res = await fetch("/.netlify/functions/uploadItem", {
+        method: "POST",
+        body: JSON.stringify({
+          item_name: newItemName,
+          image_url: newImageUrl,
+        }),
+      });
+      const data = await res.json();
+      setMessage(data.message || "Item uploaded!");
+      setNewItemName("");
+      setNewImageUrl("");
+    } catch (err) {
+      setMessage("Error uploading item");
+      console.error(err);
+    }
   }
 
   return (
-    <div className="border rounded-lg shadow-sm p-4 bg-white text-center">
-      <h3 className="text-lg font-semibold mb-2">{itemName}</h3>
-
-      <form onSubmit={handleUpload} className="space-y-3">
-        <input
-          type="file"
-          accept="image/*"
-          onChange={(e) => setFile(e.target.files[0])}
-          className="w-full border p-2 rounded"
-        />
-        <button
-          type="submit"
-          className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition"
-        >
-          Upload Item Picture
-        </button>
-      </form>
-
-      {uploadedUrl && (
-        <div className="mt-4">
-          <img
-            src={uploadedUrl}
-            alt={itemName}
-            className="mx-auto h-32 w-32 object-contain mb-2"
-          />
-          <a
-            href={uploadedUrl}
-            download
-            className="text-blue-600 underline text-sm"
-          >
-            Download Picture
-          </a>
+    <div style={{ marginBottom: "20px" }}>
+      {itemName && (
+        <div style={{ border: "1px solid #ddd", padding: "10px", borderRadius: "6px" }}>
+          <h4>{itemName}</h4>
+          {imageUrl && <img src={imageUrl} alt={itemName} style={{ maxWidth: "100%" }} />}
         </div>
       )}
+
+      {/* Upload form */}
+      <form onSubmit={handleUpload} style={{ marginTop: "15px" }}>
+        <input
+          type="text"
+          placeholder="Item Name"
+          value={newItemName}
+          onChange={(e) => setNewItemName(e.target.value)}
+          required
+        />
+        <input
+          type="text"
+          placeholder="Image URL"
+          value={newImageUrl}
+          onChange={(e) => setNewImageUrl(e.target.value)}
+        />
+        <button type="submit">Upload Item</button>
+      </form>
+      {message && <p>{message}</p>}
     </div>
   );
 }
+
+export default ItemCard;

@@ -1,6 +1,5 @@
-import { useNavigate } from "react-router-dom";
-import Navbar from "../components/Navbar";
 import { useLocation, useNavigate } from "react-router-dom";
+import Navbar from "../components/Navbar";
 
 function Login() {
   const navigate = useNavigate();
@@ -10,13 +9,14 @@ function Login() {
 
   async function handleLogin(e) {
     e.preventDefault();
+    // TODO: add real authentication here
     // On success:
     navigate(`/dashboard?item=${encodeURIComponent(selectedItem)}`);
   }
-}
 
   return (
     <div>
+      <Navbar />
       <div
         style={{
           minHeight: "100vh",
@@ -24,7 +24,7 @@ function Login() {
           alignItems: "center",
           justifyContent: "center",
           backgroundColor: "#f5f5f5",
-          padding: "20px"
+          padding: "20px",
         }}
       >
         <div
@@ -34,7 +34,7 @@ function Login() {
             backgroundColor: "white",
             padding: "20px",
             borderRadius: "8px",
-            boxShadow: "2px 2px 8px rgba(0,0,0,0.1)"
+            boxShadow: "2px 2px 8px rgba(0,0,0,0.1)",
           }}
         >
           <h2
@@ -43,7 +43,7 @@ function Login() {
               fontSize: "22px",
               fontWeight: "bold",
               marginBottom: "10px",
-              color: "#003366"
+              color: "#003366",
             }}
           >
             Client Login
@@ -53,13 +53,16 @@ function Login() {
               textAlign: "center",
               color: "#666",
               marginBottom: "20px",
-              fontSize: "14px"
+              fontSize: "14px",
             }}
           >
             Please log in to provide professional feedback on your repair request.
           </p>
 
-          <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column" }}>
+          <form
+            onSubmit={handleLogin}
+            style={{ display: "flex", flexDirection: "column" }}
+          >
             <label style={{ marginBottom: "5px", fontSize: "14px" }}>Email</label>
             <input
               type="email"
@@ -72,7 +75,7 @@ function Login() {
                 border: "1px solid #ccc",
                 borderRadius: "4px",
                 marginBottom: "15px",
-                fontSize: "14px"
+                fontSize: "14px",
               }}
             />
 
@@ -88,7 +91,7 @@ function Login() {
                 border: "1px solid #ccc",
                 borderRadius: "4px",
                 marginBottom: "15px",
-                fontSize: "14px"
+                fontSize: "14px",
               }}
             />
 
@@ -104,7 +107,7 @@ function Login() {
                 borderRadius: "4px",
                 minHeight: "80px",
                 marginBottom: "15px",
-                fontSize: "14px"
+                fontSize: "14px",
               }}
             />
 
@@ -118,7 +121,7 @@ function Login() {
                 border: "none",
                 borderRadius: "4px",
                 cursor: "pointer",
-                fontSize: "15px"
+                fontSize: "15px",
               }}
             >
               Login & Submit

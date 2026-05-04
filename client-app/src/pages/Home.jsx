@@ -52,7 +52,6 @@ function Home() {
 
   return (
     <div>
-      <Navbar />
       <header style={{ padding: "20px", backgroundColor: "#003366", color: "white", textAlign: "center" }}>
         <h1 style={{ fontSize: "28px", fontWeight: "bold" }}>Khaleel Electronics Repair Shop</h1>
       </header>

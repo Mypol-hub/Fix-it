@@ -1,6 +1,22 @@
+import { useEffect, useState } from "react";
 import RequestForm from "./RequestForm";
 
 function Dashboard() {
+  const [feedbacks, setFeedbacks] = useState([]);
+
+  useEffect(() => {
+    async function fetchFeedbacks() {
+      try {
+        const res = await fetch("/.netlify/functions/getFeedbacks");
+        const data = await res.json();
+        setFeedbacks(data.feedbacks || []);
+      } catch (err) {
+        console.error("Error fetching feedbacks:", err);
+      }
+    }
+    fetchFeedbacks();
+  }, []);
+
   return (
     <div className="min-h-screen bg-gray-50 p-6">
       <h2 className="text-2xl font-bold text-center mb-4">Your Dashboard</h2>
@@ -9,8 +25,30 @@ function Dashboard() {
       </p>
 
       {/* Request Form inside Dashboard */}
-      <div className="max-w-lg mx-auto bg-white p-6 rounded-lg shadow-md">
+      <div className="max-w-lg mx-auto bg-white p-6 rounded-lg shadow-md mb-8">
         <RequestForm />
+      </div>
+
+      {/* Feedback Section */}
+      <div className="max-w-lg mx-auto bg-white p-6 rounded-lg shadow-md">
+        <h3 className="text-xl font-semibold mb-4">Your Feedback</h3>
+        {feedbacks.length === 0 ? (
+          <p className="text-gray-500">No feedback submitted yet.</p>
+        ) : (
+          <ul className="space-y-3">
+            {feedbacks.map((fb, idx) => (
+              <li
+                key={idx}
+                className="border border-gray-200 rounded-md p-3 bg-gray-50"
+              >
+                <p className="text-sm text-gray-700">{fb.feedback}</p>
+                <span className="text-xs text-gray-400 block mt-1">
+                  {fb.email}
+                </span>
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
     </div>
   );

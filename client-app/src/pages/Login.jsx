@@ -1,4 +1,5 @@
 import { useLocation, useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 import Navbar from "../components/Navbar";
 
 function Login() {
@@ -7,16 +8,28 @@ function Login() {
   const params = new URLSearchParams(location.search);
   const selectedItem = params.get("item"); // e.g. "Washing Board"
 
+  // ✅ Auto‑redirect if email already saved
+  useEffect(() => {
+    const savedEmail = localStorage.getItem("clientEmail");
+    if (savedEmail) {
+      navigate(
+        `/dashboard?item=${encodeURIComponent(selectedItem || "")}&email=${encodeURIComponent(savedEmail)}`
+      );
+    }
+  }, [navigate, selectedItem]);
+
   async function handleLogin(e) {
-  e.preventDefault();
-  const email = e.target.email.value;
+    e.preventDefault();
+    const email = e.target.email.value;
 
-  // Save email locally
-  localStorage.setItem("clientEmail", email);
+    // Save email locally
+    localStorage.setItem("clientEmail", email);
 
-  // Redirect with item param
-  navigate(`/dashboard?item=${encodeURIComponent(selectedItem)}`);
-}
+    // Redirect with item param + email
+    navigate(
+      `/dashboard?item=${encodeURIComponent(selectedItem || "")}&email=${encodeURIComponent(email)}`
+    );
+  }
 
   return (
     <div>

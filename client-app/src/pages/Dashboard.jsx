@@ -174,46 +174,4 @@ function Dashboard() {
   );
 }
 
-// Shared styles
-const cardStyle = {
-  maxWidth: "600px",
-  margin: "0 auto 25px auto",
-  backgroundColor: "white",
-  padding: "20px",
-  borderRadius: "10px",
-  boxShadow: "2px 2px 10px rgba(0,0,0,0.1)",
-};
-
-const sectionTitle = {
-  fontSize: "20px",
-  fontWeight: "600",
-  color: "#0055aa",
-  marginBottom: "15px",
-};
-
-const uploadButtonStyle = {
-  marginTop: "15px",
-  padding: "10px 15px",
-  backgroundColor: "#0055aa",
-  color: "white",
-  border: "none",
-  borderRadius: "6px",
-  cursor: "pointer",
-};
-
-const feedbackItemStyle = {
-  border: "1px solid #ddd",
-  borderRadius: "6px",
-  padding: "10px",
-  backgroundColor: "#f0f8ff",
-  marginBottom: "10px",
-};
-
-const feedbackMetaStyle = {
-  fontSize: "12px",
-  color: "#777",
-  display: "block",
-  marginTop: "5px",
-};
-
 export default Dashboard;

@@ -2,5 +2,8 @@
   "dependencies": {
     "@supabase-js/source": "github:supabase/supabase-js",
     "react-router-dom": "^7.14.2"
+  },
+  "devDependencies": {
+    "gh-pages": "^6.3.0"
   }
 }

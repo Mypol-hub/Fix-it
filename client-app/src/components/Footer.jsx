@@ -10,17 +10,16 @@ export default function Footer() {
 
         {/* Contact Info */}
         <div className="space-x-4 mt-2 md:mt-0">
-          <p>📞 <span className="mx-2">09 215 171</span> | <span className="mx-2">03 660 068</span></p>
-          
+          📞 
+          <a href="tel:09215171" className="no-underline mx-2">09 215 171</a> | 
+          <a href="tel:03660068" className="no-underline mx-2">03 660 068</a>
         </div>
       </div>
 
       {/* Copyright */}
-      <div className="mt-4 text-center text-xs text-gray-400">
+      <div className="mt-4 text-center text-xs text-gray-300">
         © 2026 Kangooroo-Tech. All rights reserved.
-        
-        <p>📞 <span className="mx-2">71 989151</span></p>
-
+        <p className="mt-2">📞 <a href="tel:+96171989151" className="no-underline mx-2">71 989151</a></p>
       </div>
     </footer>
   );

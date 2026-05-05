@@ -5,18 +5,34 @@ export default function Navbar() {
 
   function handleLogout() {
     localStorage.removeItem("clientEmail");
-    navigate("/login");
+    navigate("/"); // redirects to Home;
   }
 
   return (
-    <nav className="bg-blue-900 text-white p-4 flex justify-between items-center">
-  
-  <div className="space-x-4">
-    <a href="/" className="hover:underline">Home</a>
-    <a href="/login" className="hover:underline">Login</a>
-    <a href="/dashboard" className="hover:underline">Dashboard</a>
-    <button className="bg-red-600 px-3 py-1 rounded hover:bg-red-700">Logout</button>
-  </div>
-</nav>
+    <nav className="bg-blue-900 text-white px-6 py-4 flex justify-between items-center shadow-md">
+      {/* Logo / Title */}
+      <h1 className="text-xl font-bold tracking-wide">Khalil Electronics</h1>
+
+      {/* Navigation Links */}
+      <div className="flex items-center space-x-6">
+        <Link to="/" className="no-underline hover:text-blue-200 transition">
+          Home
+        </Link>
+        <Link to="/login" className="no-underline hover:text-blue-200 transition">
+          Login
+        </Link>
+        <Link to="/dashboard" className="no-underline hover:text-blue-200 transition">
+          Dashboard
+        </Link>
+
+        {/* Logout Button */}
+        <button
+          onClick={handleLogout}
+          className="bg-red-600 px-4 py-2 rounded-lg hover:bg-red-700 transition"
+        >
+          Logout
+        </button>
+      </div>
+    </nav>
   );
 }

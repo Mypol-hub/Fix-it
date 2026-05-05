@@ -1,6 +1,6 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Navbar from "./components/Navbar";
-import Footer from "./components/Footer";   // import Footer
+import Footer from "./components/Footer";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
@@ -9,12 +9,11 @@ import RequestForm from "./components/RequestForm";
 
 function App() {
   return (
-    <Router>
+    <BrowserRouter basename="/Fix-it">
       {/* Navbar always visible */}
       <Navbar />
 
       {/* Page routes */}
-    <BrowserRouter basename="/Fix-it">
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
@@ -22,11 +21,10 @@ function App() {
         <Route path="/feedback" element={<Feedback />} />
         <Route path="/request" element={<RequestForm />} />
       </Routes>
-    </BrowserRouter>
 
       {/* Footer always visible */}
       <Footer />
-    </Router>
+    </BrowserRouter>
   );
 }
 

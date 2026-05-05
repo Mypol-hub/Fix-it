@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import RequestForm from "../pages/RequestForm";
+import RequestForm from "../components/RequestForm";   // ✅ use component version
 import RepairStatus from "../components/RepairStatus";
 import ItemCard from "../components/ItemCard";
 import Navbar from "../components/Navbar";
+import { supabase } from "../supabaseClient";          // ✅ import Supabase client
 
 function Dashboard() {
   const navigate = useNavigate();
@@ -26,34 +27,23 @@ function Dashboard() {
     }
   }, [clientEmail, navigate]);
 
+  // ✅ Supabase fetch functions
   async function fetchRequests() {
-    try {
-      const res = await fetch("/.netlify/functions/getRequests");
-      const data = await res.json();
-      setRequests(data.requests || []);
-    } catch (err) {
-      console.error("Error fetching requests:", err);
-    }
+    const { data, error } = await supabase.from("requests").select("*");
+    if (error) console.error("Error fetching requests:", error);
+    setRequests(data || []);
   }
 
   async function fetchFeedbacks() {
-    try {
-      const res = await fetch("/.netlify/functions/getFeedbacks");
-      const data = await res.json();
-      setFeedbacks(data.feedbacks || []);
-    } catch (err) {
-      console.error("Error fetching feedbacks:", err);
-    }
+    const { data, error } = await supabase.from("feedbacks").select("*");
+    if (error) console.error("Error fetching feedbacks:", error);
+    setFeedbacks(data || []);
   }
 
   async function fetchItems() {
-    try {
-      const res = await fetch("/.netlify/functions/getItems");
-      const data = await res.json();
-      setItems(data.items || []);
-    } catch (err) {
-      console.error("Error fetching items:", err);
-    }
+    const { data, error } = await supabase.from("items").select("*");
+    if (error) console.error("Error fetching items:", error);
+    setItems(data || []);
   }
 
   useEffect(() => {
@@ -63,16 +53,29 @@ function Dashboard() {
   }, []);
 
   async function handleUploadItem(itemName, imageUrl) {
-    try {
-      const res = await fetch("/.netlify/functions/uploadItem", {
-        method: "POST",
-        body: JSON.stringify({ item_name: itemName, image_url: imageUrl }),
-      });
-      const data = await res.json();
-      console.log("Upload result:", data);
+    const { error } = await supabase
+      .from("items")
+      .insert([{ item_name: itemName, image_url: imageUrl }]);
+    if (error) {
+      console.error("Error uploading item:", error);
+    } else {
       fetchItems();
-    } catch (err) {
-      console.error("Error uploading item:", err);
+    }
+  }
+
+  async function handleSubmitFeedback(e) {
+    e.preventDefault();
+    const { error } = await supabase
+      .from("feedbacks")
+      .insert([{ email: feedbackEmail || clientEmail, feedback: feedbackText }]);
+    if (error) {
+      alert("Error submitting feedback");
+      console.error(error);
+    } else {
+      alert("Feedback submitted!");
+      fetchFeedbacks();
+      setFeedbackEmail("");
+      setFeedbackText("");
     }
   }
 
@@ -112,15 +115,7 @@ function Dashboard() {
         )}
         <button
           onClick={() => handleUploadItem("Washing Machine Board", "https://example.com/washing.jpg")}
-          style={{
-            marginTop: "15px",
-            padding: "10px 15px",
-            backgroundColor: "#0055aa",
-            color: "white",
-            border: "none",
-            borderRadius: "6px",
-            cursor: "pointer",
-          }}
+          style={uploadButtonStyle}
         >
           Upload Example Item
         </button>
@@ -129,26 +124,7 @@ function Dashboard() {
       {/* Feedback Section */}
       <div style={cardStyle}>
         <h3 style={sectionTitle}>Your Feedback</h3>
-        <form
-          onSubmit={async (e) => {
-            e.preventDefault();
-            try {
-              const res = await fetch("/.netlify/functions/submitFeedback", {
-                method: "POST",
-                body: JSON.stringify({ email: feedbackEmail || clientEmail, feedback: feedbackText }),
-              });
-              const data = await res.json();
-              alert(data.message || data.error);
-
-              fetchFeedbacks();
-              setFeedbackEmail("");
-              setFeedbackText("");
-            } catch (err) {
-              console.error("Error submitting feedback:", err);
-            }
-          }}
-          style={{ marginBottom: "20px" }}
-        >
+        <form onSubmit={handleSubmitFeedback} style={{ marginBottom: "20px" }}>
           <input
             type="email"
             placeholder="Your email"
@@ -164,17 +140,7 @@ function Dashboard() {
             required
             style={{ display: "block", marginBottom: "10px", width: "100%" }}
           />
-          <button
-            type="submit"
-            style={{
-              padding: "10px 15px",
-              backgroundColor: "#0055aa",
-              color: "white",
-              border: "none",
-              borderRadius: "6px",
-              cursor: "pointer",
-            }}
-          >
+          <button type="submit" style={uploadButtonStyle}>
             Submit Feedback
           </button>
         </form>
@@ -183,8 +149,8 @@ function Dashboard() {
           <p style={{ color: "#888", textAlign: "center" }}>No feedback submitted yet.</p>
         ) : (
           <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
-            {feedbacks.map((fb, idx) => (
-              <li key={idx} style={feedbackItemStyle}>
+            {feedbacks.map((fb) => (
+              <li key={fb.id} style={feedbackItemStyle}>
                 <p style={{ fontSize: "14px", color: "#333" }}>{fb.feedback}</p>
                 <span style={feedbackMetaStyle}>{fb.email}</span>
               </li>
@@ -211,6 +177,16 @@ const sectionTitle = {
   fontWeight: "600",
   color: "#0055aa",
   marginBottom: "15px",
+};
+
+const uploadButtonStyle = {
+  marginTop: "15px",
+  padding: "10px 15px",
+  backgroundColor: "#0055aa",
+  color: "white",
+  border: "none",
+  borderRadius: "6px",
+  cursor: "pointer",
 };
 
 const feedbackItemStyle = {

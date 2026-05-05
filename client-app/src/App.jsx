@@ -5,7 +5,7 @@ import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import Feedback from "./pages/Feedback";
-import RequestForm from "./pages/RequestForm";
+import RequestForm from "./components/RequestForm";
 
 function App() {
   return (

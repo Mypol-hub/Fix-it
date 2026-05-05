@@ -8,14 +8,15 @@ export default function RequestForm() {
   const [problemDescription, setProblemDescription] = useState("");
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    await submitRequest(customerName, email, itemName, problemDescription);
-    alert("Request submitted!");
-    setCustomerName("");
-    setEmail("");
-    setItemName("");
-    setProblemDescription("");
-  };
+  e.preventDefault();
+  await submitRequest(customerName, email, itemName, problemDescription);
+  alert("Request submitted!");
+  setCustomerName("");
+  setEmail("");
+  setItemName("");
+  setProblemDescription("");
+  if (onRequestSubmitted) onRequestSubmitted(); // refresh requests
+};
 
   return (
     <form

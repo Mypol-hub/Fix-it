@@ -3,7 +3,6 @@ import { useLocation, useNavigate } from "react-router-dom";
 import RequestForm from "../components/RequestForm";   // ✅ use component version
 import RepairStatus from "../components/RepairStatus";
 import ItemCard from "../components/ItemCard";
-import Navbar from "../components/Navbar";
 import { supabase } from "../supabaseClient";          // ✅ import Supabase client
 
 function Dashboard() {

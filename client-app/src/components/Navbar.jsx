@@ -4,53 +4,35 @@ export default function Navbar() {
   const navigate = useNavigate();
 
   function handleLogout() {
-    // Clear saved email from localStorage
     localStorage.removeItem("clientEmail");
-    // Redirect to login page
     navigate("/login");
   }
 
   return (
-    <nav
-      style={{
-        backgroundColor: "#003366",
-        color: "white",
-        padding: "10px",
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "center",
-      }}
-    >
-      <h1 style={{ fontSize: "18px" }}>Khalil Electronics</h1>
-      <div>
+    <nav className="bg-blue-900 text-white px-6 py-3 flex justify-between items-center shadow-md">
+      <h1 className="text-lg font-bold tracking-wide">Khalil Electronics</h1>
+      <div className="flex items-center space-x-4">
         <Link
           to="/"
-          style={{ marginRight: "10px", color: "white", textDecoration: "none" }}
+          className="hover:text-blue-300 transition-colors"
         >
           Home
         </Link>
         <Link
           to="/login"
-          style={{ marginRight: "10px", color: "white", textDecoration: "none" }}
+          className="hover:text-blue-300 transition-colors"
         >
           Login
         </Link>
         <Link
           to="/dashboard"
-          style={{ marginRight: "10px", color: "white", textDecoration: "none" }}
+          className="hover:text-blue-300 transition-colors"
         >
           Dashboard
         </Link>
         <button
           onClick={handleLogout}
-          style={{
-            backgroundColor: "#cc0000",
-            color: "white",
-            border: "none",
-            borderRadius: "4px",
-            padding: "6px 12px",
-            cursor: "pointer",
-          }}
+          className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded-md transition"
         >
           Logout
         </button>

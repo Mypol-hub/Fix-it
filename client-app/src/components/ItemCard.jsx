@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-function ItemCard({ itemName, imageUrl }) {
+export default function ItemCard({ itemName, imageUrl }) {
   const [newItemName, setNewItemName] = useState(itemName || "");
   const [newImageUrl, setNewImageUrl] = useState("");
   const [message, setMessage] = useState("");
@@ -25,17 +25,8 @@ function ItemCard({ itemName, imageUrl }) {
   }
 
   return (
-    <div
-      style={{
-        border: "1px solid #ddd",
-        borderRadius: "6px",
-        padding: "15px",
-        backgroundColor: "#fff",
-        marginBottom: "15px",
-        textAlign: "center",
-      }}
-    >
-      <h4 style={{ marginBottom: "10px", color: "#003366" }}>
+    <div className="border border-gray-300 rounded-lg p-4 bg-white shadow-sm mb-4 text-center">
+      <h4 className="mb-3 text-blue-900 font-semibold text-lg">
         {itemName || "Upload Item"}
       </h4>
 
@@ -43,44 +34,37 @@ function ItemCard({ itemName, imageUrl }) {
         <img
           src={imageUrl}
           alt={itemName}
-          style={{ maxWidth: "100%", marginBottom: "10px" }}
+          className="max-w-full h-40 object-contain mx-auto mb-3 rounded"
         />
       )}
 
-      <form onSubmit={handleUpload}>
+      <form onSubmit={handleUpload} className="space-y-3">
         <input
           type="text"
           placeholder="Item Name"
           value={newItemName}
           onChange={(e) => setNewItemName(e.target.value)}
           required
-          style={{ display: "block", marginBottom: "10px", width: "100%" }}
+          className="w-full border rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
         />
         <input
           type="text"
           placeholder="Image URL"
           value={newImageUrl}
           onChange={(e) => setNewImageUrl(e.target.value)}
-          style={{ display: "block", marginBottom: "10px", width: "100%" }}
+          className="w-full border rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
         />
         <button
           type="submit"
-          style={{
-            padding: "8px 12px",
-            backgroundColor: "#0055aa",
-            color: "white",
-            border: "none",
-            borderRadius: "6px",
-            cursor: "pointer",
-          }}
+          className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition"
         >
           Upload for Repair
         </button>
       </form>
 
-      {message && <p style={{ marginTop: "10px", color: "#007700" }}>{message}</p>}
+      {message && (
+        <p className="mt-3 text-green-700 font-medium">{message}</p>
+      )}
     </div>
   );
 }
-
-export default ItemCard;

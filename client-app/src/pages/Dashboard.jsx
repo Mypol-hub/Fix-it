@@ -62,21 +62,38 @@ function Dashboard() {
     }
   }
 
-  async function handleSubmitFeedback(e) {
-    e.preventDefault();
-    const { error } = await supabase
-      .from("feedbacks")
-      .insert([{ email: feedbackEmail || clientEmail, feedback: feedbackText }]);
-    if (error) {
-      alert("Error submitting feedback");
-      console.error(error);
-    } else {
-      alert("Feedback submitted!");
-      fetchFeedbacks();
-      setFeedbackEmail("");
-      setFeedbackText("");
-    }
+  async function handleUploadItem(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+
+  // Upload to Supabase storage bucket
+  const { data, error } = await supabase.storage
+    .from("item-images")
+    .upload(`items/${file.name}`, file);
+
+  if (error) {
+    console.error("Error uploading file:", error);
+    alert("Upload failed");
+    return;
   }
+
+  // Get public URL for the uploaded file
+  const { publicURL } = supabase.storage
+    .from("item-images")
+    .getPublicUrl(`items/${file.name}`);
+
+  // Save item record with image URL
+  const { error: insertError } = await supabase
+    .from("items")
+    .insert([{ item_name: "Washing Machine Board", image_url: publicURL }]);
+
+  if (insertError) {
+    console.error("Error saving item:", insertError);
+    alert("Error saving item record");
+  } else {
+    fetchItems(); // refresh dashboard items
+  }
+}
 
   return (
     <div className="min-h-screen bg-gray-100">

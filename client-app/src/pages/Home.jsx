@@ -91,7 +91,6 @@ const images = {
           </div>
         ))}
       </main>
-    </div>
   );
 }
 

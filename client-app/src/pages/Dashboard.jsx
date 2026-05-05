@@ -113,26 +113,31 @@ function Dashboard() {
     </div>
 
     {/* Item Upload */}
-    <div className="bg-white shadow-md rounded-lg p-6 mb-6">
-      <h3 className="text-xl font-semibold text-blue-700 mb-4">Upload Item Pictures</h3>
-      {items.length === 0 ? (
-        <p className="text-gray-500 text-center">No items uploaded yet.</p>
-      ) : (
-        <div className="grid grid-cols-2 gap-4">
-          {items.map((item) => (
-            <ItemCard key={item.id} itemName={item.item_name} imageUrl={item.image_url} />
-          ))}
-        </div>
-      )}
-      <button
-        onClick={() =>
-          handleUploadItem("Washing Machine Board", "https://example.com/washing.jpg")
-        }
-        className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
-      >
-        Upload Example Item
-      </button>
+<div className="bg-white shadow-md rounded-lg p-6 mb-6">
+  <h3 className="text-xl font-semibold text-blue-700 mb-4">Upload Item Pictures</h3>
+  {items.length === 0 ? (
+    <p className="text-gray-500 text-center">No items uploaded yet.</p>
+  ) : (
+    <div className="grid grid-cols-2 gap-4">
+      {items.map((item) => (
+        <ItemCard key={item.id} itemName={item.item_name} imageUrl={item.image_url} />
+      ))}
     </div>
+  )}
+
+  {/* Replace button with file input */}
+  <div className="mt-4">
+    <label className="block text-sm font-medium text-gray-700 mb-2">
+      Upload Item Photo
+    </label>
+    <input
+      type="file"
+      accept="image/*"
+      onChange={handleUploadItem}
+      className="w-full border rounded-lg p-2 cursor-pointer focus:ring-2 focus:ring-blue-500 focus:outline-none"
+    />
+  </div>
+</div>
 
     {/* Feedback */}
     <div className="bg-white shadow-md rounded-lg p-6">

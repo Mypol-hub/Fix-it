@@ -51,17 +51,6 @@ function Dashboard() {
     fetchItems();
   }, []);
 
-  async function handleUploadItem(itemName, imageUrl) {
-    const { error } = await supabase
-      .from("items")
-      .insert([{ item_name: itemName, image_url: imageUrl }]);
-    if (error) {
-      console.error("Error uploading item:", error);
-    } else {
-      fetchItems();
-    }
-  }
-
   async function handleUploadItem(e) {
   const file = e.target.files[0];
   if (!file) return;

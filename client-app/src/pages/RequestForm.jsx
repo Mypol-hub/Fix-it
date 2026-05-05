@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { submitRequest } from "../api";  // import helper from src/api.js
 
 function RequestForm({ onRequestSubmitted, prefilledItem, prefilledEmail }) {
   const [customerName, setCustomerName] = useState("");
@@ -10,17 +11,8 @@ function RequestForm({ onRequestSubmitted, prefilledItem, prefilledEmail }) {
   async function handleSubmit(e) {
     e.preventDefault();
     try {
-      const res = await fetch("/.netlify/functions/submitRequest", {
-        method: "POST",
-        body: JSON.stringify({
-          customer_name: customerName,
-          email,
-          item_name: itemName,
-          problem_description: problemDescription,
-        }),
-      });
-      const data = await res.json();
-      setMessage(data.message || "Request submitted!");
+      await submitRequest(customerName, email, itemName, problemDescription);
+      setMessage("Request submitted!");
 
       // Clear only name + description, keep email/item
       setCustomerName("");

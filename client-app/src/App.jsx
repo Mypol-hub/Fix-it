@@ -14,6 +14,7 @@ function App() {
       <Navbar />
 
       {/* Page routes */}
+    <BrowserRouter basename="/Fix-it">
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
@@ -21,6 +22,7 @@ function App() {
         <Route path="/feedback" element={<Feedback />} />
         <Route path="/request" element={<RequestForm />} />
       </Routes>
+    </BrowserRouter>
 
       {/* Footer always visible */}
       <Footer />

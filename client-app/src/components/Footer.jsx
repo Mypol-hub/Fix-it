@@ -17,7 +17,10 @@ export default function Footer() {
 
       {/* Copyright */}
       <div className="mt-4 text-center text-xs text-gray-400">
-        © 2026 Kangooroo-Tech. All rights reserved. gsm: +961 71 989151
+        © 2026 Kangooroo-Tech. All rights reserved.
+        
+        <p>📞 <span className="mx-2">71 989151</span></p>
+
       </div>
     </footer>
   );

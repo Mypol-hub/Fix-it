@@ -10,15 +10,14 @@ export default function Footer() {
 
         {/* Contact Info */}
         <div className="space-x-4 mt-2 md:mt-0">
-          <a href="tel:09215171 - " className="hover:underline">09 215171</a>
+          <a href="tel:09215171" className="hover:underline">09 215171</a>
           <a href="tel:03660068" className="hover:underline">03 660068</a>
         </div>
       </div>
 
       {/* Copyright */}
       <div className="mt-4 text-center text-xs text-gray-400">
-        © 2026 Kangooroo-Tech. All rights reserved. 
-               gsm:961-71989151
+        © 2026 Kangooroo-Tech. All rights reserved. gsm: +961 71 989151
       </div>
     </footer>
   );

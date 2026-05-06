@@ -1,11 +1,12 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect } from "react";
+import Navbar from "./components/Navbar"; // make sure this import exists
 
 function Login() {
   const navigate = useNavigate();
   const location = useLocation();
   const params = new URLSearchParams(location.search);
-  const selectedItem = params.get("item"); // e.g. "Washing Board"
+  const selectedItem = params.get("item"); // e.g. "AC Board"
 
   // ✅ Auto‑redirect if email already saved
   useEffect(() => {
@@ -64,6 +65,21 @@ function Login() {
           >
             Client Login
           </h2>
+
+          {/* ✅ Show selected item */}
+          {selectedItem && (
+            <p
+              style={{
+                textAlign: "center",
+                color: "#444",
+                marginBottom: "15px",
+                fontSize: "14px",
+              }}
+            >
+              You are logging in for: <strong>{selectedItem}</strong>
+            </p>
+          )}
+
           <p
             style={{
               textAlign: "center",
@@ -80,68 +96,15 @@ function Login() {
             style={{ display: "flex", flexDirection: "column" }}
           >
             <label style={{ marginBottom: "5px", fontSize: "14px" }}>Email</label>
-            <input
-              type="email"
-              name="email"
-              placeholder="Enter your email"
-              required
-              style={{
-                width: "100%",
-                padding: "12px",
-                border: "1px solid #ccc",
-                borderRadius: "4px",
-                marginBottom: "15px",
-                fontSize: "14px",
-              }}
-            />
+            <input type="email" name="email" placeholder="Enter your email" required />
 
             <label style={{ marginBottom: "5px", fontSize: "14px" }}>Password</label>
-            <input
-              type="password"
-              name="password"
-              placeholder="Enter your password"
-              required
-              style={{
-                width: "100%",
-                padding: "12px",
-                border: "1px solid #ccc",
-                borderRadius: "4px",
-                marginBottom: "15px",
-                fontSize: "14px",
-              }}
-            />
+            <input type="password" name="password" placeholder="Enter your password" required />
 
             <label style={{ marginBottom: "5px", fontSize: "14px" }}>Feedback</label>
-            <textarea
-              name="feedback"
-              placeholder="Describe your repair issue or feedback"
-              required
-              style={{
-                width: "100%",
-                padding: "12px",
-                border: "1px solid #ccc",
-                borderRadius: "4px",
-                minHeight: "80px",
-                marginBottom: "15px",
-                fontSize: "14px",
-              }}
-            />
+            <textarea name="feedback" placeholder="Describe your repair issue or feedback" required />
 
-            <button
-              type="submit"
-              style={{
-                width: "100%",
-                padding: "12px",
-                backgroundColor: "#003366",
-                color: "white",
-                border: "none",
-                borderRadius: "4px",
-                cursor: "pointer",
-                fontSize: "15px",
-              }}
-            >
-              Login & Submit
-            </button>
+            <button type="submit">Login & Submit</button>
           </form>
         </div>
       </div>

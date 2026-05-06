@@ -12,7 +12,7 @@ function Login() {
     const savedEmail = localStorage.getItem("clientEmail");
     if (savedEmail) {
       navigate(
-        `/dashboard?item=${encodeURIComponent(selectedItem || "")}&email=${encodeURIComponent(savedEmail)}`
+        `/dashboard?email=${encodeURIComponent(email)})`;
       );
     }
   }, [navigate, selectedItem]);

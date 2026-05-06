@@ -3,9 +3,10 @@ import { Link, useNavigate } from "react-router-dom";
 export default function Navbar() {
   const navigate = useNavigate();
 
+  // ✅ Logout clears localStorage and redirects to Login
   function handleLogout() {
-    localStorage.removeItem("clientEmail");
-    navigate("/"); // redirects to Home;
+    localStorage.removeItem("clientEmail"); 
+    navigate("/"); // redirect to login page
   }
 
   return (

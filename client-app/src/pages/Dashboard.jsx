@@ -21,7 +21,7 @@ function Dashboard() {
   const selectedItem = params.get("item");
   const clientEmail = params.get("email") || localStorage.getItem("clientEmail");
 
-  // Check login state
+  // ✅ Check login state
   useEffect(() => {
     const email = localStorage.getItem("clientEmail");
     if (!email) {
@@ -35,25 +35,7 @@ function Dashboard() {
     navigate("/"); // redirect to Home after logout
   }
 
-  return (
-    <div className="p-6">
-      <h2 className="text-xl font-bold">Dashboard</h2>
-      <p>Welcome, {localStorage.getItem("clientEmail")}!</p>
-
-      <button
-        onClick={handleLogout}
-        className="bg-red-600 px-4 py-2 rounded-lg hover:bg-red-700 transition mt-4"
-      >
-        Logout
-      </button>
-
-      {/* rest of your dashboard content */}
-    </div>
-  );
-}
-
-export default Dashboard;
-
+  // ✅ Fetch data
   async function fetchRequests() {
     const { data, error } = await supabase.from("requests").select("*");
     if (error) console.error("Error fetching requests:", error);
@@ -78,6 +60,7 @@ export default Dashboard;
     fetchItems();
   }, []);
 
+  // ✅ Upload item
   async function handleUploadItem(e) {
     const file = e.target.files[0];
     if (!file || !itemName) {
@@ -118,6 +101,7 @@ export default Dashboard;
     setLoading(false);
   }
 
+  // ✅ Submit feedback
   async function handleSubmitFeedback(e) {
     e.preventDefault();
     const { error } = await supabase
@@ -134,6 +118,7 @@ export default Dashboard;
     }
   }
 
+  // ✅ Single return
   return (
     <div className="min-h-screen bg-gray-100">
       <div className="max-w-4xl mx-auto p-6">
@@ -141,8 +126,18 @@ export default Dashboard;
           Your Dashboard
         </h2>
         <p className="text-center text-gray-600 mb-8">
-          Submit a new repair request, upload item pictures, or provide feedback below.
+          Welcome, {clientEmail}! Submit a new repair request, upload item pictures, or provide feedback below.
         </p>
+
+        {/* Logout Button */}
+        <div className="text-center mb-6">
+          <button
+            onClick={handleLogout}
+            className="bg-red-600 px-4 py-2 rounded-lg hover:bg-red-700 transition"
+          >
+            Logout
+          </button>
+        </div>
 
         {/* Request Form */}
         <div className="bg-white shadow-md rounded-lg p-6 mb-6">

@@ -63,10 +63,10 @@ function Home() {
           />
           <h3 className="text-lg font-semibold mb-3 text-gray-800">{item}</h3>
           <Link to={`/login?item=${encodeURIComponent(item)}`}>
-            <button className="w-full py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
-              Repair
-            </button>
-          </Link>
+  <button className="w-full py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+    Repair
+  </button>
+</Link>
         </div>
       ))}
     </main>

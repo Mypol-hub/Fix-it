@@ -1,6 +1,6 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect } from "react";
-import Navbar from "./components/Navbar"; // make sure this import exists
+import Navbar from "../components/Navbar"; // make sure this import exists
 
 function Login() {
   const navigate = useNavigate();

@@ -21,11 +21,38 @@ function Dashboard() {
   const selectedItem = params.get("item");
   const clientEmail = params.get("email") || localStorage.getItem("clientEmail");
 
+  // Check login state
   useEffect(() => {
-    if (!clientEmail) {
-      navigate("/login");
+    const email = localStorage.getItem("clientEmail");
+    if (!email) {
+      navigate("/login"); // redirect if not logged in
     }
-  }, [clientEmail, navigate]);
+  }, [navigate]);
+
+  // ✅ Logout only here
+  function handleLogout() {
+    localStorage.removeItem("clientEmail");
+    navigate("/"); // redirect to Home after logout
+  }
+
+  return (
+    <div className="p-6">
+      <h2 className="text-xl font-bold">Dashboard</h2>
+      <p>Welcome, {localStorage.getItem("clientEmail")}!</p>
+
+      <button
+        onClick={handleLogout}
+        className="bg-red-600 px-4 py-2 rounded-lg hover:bg-red-700 transition mt-4"
+      >
+        Logout
+      </button>
+
+      {/* rest of your dashboard content */}
+    </div>
+  );
+}
+
+export default Dashboard;
 
   async function fetchRequests() {
     const { data, error } = await supabase.from("requests").select("*");

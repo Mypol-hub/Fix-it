@@ -1,6 +1,5 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect } from "react";
-import Navbar from "../components/Navbar"; // ✅ import Navbar
 
 function Login() {
   const navigate = useNavigate();

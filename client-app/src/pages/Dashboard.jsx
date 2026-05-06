@@ -21,18 +21,18 @@ function Dashboard() {
   const selectedItem = params.get("item");
   const clientEmail = params.get("email") || localStorage.getItem("clientEmail");
 
-  // ✅ Check login state
+  // ✅ Redirect if not logged in
   useEffect(() => {
     const email = localStorage.getItem("clientEmail");
     if (!email) {
-      navigate("/login"); // redirect if not logged in
+      navigate("/login");
     }
   }, [navigate]);
 
-  // ✅ Logout only here
+  // ✅ Logout
   function handleLogout() {
     localStorage.removeItem("clientEmail");
-    navigate("/"); // redirect to Home after logout
+    navigate("/");
   }
 
   // ✅ Fetch data
@@ -82,9 +82,11 @@ function Dashboard() {
       return;
     }
 
-    const { publicURL } = supabase.storage
+    const { data: urlData } = supabase.storage
       .from("item-images")
       .getPublicUrl(`items/${file.name}`);
+
+    const publicURL = urlData?.publicUrl;
 
     const { error: insertError } = await supabase
       .from("items")
@@ -118,7 +120,6 @@ function Dashboard() {
     }
   }
 
-  // ✅ Single return
   return (
     <div className="min-h-screen bg-gray-100">
       <div className="max-w-4xl mx-auto p-6">
@@ -133,7 +134,7 @@ function Dashboard() {
         <div className="text-center mb-6">
           <button
             onClick={handleLogout}
-            className="bg-red-600 px-4 py-2 rounded-lg hover:bg-red-700 transition"
+            className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition"
           >
             Logout
           </button>

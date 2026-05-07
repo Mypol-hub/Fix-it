@@ -1,0 +1,120 @@
+/* General layout */
+body {
+  margin: 0;
+  font-family: var(--sans, system-ui, sans-serif);
+  background: #f9fafb; /* light gray background */
+  color: #333;
+}
+
+/* Dashboard container */
+.dashboard {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+/* Card sections */
+.card {
+  background: #fff;
+  border: 1px solid var(--border, #e5e4e7);
+  border-radius: 12px;
+  box-shadow: var(--shadow,
+    rgba(0,0,0,0.1) 0 4px 6px -1px,
+    rgba(0,0,0,0.06) 0 2px 4px -1px);
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+/* Headings */
+.card h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1e3a8a; /* blue-900 */
+  margin-bottom: 1rem;
+}
+
+/* Buttons */
+.button {
+  background: #2563eb; /* blue-600 */
+  color: #fff;
+  padding: 0.75rem 1.25rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+.button:hover {
+  background: #1d4ed8; /* darker blue */
+}
+.button.logout {
+  background: #dc2626; /* red-600 */
+}
+.button.logout:hover {
+  background: #b91c1c; /* red-700 */
+}
+
+/* Inputs & textarea */
+input, textarea {
+  width: 100%;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  padding: 0.5rem;
+  font-size: 1rem;
+  box-sizing: border-box;
+}
+input:focus, textarea:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 2px rgba(37,99,235,0.3);
+}
+
+/* Feedback list */
+.feedback-item {
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  background: #f0f9ff;
+  padding: 0.75rem;
+  margin-bottom: 0.5rem;
+}
+.feedback-item p {
+  margin: 0;
+  font-size: 0.9rem;
+  color: #111827;
+}
+.feedback-item span {
+  font-size: 0.75rem;
+  color: #6b7280;
+}
+
+/* Responsive media queries */
+@media (max-width: 768px) {
+  .dashboard {
+    padding: 1rem;
+  }
+  .card {
+    padding: 1rem;
+  }
+  .card h3 {
+    font-size: 1.1rem;
+  }
+  .button {
+    width: 100%; /* full-width buttons on mobile */
+    padding: 0.75rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .dashboard {
+    padding: 0.5rem;
+  }
+  .card {
+    margin-bottom: 1rem;
+    padding: 0.75rem;
+  }
+  .card h3 {
+    font-size: 1rem;
+  }
+  input, textarea {
+    font-size: 0.9rem;
+  }
+}

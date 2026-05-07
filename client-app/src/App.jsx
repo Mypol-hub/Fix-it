@@ -4,7 +4,8 @@ import Footer from "./components/Footer";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
-import RequestForm from "./components/RequestForm";
+import Request from "./pages/Request";
+import Feedback from "./pages/Feedback";
 
 function App() {
   return (
@@ -17,6 +18,8 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/request" element={<Request />} />
+        <Route path="/feedback" element={<Feedback />} />
       </Routes>
 
       {/* Footer always visible */}

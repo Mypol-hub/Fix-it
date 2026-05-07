@@ -53,27 +53,41 @@ function Dashboard() {
     fetchItems();
   }, []);
 
-  async function handleUploadItem(e) {
-    const file = e.target.files[0];
-    if (!file || !itemName) {
-      setUploadMessage("Please enter an item name and select a file.");
-      return;
-    }
-    setLoading(true);
-    const { error } = await supabase.storage.from("item-images").upload(`items/${file.name}`, file);
-    if (error) {
-      setUploadMessage("Upload failed.");
-      setLoading(false);
-      return;
-    }
-    const { data: urlData } = supabase.storage.from("item-images").getPublicUrl(`items/${file.name}`);
-    const publicURL = urlData?.publicUrl;
-    await supabase.from("items").insert([{ item_name: itemName, image_url: publicURL }]);
-    setUploadMessage("Item uploaded successfully!");
-    fetchItems();
-    setItemName("");
-    setLoading(false);
+async function handleUploadItem(e) {
+  const file = e.target.files[0];
+  if (!file || !itemName) {
+    setUploadMessage("Please enter an item name and select a file.");
+    return;
   }
+  setLoading(true);
+
+  // ✅ Upload with unique filename and upsert enabled
+  const filePath = `items/${Date.now()}-${file.name}`;
+  const { error } = await supabase.storage
+    .from("item-images")
+    .upload(filePath, file, { upsert: true });
+
+  if (error) {
+    setUploadMessage("Upload failed.");
+    setLoading(false);
+    return;
+  }
+
+  // ✅ Get public URL for the uploaded file
+  const { data: urlData } = supabase.storage
+    .from("item-images")
+    .getPublicUrl(filePath);
+
+  const publicURL = urlData?.publicUrl;
+
+  // ✅ Save record in items table
+  await supabase.from("items").insert([{ item_name: itemName, image_url: publicURL }]);
+
+  setUploadMessage("Item uploaded successfully!");
+  fetchItems();
+  setItemName("");
+  setLoading(false);
+}
 
   async function handleSubmitFeedback(e) {
     e.preventDefault();

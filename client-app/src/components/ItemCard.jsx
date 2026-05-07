@@ -1,4 +1,5 @@
 import { useState } from "react";
+import "./ItemCard.css";   // ✅ Import CSS
 
 export default function ItemCard({ itemName, imageUrl }) {
   const [newItemName, setNewItemName] = useState(itemName || "");
@@ -25,46 +26,31 @@ export default function ItemCard({ itemName, imageUrl }) {
   }
 
   return (
-    <div className="border border-gray-300 rounded-lg p-4 bg-white shadow-sm mb-4 text-center">
-      <h4 className="mb-3 text-blue-900 font-semibold text-lg">
-        {itemName || "Upload Item"}
-      </h4>
+    <div className="item-card">
+      <h4>{itemName || "Upload Item"}</h4>
 
       {imageUrl && (
-        <img
-          src={imageUrl}
-          alt={itemName}
-          className="max-w-full h-40 object-contain mx-auto mb-3 rounded"
-        />
+        <img src={imageUrl} alt={itemName} />
       )}
 
-      <form onSubmit={handleUpload} className="space-y-3">
+      <form onSubmit={handleUpload}>
         <input
           type="text"
           placeholder="Item Name"
           value={newItemName}
           onChange={(e) => setNewItemName(e.target.value)}
           required
-          className="w-full border rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
         />
         <input
           type="text"
           placeholder="Image URL"
           value={newImageUrl}
           onChange={(e) => setNewImageUrl(e.target.value)}
-          className="w-full border rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
         />
-        <button
-          type="submit"
-          className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition"
-        >
-          Upload for Repair
-        </button>
+        <button type="submit">Upload for Repair</button>
       </form>
 
-      {message && (
-        <p className="mt-3 text-green-700 font-medium">{message}</p>
-      )}
+      {message && <p>{message}</p>}
     </div>
   );
 }

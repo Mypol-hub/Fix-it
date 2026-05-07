@@ -21,16 +21,19 @@ function Dashboard() {
   const selectedItem = params.get("item");
   const clientEmail = params.get("email") || localStorage.getItem("clientEmail");
 
+  // ✅ Redirect if not logged in
   useEffect(() => {
     const email = localStorage.getItem("clientEmail");
     if (!email) navigate("/login");
   }, [navigate]);
 
+  // ✅ Logout
   function handleLogout() {
     localStorage.removeItem("clientEmail");
     navigate("/");
   }
 
+  // ✅ Fetch data
   async function fetchRequests() {
     const { data } = await supabase.from("requests").select("*");
     setRequests(data || []);
@@ -50,6 +53,7 @@ function Dashboard() {
     fetchItems();
   }, []);
 
+  // ✅ Upload item
   async function handleUploadItem(e) {
     const file = e.target.files[0];
     if (!file || !itemName) {
@@ -72,6 +76,7 @@ function Dashboard() {
     setLoading(false);
   }
 
+  // ✅ Submit feedback
   async function handleSubmitFeedback(e) {
     e.preventDefault();
     await supabase.from("feedbacks").insert([{ email: feedbackEmail || clientEmail, feedback: feedbackText }]);
@@ -98,117 +103,93 @@ function Dashboard() {
           Welcome, <span className="font-semibold">{clientEmail}</span>
         </p>
 
-        {/* Grid Layout */}
+        {/* Repair Request */}
         <div className="bg-white shadow-md rounded-lg p-6 mb-6">
-  <h3 className="text-xl font-semibold text-blue-700 mb-4">Repair Request</h3>
-  <form className="space-y-4">
-    <input
-      type="text"
-      placeholder="Your name"
-      className="w-full border rounded-lg p-2 focus:ring-2 focus:ring-blue-500"
-    />
-    <input
-      type="email"
-      placeholder="Your email"
-      className="w-full border rounded-lg p-2 focus:ring-2 focus:ring-blue-500"
-    />
-    <input
-      type="text"
-      placeholder="Item name"
-      className="w-full border rounded-lg p-2 focus:ring-2 focus:ring-blue-500"
-    />
-    <textarea
-      placeholder="Describe the problem"
-      rows="3"
-      className="w-full border rounded-lg p-2 focus:ring-2 focus:ring-blue-500"
-    />
-    <button
-      type="submit"
-      className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition"
-    >
-      Submit Request
-    </button>
-  </form>
-</div>
+          <h3 className="text-xl font-semibold text-blue-700 mb-4">Repair Request</h3>
+          <RequestForm
+            onRequestSubmitted={fetchRequests}
+            prefilledItem={selectedItem}
+            prefilledEmail={clientEmail}
+          />
+        </div>
 
-          {/* Repair Status */}
-          <div className="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition">
-            {/*<h2 className="text-xl font-semibold text-blue-700 mb-4">Repair Status</h2>*/}
-            <RepairStatus requests={requests} />
-          </div>
+        {/* Repair Status */}
+        <div className="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition mb-6">
+          <h3 className="text-xl font-semibold text-blue-700 mb-4">Repair Status</h3>
+          <RepairStatus requests={requests} />
+        </div>
 
-          {/* Item Upload */}
-          <div className="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition">
-            <h2 className="text-xl font-semibold text-blue-700 mb-4">Upload Item Pictures</h2>
-            {items.length === 0 ? (
-              <p className="text-gray-500 text-center">No items uploaded yet.</p>
-            ) : (
-              <div className="grid grid-cols-2 gap-4">
-                {items.map((item) => (
-                  <ItemCard key={item.id} itemName={item.item_name} imageUrl={item.image_url} />
-                ))}
-              </div>
-            )}
-            <div className="mt-4 space-y-3">
-              <input
-                type="text"
-                placeholder="Item Name"
-                value={itemName}
-                onChange={(e) => setItemName(e.target.value)}
-                className="w-full border rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-              />
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleUploadItem}
-                className="w-full border rounded-lg p-2 cursor-pointer focus:ring-2 focus:ring-blue-500 focus:outline-none"
-              />
-              {loading && <p className="text-blue-600 text-sm">Uploading...</p>}
-              {uploadMessage && <p className="text-green-600 text-sm">{uploadMessage}</p>}
+        {/* Item Upload */}
+        <div className="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition mb-6">
+          <h3 className="text-xl font-semibold text-blue-700 mb-4">Upload Item Pictures</h3>
+          {items.length === 0 ? (
+            <p className="text-gray-500 text-center">No items uploaded yet.</p>
+          ) : (
+            <div className="grid grid-cols-2 gap-4">
+              {items.map((item) => (
+                <ItemCard key={item.id} itemName={item.item_name} imageUrl={item.image_url} />
+              ))}
             </div>
+          )}
+          <div className="mt-4 space-y-3">
+            <input
+              type="text"
+              placeholder="Item Name"
+              value={itemName}
+              onChange={(e) => setItemName(e.target.value)}
+              className="w-full border rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+            />
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleUploadItem}
+              className="w-full border rounded-lg p-2 cursor-pointer focus:ring-2 focus:ring-blue-500 focus:outline-none"
+            />
+            {loading && <p className="text-blue-600 text-sm">Uploading...</p>}
+            {uploadMessage && <p className="text-green-600 text-sm">{uploadMessage}</p>}
           </div>
+        </div>
 
-          {/* Feedback */}
-<div className="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition">
-  <h3 className="text-xl font-semibold text-blue-700 mb-4">Your Feedback</h3>
-  <form onSubmit={handleSubmitFeedback} className="space-y-4">
-    <input
-      type="email"
-      placeholder="Your email"
-      value={feedbackEmail || clientEmail || ""}
-      onChange={(e) => setFeedbackEmail(e.target.value)}
-      required
-      className="w-full border rounded-lg p-2 focus:ring-2 focus:ring-blue-500"
-    />
-    <textarea
-      placeholder={selectedItem ? `Issue with ${selectedItem}` : "Your feedback"}
-      value={feedbackText}
-      onChange={(e) => setFeedbackText(e.target.value)}
-      rows="3"
-      required
-      className="w-full border rounded-lg p-2 focus:ring-2 focus:ring-blue-500"
-    />
-    <button
-      type="submit"
-      className="w-full bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 transition"
-    >
-      Submit Feedback
-    </button>
-  </form>
+        {/* Feedback */}
+        <div className="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition">
+          <h3 className="text-xl font-semibold text-blue-700 mb-4">Your Feedback</h3>
+          <form onSubmit={handleSubmitFeedback} className="space-y-4">
+            <input
+              type="email"
+              placeholder="Your email"
+              value={feedbackEmail || clientEmail || ""}
+              onChange={(e) => setFeedbackEmail(e.target.value)}
+              required
+              className="w-full border rounded-lg p-2 focus:ring-2 focus:ring-blue-500"
+            />
+            <textarea
+              placeholder={selectedItem ? `Issue with ${selectedItem}` : "Your feedback"}
+              value={feedbackText}
+              onChange={(e) => setFeedbackText(e.target.value)}
+              rows="3"
+              required
+              className="w-full border rounded-lg p-2 focus:ring-2 focus:ring-blue-500"
+            />
+            <button
+              type="submit"
+              className="w-full bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 transition"
+            >
+              Submit Feedback
+            </button>
+          </form>
 
-  {feedbacks.length === 0 ? (
-    <p className="text-gray-500 text-center mt-4">No feedback submitted yet.</p>
-  ) : (
-    <ul className="mt-4 space-y-2">
-      {feedbacks.map((fb) => (
-        <li key={fb.id} className="border rounded-lg p-2 bg-blue-50 shadow-sm">
-          <p className="text-sm text-gray-800">{fb.feedback}</p>
-          <span className="text-xs text-gray-500">{fb.email}</span>
-        </li>
-      ))}
-    </ul>
-  )}
-</div>
+          {feedbacks.length === 0 ? (
+            <p className="text-gray-500 text-center mt-4">No feedback submitted yet.</p>
+          ) : (
+            <ul className="mt-4 space-y-2">
+              {feedbacks.map((fb) => (
+                <li key={fb.id} className="border rounded-lg p-2 bg-blue-50 shadow-sm">
+                  <p className="text-sm text-gray-800">{fb.feedback}</p>
+                  <span className="text-xs text-gray-500">{fb.email}</span>
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
       </div>
     </div>

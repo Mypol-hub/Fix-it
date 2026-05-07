@@ -95,16 +95,41 @@ function Dashboard() {
           </button>
         </div>
         <p className="text-gray-600 mb-10">
-          Welcome, <span className="font-semibold">{clientEmail}</span>! Manage your repair requests, uploads, and feedback below.
+          Welcome, <span className="font-semibold">{clientEmail}</span>
         </p>
 
         {/* Grid Layout */}
-        <div className="grid md:grid-cols-2 gap-8">
-          {/* Repair Request */}
-          <div className="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition">
-            <h2 className="text-xl font-semibold text-blue-700 mb-4">Repair Request</h2>
-            <RequestForm onRequestSubmitted={fetchRequests} prefilledItem={selectedItem} prefilledEmail={clientEmail} />
-          </div>
+        <div className="bg-white shadow-md rounded-lg p-6 mb-6">
+  <h3 className="text-xl font-semibold text-blue-700 mb-4">Repair Request</h3>
+  <form className="space-y-4">
+    <input
+      type="text"
+      placeholder="Your name"
+      className="w-full border rounded-lg p-2 focus:ring-2 focus:ring-blue-500"
+    />
+    <input
+      type="email"
+      placeholder="Your email"
+      className="w-full border rounded-lg p-2 focus:ring-2 focus:ring-blue-500"
+    />
+    <input
+      type="text"
+      placeholder="Item name"
+      className="w-full border rounded-lg p-2 focus:ring-2 focus:ring-blue-500"
+    />
+    <textarea
+      placeholder="Describe the problem"
+      rows="3"
+      className="w-full border rounded-lg p-2 focus:ring-2 focus:ring-blue-500"
+    />
+    <button
+      type="submit"
+      className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition"
+    >
+      Submit Request
+    </button>
+  </form>
+</div>
 
           {/* Repair Status */}
           <div className="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition">
@@ -145,44 +170,27 @@ function Dashboard() {
 
           {/* Feedback */}
           <div className="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition">
-            <h2 className="text-xl font-semibold text-blue-700 mb-4">Your Feedback</h2>
-            <form onSubmit={handleSubmitFeedback} className="space-y-4 mb-6">
-              <input
-                type="email"
-                placeholder="Your email"
-                value={feedbackEmail || clientEmail || ""}
-                onChange={(e) => setFeedbackEmail(e.target.value)}
-                required
-                className="w-full border rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-              />
-              <textarea
-                placeholder="Your feedback"
-                value={feedbackText || (selectedItem ? `Issue with ${selectedItem}` : "")}
-                onChange={(e) => setFeedbackText(e.target.value)}
-                required
-                rows="4"
-                className="w-full border rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-              />
-              <button
-                type="submit"
-                className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition"
-              >
-                Submit Feedback
-              </button>
-            </form>
-            {feedbacks.length === 0 ? (
-              <p className="text-gray-500 text-center">No feedback submitted yet.</p>
-            ) : (
-              <ul className="space-y-3">
-                {feedbacks.map((fb) => (
-                  <li key={fb.id} className="border rounded-lg p-3 bg-blue-50 shadow-sm">
-                    <p className="text-sm text-gray-800">{fb.feedback}</p>
-                    <span className="text-xs text-gray-500 block mt-1">{fb.email}</span>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
+          <div className="bg-white shadow-md rounded-lg p-6">
+  <h3 className="text-xl font-semibold text-blue-700 mb-4">Your Feedback</h3>
+  <form className="space-y-4">
+    <input
+      type="email"
+      placeholder="Your email"
+      className="w-full border rounded-lg p-2 focus:ring-2 focus:ring-blue-500"
+    />
+    <textarea
+      placeholder="Issue with APS"
+      rows="3"
+      className="w-full border rounded-lg p-2 focus:ring-2 focus:ring-blue-500"
+    />
+    <button
+      type="submit"
+      className="w-full bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 transition"
+    >
+      Submit Feedback
+    </button>
+  </form>
+</div>
         </div>
       </div>
     </div>

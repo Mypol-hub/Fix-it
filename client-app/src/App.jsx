@@ -17,8 +17,6 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/feedback" element={<Feedback />} />
-        <Route path="/request" element={<RequestForm />} />
       </Routes>
 
       {/* Footer always visible */}

@@ -169,18 +169,23 @@ function Dashboard() {
           </div>
 
           {/* Feedback */}
-          <div className="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition">
-          <div className="bg-white shadow-md rounded-lg p-6">
+<div className="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition">
   <h3 className="text-xl font-semibold text-blue-700 mb-4">Your Feedback</h3>
-  <form className="space-y-4">
+  <form onSubmit={handleSubmitFeedback} className="space-y-4">
     <input
       type="email"
       placeholder="Your email"
+      value={feedbackEmail || clientEmail || ""}
+      onChange={(e) => setFeedbackEmail(e.target.value)}
+      required
       className="w-full border rounded-lg p-2 focus:ring-2 focus:ring-blue-500"
     />
     <textarea
-      placeholder="Issue with APS"
+      placeholder={selectedItem ? `Issue with ${selectedItem}` : "Your feedback"}
+      value={feedbackText}
+      onChange={(e) => setFeedbackText(e.target.value)}
       rows="3"
+      required
       className="w-full border rounded-lg p-2 focus:ring-2 focus:ring-blue-500"
     />
     <button
@@ -190,6 +195,19 @@ function Dashboard() {
       Submit Feedback
     </button>
   </form>
+
+  {feedbacks.length === 0 ? (
+    <p className="text-gray-500 text-center mt-4">No feedback submitted yet.</p>
+  ) : (
+    <ul className="mt-4 space-y-2">
+      {feedbacks.map((fb) => (
+        <li key={fb.id} className="border rounded-lg p-2 bg-blue-50 shadow-sm">
+          <p className="text-sm text-gray-800">{fb.feedback}</p>
+          <span className="text-xs text-gray-500">{fb.email}</span>
+        </li>
+      ))}
+    </ul>
+  )}
 </div>
         </div>
       </div>

@@ -108,7 +108,7 @@ function Dashboard() {
 
           {/* Repair Status */}
           <div className="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition">
-            <h2 className="text-xl font-semibold text-blue-700 mb-4">Repair Status</h2>
+            {/*<h2 className="text-xl font-semibold text-blue-700 mb-4">Repair Status</h2>*/}
             <RepairStatus requests={requests} />
           </div>
 

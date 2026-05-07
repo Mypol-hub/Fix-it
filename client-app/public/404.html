@@ -3,5 +3,16 @@
   <head>
     <meta http-equiv="refresh" content="0; url=/Fix-it/" />
   </head>
-  <body></body>
+  <body>
+    <p>Redirecting…</p>
+    <script>
+      // Redirect to index.html with hash support
+      var redirectTo = "/Fix-it/";
+      var path = window.location.pathname.replace("/Fix-it", "");
+      if (path) {
+        redirectTo += "#" + path;
+      }
+      window.location.replace(redirectTo);
+    </script>
+  </body>
 </html>

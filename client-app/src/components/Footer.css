@@ -1,0 +1,68 @@
+.footer {
+  margin-top: 4rem;
+  margin-bottom: 1.5rem;
+  border: 2px solid #1d4ed8; /* blue-700 */
+  border-radius: 0.5rem;
+  background: linear-gradient(to right, #1e3a8a, #1e40af, #1e3a8a); /* blue-900 → blue-800 → blue-900 */
+  color: #fff;
+  text-align: center;
+  padding: 1.5rem;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+.footer-container {
+  max-width: 72rem; /* 6xl */
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+@media (min-width: 768px) {
+  .footer-container {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+}
+
+/* Business Info */
+.footer-business h2 {
+  font-weight: 600;
+  font-size: 0.875rem; /* text-sm */
+}
+.footer-business p {
+  font-size: 0.7rem; /* text-[11px] */
+}
+
+/* Contact Info */
+.footer-contact {
+  font-size: 0.7rem;
+}
+.footer-contact a {
+  margin: 0 0.25rem;
+  color: #fff;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+.footer-contact a:hover {
+  color: #93c5fd; /* blue-300 */
+}
+
+/* Copyright + GSM */
+.footer-bottom {
+  border-top: 1px solid #1d4ed8; /* blue-700 */
+  margin-top: 1rem;
+  padding-top: 0.5rem;
+  font-size: 0.625rem; /* text-[10px] */
+  color: #d1d5db; /* gray-300 */
+}
+.footer-bottom a {
+  margin: 0 0.25rem;
+  color: #fff;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+.footer-bottom a:hover {
+  color: #93c5fd; /* blue-300 */
+}

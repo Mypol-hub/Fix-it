@@ -4,7 +4,6 @@ import Footer from "./components/Footer";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
-import Feedback from "./pages/Feedback";
 import RequestForm from "./components/RequestForm";
 
 function App() {

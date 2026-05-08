@@ -102,7 +102,7 @@ async function handleUploadItem(e) {
     <div className="dashboard">
       {/* Header */}
       <div className="dashboard-header">
-        <h1>Your Dashboard</h1>
+        <h1>Your Dashboard works!</h1>
         <button onClick={handleLogout} className="button logout">
           Logout
         </button>

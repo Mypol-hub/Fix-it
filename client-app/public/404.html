@@ -3,20 +3,20 @@
   <head>
     <meta charset="utf-8" />
     <title>Redirecting…</title>
-    <meta http-equiv="refresh" content="0; url=/Fix-it/" />
-  </head>
-  <body>
-    <p>Redirecting…</p>
-    <script>
-      // Always redirect back into your app’s subpath
-      var redirectTo = "/Fix-it/";
-      // Strip the /Fix-it prefix from the current path
-      var path = window.location.pathname.replace("/Fix-it", "");
-      if (path) {
-        // Append as hash so React Router can resolve it
-        redirectTo += "#" + path;
+    <script type="text/javascript">
+      // GitHub Pages serves 404.html for unknown routes.
+      // Redirect back to index.html with the original path preserved.
+      var redirectTo = "/Fix-it" + window.location.pathname.replace("/Fix-it", "");
+      if (window.location.search) {
+        redirectTo += window.location.search;
+      }
+      if (window.location.hash) {
+        redirectTo += window.location.hash;
       }
       window.location.replace(redirectTo);
     </script>
+  </head>
+  <body>
+    <p>Redirecting…</p>
   </body>
 </html>

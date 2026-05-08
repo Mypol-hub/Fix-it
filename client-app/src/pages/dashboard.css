@@ -8,29 +8,29 @@
 }
 
 /* Header */
-.dashboard-header {
+.dashboard .dashboard-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 2rem;
 }
-.dashboard-header h1 {
+.dashboard .dashboard-header h1 {
   font-size: 2rem;
   font-weight: 700;
   color: #1e3a8a; /* blue-900 */
 }
 
 /* Welcome text */
-.welcome-text {
+.dashboard .welcome-text {
   color: #4b5563; /* gray-600 */
   margin-bottom: 2rem;
 }
-.welcome-text .highlight {
+.dashboard .welcome-text .highlight {
   font-weight: 600;
 }
 
 /* Card sections */
-.card {
+.dashboard .card {
   background: #fff;
   border: 1px solid #e5e7eb;
   border-radius: 12px;
@@ -39,7 +39,7 @@
   padding: 1.5rem;
   margin-bottom: 1.5rem;
 }
-.card h3 {
+.dashboard .card h3 {
   font-size: 1.25rem;
   font-weight: 600;
   color: #1d4ed8; /* blue-700 */
@@ -47,7 +47,7 @@
 }
 
 /* Buttons */
-.button {
+.dashboard .button {
   background: #2563eb; /* blue-600 */
   color: #fff;
   padding: 0.75rem 1.25rem;
@@ -56,18 +56,19 @@
   cursor: pointer;
   transition: background 0.2s ease;
 }
-.button:hover {
+.dashboard .button:hover {
   background: #1d4ed8; /* darker blue */
 }
-.button.logout {
+.dashboard .button.logout {
   background: #dc2626; /* red-600 */
 }
-.button.logout:hover {
+.dashboard .button.logout:hover {
   background: #b91c1c; /* red-700 */
 }
 
 /* Inputs & textarea */
-input, textarea {
+.dashboard input,
+.dashboard textarea {
   width: 100%;
   border: 1px solid #d1d5db;
   border-radius: 8px;
@@ -75,58 +76,59 @@ input, textarea {
   font-size: 1rem;
   box-sizing: border-box;
 }
-input:focus, textarea:focus {
+.dashboard input:focus,
+.dashboard textarea:focus {
   outline: none;
   border-color: #2563eb;
   box-shadow: 0 0 0 2px rgba(37,99,235,0.3);
 }
 
 /* Feedback list */
-.feedback-list {
+.dashboard .feedback-list {
   margin-top: 1rem;
   list-style: none;
   padding: 0;
 }
-.feedback-item {
+.dashboard .feedback-item {
   border: 1px solid #e5e7eb;
   border-radius: 8px;
   background: #f0f9ff;
   padding: 0.75rem;
   margin-bottom: 0.5rem;
 }
-.feedback-item p {
+.dashboard .feedback-item p {
   margin: 0;
   font-size: 0.9rem;
   color: #111827;
 }
-.feedback-item span {
+.dashboard .feedback-item span {
   font-size: 0.75rem;
   color: #6b7280;
 }
 
 /* Utility text */
-.muted {
+.dashboard .muted {
   color: #6b7280;
   text-align: center;
 }
-.info {
+.dashboard .info {
   color: #2563eb;
   font-size: 0.9rem;
 }
-.success {
+.dashboard .success {
   color: #16a34a;
   font-size: 0.9rem;
 }
 
 /* Item grid */
-.item-grid {
+.dashboard .item-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
   gap: 1rem;
 }
 
 /* Form group spacing */
-.form-group {
+.dashboard .form-group {
   margin-top: 1rem;
   display: flex;
   flex-direction: column;
@@ -138,17 +140,17 @@ input:focus, textarea:focus {
   .dashboard {
     padding: 1rem;
   }
-  .dashboard-header h1 {
+  .dashboard .dashboard-header h1 {
     font-size: 1.5rem;
   }
-  .card {
+  .dashboard .card {
     padding: 1rem;
   }
-  .button {
+  .dashboard .button {
     width: 100%;
     padding: 0.75rem;
   }
-  .item-grid {
+  .dashboard .item-grid {
     grid-template-columns: 1fr;
   }
 }
@@ -157,14 +159,15 @@ input:focus, textarea:focus {
   .dashboard {
     padding: 0.5rem;
   }
-  .card {
+  .dashboard .card {
     margin-bottom: 1rem;
     padding: 0.75rem;
   }
-  .card h3 {
+  .dashboard .card h3 {
     font-size: 1rem;
   }
-  input, textarea {
+  .dashboard input,
+  .dashboard textarea {
     font-size: 0.9rem;
   }
 }

@@ -26,7 +26,7 @@ function Dashboard() {
 
   useEffect(() => {
     const email = localStorage.getItem("clientEmail");
-    if (!email) navigate("/login");
+    if (!email) navigate("/");
   }, [navigate]);
 
   function handleLogout() {

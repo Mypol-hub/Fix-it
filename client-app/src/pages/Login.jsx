@@ -1,6 +1,6 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect } from "react";
-import "./Login.css";   // ✅ Import CSS
+import "./login.css";   // ✅ Import CSS
 
 function Login() {
   const navigate = useNavigate();

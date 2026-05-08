@@ -1,15 +1,19 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <meta charset="utf-8" />
+    <title>Redirecting…</title>
     <meta http-equiv="refresh" content="0; url=/Fix-it/" />
   </head>
   <body>
     <p>Redirecting…</p>
     <script>
-      // Redirect to index.html with hash support
+      // Always redirect back into your app’s subpath
       var redirectTo = "/Fix-it/";
+      // Strip the /Fix-it prefix from the current path
       var path = window.location.pathname.replace("/Fix-it", "");
       if (path) {
+        // Append as hash so React Router can resolve it
         redirectTo += "#" + path;
       }
       window.location.replace(redirectTo);

@@ -6,7 +6,7 @@ import ItemCard from "../components/ItemCard";
 import { supabase } from "../supabaseClient";
 
 // ✅ Import your CSS file
-import "./Dashboard.css";
+import "./dashboard.css";
 
 function Dashboard() {
   const navigate = useNavigate();

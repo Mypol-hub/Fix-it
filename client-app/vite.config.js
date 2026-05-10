@@ -1,7 +1,14 @@
-import { defineConfig } from "vite";
-import react from "@vitejs/plugin-react";
-
-export default defineConfig({
-  base: "/Fix-it/",
-  plugins: [react()],
-});
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/Fix-it/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fix-it</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <!-- 👇 This line is critical -->
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>

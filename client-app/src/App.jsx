@@ -9,7 +9,7 @@ import Feedback from "./pages/Feedback";
 
 function App() {
   return (
-    <Router>
+    <>
       {/* Navbar always visible */}
       <Navbar />
 
@@ -24,7 +24,7 @@ function App() {
 
       {/* Footer always visible */}
       <Footer />
-    </Router>
+    </>
   );
 }
 

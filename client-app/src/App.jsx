@@ -9,7 +9,7 @@ import Feedback from "./pages/Feedback";
 
 function App() {
   return (
-    <Router basename="/Fix-it">
+    <Router>
       {/* Navbar always visible */}
       <Navbar />
 

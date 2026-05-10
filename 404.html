@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Redirecting…</title>
+    <script type="text/javascript">
+      // GitHub Pages serves 404.html for unknown routes.
+      // Redirect back to index.html with the original path preserved.
+      var redirectTo = "/Fix-it" + window.location.pathname.replace("/Fix-it", "");
+      if (window.location.search) {
+        redirectTo += window.location.search;
+      }
+      if (window.location.hash) {
+        redirectTo += window.location.hash;
+      }
+      window.location.replace(redirectTo);
+    </script>
+  </head>
+  <body>
+    <p>Redirecting…</p>
+  </body>
+</html>

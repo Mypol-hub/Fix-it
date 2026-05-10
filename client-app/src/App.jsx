@@ -1,4 +1,4 @@
-import { HashRouter as Router, Routes, Route } from "react-router-dom";
+import { Routes, Route } from "react-router-dom"; // No Router import needed here if it's in main.jsx
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import Home from "./pages/Home";
@@ -10,10 +10,7 @@ import Feedback from "./pages/Feedback";
 function App() {
   return (
     <>
-      {/* Navbar always visible */}
       <Navbar />
-
-      {/* Page routes */}
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
@@ -21,8 +18,6 @@ function App() {
         <Route path="/request" element={<Request />} />
         <Route path="/feedback" element={<Feedback />} />
       </Routes>
-
-      {/* Footer always visible */}
       <Footer />
     </>
   );

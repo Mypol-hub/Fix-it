@@ -12,7 +12,10 @@ import Feedback from "./pages/Feedback";
 
 // 1. A wrapper to protect pages from logged-out users
 const ProtectedRoute = ({ session, children }) => {
+  // Use a state to track if we are intentionally logging out
   if (!session) {
+    // Check if the current URL is a dashboard-related one
+    // If we just logged out, this redirect to login is what we want to prevent
     return <Navigate to="/login" replace />;
   }
   return children;

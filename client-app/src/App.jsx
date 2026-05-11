@@ -1,6 +1,7 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { supabase } from "./supabaseClient";
+
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import Home from "./pages/Home";
@@ -10,12 +11,11 @@ import Dashboard from "./pages/Dashboard";
 import Request from "./pages/Request";
 import Feedback from "./pages/Feedback";
 
-// 1. A wrapper to protect pages from logged-out users
-const ProtectedRoute = ({ session, children }) => {
-  // Use a state to track if we are intentionally logging out
+// ✅ Intelligent ProtectedRoute
+const ProtectedRoute = ({ session, loading, children }) => {
+  if (loading) return <div className="loading-screen">Loading Khalil Electronics...</div>;
+  
   if (!session) {
-    // Check if the current URL is a dashboard-related one
-    // If we just logged out, this redirect to login is what we want to prevent
     return <Navigate to="/login" replace />;
   }
   return children;
@@ -23,15 +23,19 @@ const ProtectedRoute = ({ session, children }) => {
 
 function App() {
   const [session, setSession] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  // 2. Listen for Login/Logout changes
   useEffect(() => {
+    // Check session on first load
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
+      setLoading(false);
     });
 
+    // Listen for any auth changes (Login, Logout, Session Expiry)
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
+      setLoading(false);
     });
 
     return () => subscription.unsubscribe();
@@ -39,19 +43,19 @@ function App() {
 
   return (
     <>
-      {/* Pass session to Navbar so it can show Login or Logout button */}
       <Navbar session={session} />
       
       <Routes>
+        {/* Public Routes */}
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         
-        {/* 3. Protect these routes */}
+        {/* Protected Action Routes */}
         <Route 
           path="/dashboard" 
           element={
-            <ProtectedRoute session={session}>
+            <ProtectedRoute session={session} loading={loading}>
               <Dashboard />
             </ProtectedRoute>
           } 
@@ -59,7 +63,7 @@ function App() {
         <Route 
           path="/request" 
           element={
-            <ProtectedRoute session={session}>
+            <ProtectedRoute session={session} loading={loading}>
               <Request />
             </ProtectedRoute>
           } 
@@ -67,12 +71,16 @@ function App() {
         <Route 
           path="/feedback" 
           element={
-            <ProtectedRoute session={session}>
+            <ProtectedRoute session={session} loading={loading}>
               <Feedback />
             </ProtectedRoute>
           } 
         />
+
+        {/* Fallback - Redirect unknown paths to Home */}
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
+
       <Footer />
     </>
   );

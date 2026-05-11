@@ -8,9 +8,9 @@ function Login() {
   const location = useLocation();
   const params = new URLSearchParams(location.search);
   
-  // Get both parameters
+  // 1. Capture the intent from the URL
   const selectedItem = params.get("item");
-  const redirectTarget = params.get("redirect"); // "request" or null
+  const redirectTarget = params.get("redirect"); // e.g., "request"
 
   useEffect(() => {
     const checkUser = async () => {
@@ -22,16 +22,16 @@ function Login() {
     checkUser();
   }, [navigate]);
 
-  // Helper function to decide where to go
+  // 2. Logic to send user to the right place after login
   const handleNavigation = () => {
-    const itemParam = selectedItem ? `&item=${encodeURIComponent(selectedItem)}` : "";
+    const itemParam = selectedItem ? `?item=${encodeURIComponent(selectedItem)}` : "";
     
     if (redirectTarget === "request") {
-      // If they came to repair something, send them to the request page/section
-      navigate(`/dashboard?action=new_request${itemParam}`);
+      // Send them straight to the request page they wanted
+      navigate(`/request${itemParam}`);
     } else {
-      // Otherwise, just go to the standard dashboard
-      navigate(`/dashboard?${itemParam}`);
+      // Otherwise, send them to the main Dashboard
+      navigate(`/dashboard${itemParam}`);
     }
   };
 
@@ -40,10 +40,7 @@ function Login() {
     const email = e.target.email.value;
     const password = e.target.password.value;
 
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
+    const { error } = await supabase.auth.signInWithPassword({ email, password });
 
     if (error) {
       alert("Login failed: " + error.message);
@@ -66,17 +63,19 @@ function Login() {
         <form onSubmit={handleLogin} className="login-form">
           <div className="form-group">
             <label>Email</label>
-            <input type="email" name="email" placeholder="Enter your email" required />
+            <input type="email" name="email" placeholder="email@example.com" required />
           </div>
 
           <div className="form-group">
             <label>Password</label>
-            <input type="password" name="password" placeholder="Enter your password" required />
+            <input type="password" name="password" placeholder="••••••••" required />
           </div>
 
           <div className="login-buttons">
             <button type="submit" className="button login">Login</button>
-            <button type="button" className="button clear" onClick={() => navigate('/signup')}>Sign Up</button>
+            <button type="button" className="button clear" onClick={() => navigate('/signup')}>
+              Create Account
+            </button>
           </div>
         </form>
       </div>

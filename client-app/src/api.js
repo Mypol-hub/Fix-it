@@ -1,59 +1,87 @@
 import { supabase } from "./supabaseClient";
 
 /**
- * Helper function to get current user ID
+ * Robust helper to get the user ID.
+ * Throws an error if the user isn't authenticated.
  */
 async function getUserId() {
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) {
-    throw new Error("User must be logged in to perform this action");
+  const { data: { user }, error } = await supabase.auth.getUser();
+  
+  if (error || !user) {
+    // This will trigger the 'catch' blocks in your export functions
+    throw new Error("Authentication required: Please log in to continue.");
   }
+  
   return user.id;
 }
 
+/**
+ * Submit a repair request
+ */
 export async function submitRequest(customerName, email, itemName, problemDescription) {
-  const userId = await getUserId();
-  
-  const { data, error } = await supabase
-    .from("requests")
-    .insert([{ 
-      user_id: userId, // Added this line
-      customer_name: customerName, 
-      email, 
-      item_name: itemName, 
-      problem_description: problemDescription 
-    }]);
+  try {
+    const userId = await getUserId();
+    
+    const { data, error } = await supabase
+      .from("requests")
+      .insert([{ 
+        user_id: userId,
+        customer_name: customerName, 
+        email, 
+        item_name: itemName, 
+        problem_description: problemDescription 
+      }]);
 
-  if (error) console.error("Request Error:", error.message);
-  return data;
+    if (error) throw error;
+    return data;
+  } catch (err) {
+    console.error("Request Error:", err.message);
+    return { error: err.message };
+  }
 }
 
+/**
+ * Submit client feedback
+ */
 export async function submitFeedback(email, feedback) {
-  const userId = await getUserId();
+  try {
+    const userId = await getUserId();
 
-  const { data, error } = await supabase
-    .from("feedbacks")
-    .insert([{ 
-      user_id: userId, // Added this line
-      email, 
-      feedback 
-    }]);
+    const { data, error } = await supabase
+      .from("feedbacks")
+      .insert([{ 
+        user_id: userId,
+        email, 
+        feedback 
+      }]);
 
-  if (error) console.error("Feedback Error:", error.message);
-  return data;
+    if (error) throw error;
+    return data;
+  } catch (err) {
+    console.error("Feedback Error:", err.message);
+    return { error: err.message };
+  }
 }
 
+/**
+ * Upload an item for repair review
+ */
 export async function uploadItem(itemName, imageUrl) {
-  const userId = await getUserId();
+  try {
+    const userId = await getUserId();
 
-  const { data, error } = await supabase
-    .from("items")
-    .insert([{ 
-      user_id: userId, // Added this line
-      item_name: itemName, 
-      image_url: imageUrl 
-    }]);
+    const { data, error } = await supabase
+      .from("items")
+      .insert([{ 
+        user_id: userId,
+        item_name: itemName, 
+        image_url: imageUrl 
+      }]);
 
-  if (error) console.error("Upload Error:", error.message);
-  return data;
+    if (error) throw error;
+    return data;
+  } catch (err) {
+    console.error("Upload Error:", err.message);
+    return { error: err.message };
+  }
 }

@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { supabase } from "../supabaseClient";
-import "./home.css";
+import "./Home.css";
 
 function Home() {
   const [session, setSession] = useState(null);

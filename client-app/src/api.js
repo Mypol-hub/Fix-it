@@ -5,7 +5,10 @@ import { supabase } from "./supabaseClient";
  */
 async function getUserId() {
   const { data: { user } } = await supabase.auth.getUser();
-  return user?.id; // Returns the UUID of the logged-in user
+  if (!user) {
+    throw new Error("User must be logged in to perform this action");
+  }
+  return user.id;
 }
 
 export async function submitRequest(customerName, email, itemName, problemDescription) {

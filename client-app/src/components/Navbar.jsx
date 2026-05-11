@@ -5,14 +5,11 @@ import "./Navbar.css";
 export default function Navbar({ session }) {
   const navigate = useNavigate();
 
-  const handleLogout = async () => {
-    const { error } = await supabase.auth.signOut();
-    if (error) {
-      console.error("Logout error:", error.message);
-    } else {
-      // Send them home after logging out
-      navigate("/");
-    }
+    const handleLogout = async () => {
+    await supabase.auth.signOut();
+    // This forces a hard refresh to the home page, 
+    // clearing all auth states and ensuring you land on Home.
+    window.location.href = "/Fix-it/"; 
   };
 
   return (

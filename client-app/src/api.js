@@ -2,6 +2,7 @@ import { supabase } from "./supabaseClient";
 
 /**
  * Robust helper to get the user ID.
+ * Throws an error if the user isn't authenticated.
  */
 async function getUserId() {
   const { data: { user }, error } = await supabase.auth.getUser();
@@ -21,7 +22,7 @@ export async function submitRequest(customerName, email, itemName, problemDescri
     const userId = await getUserId();
     
     const { data, error } = await supabase
-      .from("requests")
+      .from("requests") // Plural
       .insert([{ 
         user_id: userId,
         customer_name: customerName, 
@@ -46,7 +47,7 @@ export async function submitFeedback(email, feedbackText) {
     const userId = await getUserId();
 
     const { data, error } = await supabase
-      .from("feedback") // Check if this is 'feedback' or 'feedbacks' in Supabase
+      .from("feedbacks") // Plural
       .insert([{ 
         user_id: userId,
         email, 
@@ -69,7 +70,7 @@ export async function uploadItem(itemName, imageUrl) {
     const userId = await getUserId();
 
     const { data, error } = await supabase
-      .from("items")
+      .from("items") // Plural
       .insert([{ 
         user_id: userId,
         item_name: itemName, 

@@ -1,7 +1,25 @@
-import { Link } from "react-router-dom";
-import "./home.css";   // ✅ Import your CSS file
+import { Link, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { supabase } from "./supabaseClient"; // Ensure this path is correct
+import "./home.css";
 
 function Home() {
+  const [session, setSession] = useState(null);
+  const navigate = useNavigate();
+
+  // 1. Check if user is logged in
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+    });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
   const items = [
     "AC Board", "APS", "Audio Boards", "Blenders", "Car Boards", "Coffee Machines",
     "Dryer Board", "Electric Cookers", "Electric Heater", "Electric Iron",
@@ -50,6 +68,17 @@ function Home() {
     "Wood Shower Heater": "/Fix-it/images/wood-shower-heater.jpg"
   };
 
+  // 2. Handle the smart redirect
+  const handleRepairClick = (item) => {
+    if (session) {
+      // If logged in, go straight to request form
+      navigate(`/request?item=${encodeURIComponent(item)}`);
+    } else {
+      // If logged out, go to login first
+      navigate(`/login?redirect=request&item=${encodeURIComponent(item)}`);
+    }
+  };
+
   return (
     <main className="home-grid">
       {items.map((item, index) => (
@@ -60,9 +89,13 @@ function Home() {
             className="home-image"
           />
           <h3 className="home-title">{item}</h3>
-          <Link to={`/login?item=${encodeURIComponent(item)}`}>
-            <button className="button">Repair</button>
-          </Link>
+          {/* Changed from Link to a button click handler */}
+          <button 
+            className="button" 
+            onClick={() => handleRepairClick(item)}
+          >
+            Repair
+          </button>
         </div>
       ))}
     </main>

@@ -126,12 +126,6 @@
   border-radius: 8px;
   background: #f9fafb;
 }
-
-/* Responsive (Mobile) */
-@media (max-width: 900px) {
-  .dashboard-grid {
-    grid-template-columns: 1fr; /* Switch to 1 column */
-  }
   
   .dashboard-header {
     flex-direction: column;
@@ -163,4 +157,9 @@
   color: #166534; /* Green */
 }
 
+/* Responsive (Mobile) */
+@media (max-width: 900px) {
+  .dashboard-grid {
+    grid-template-columns: 1fr; /* Switch to 1 column */
+  }
 }

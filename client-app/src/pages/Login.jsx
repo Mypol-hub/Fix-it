@@ -1,7 +1,7 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import { supabase } from "../supabaseClient"; // ✅ Import your supabase client
-import "./login.css";
+import "./Login.css";
 
 function Login() {
   const navigate = useNavigate();

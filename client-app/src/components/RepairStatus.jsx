@@ -10,28 +10,28 @@ export default function RepairStatus({ requests }) {
           {requests.map((req) => (
             <li key={req.id} className="repair-status-item">
               <div className="repair-info">
-                {/* ✅ Matches your Supabase column name */}
                 <strong className="item-name">{req.item_name}</strong>
-                
-                {/* ✅ Matches your Supabase column name */}
                 <p className="problem-text">{req.problem_description}</p>
               </div>
 
+              {/* ✅ Classes now match your Dashboard.css exactly */}
               <span
                 className={`status-badge ${
                   req.status === "Completed"
                     ? "status-completed"
-                    : req.status === "In Progress"
-                    ? "status-progress"
+                    : req.status === "Repairing"
+                    ? "status-repairing"
                     : "status-pending"
                 }`}
               >
                 {req.status || "Pending"}
               </span>
               
-              <small className="request-date">
-                Submitted: {new Date(req.created_at).toLocaleDateString()}
-              </small>
+              <div className="request-footer">
+                <small className="request-date">
+                  Submitted: {new Date(req.created_at).toLocaleDateString()}
+                </small>
+              </div>
             </li>
           ))}
         </ul>

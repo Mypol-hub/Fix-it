@@ -1,68 +1,97 @@
+/* Container spacing */
 .repair-status {
-  margin-top: 2rem;
+  margin-top: 1rem;
 }
 
-.repair-status h3 {
-  font-size: 1.25rem; /* text-xl */
-  font-weight: 600;
-  margin-bottom: 1rem;
-}
-
-/* Empty state */
-.repair-status-empty {
-  color: #6b7280; /* gray-500 */
-  font-size: 0.95rem;
-}
-
-/* List */
+/* List container */
 .repair-status-list {
+  list-style: none;
+  padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 0.75rem; /* space-y-3 */
+  gap: 1rem;
 }
 
-/* List item */
+/* Individual repair card */
 .repair-status-item {
-  border: 1px solid #e5e7eb; /* gray-200 */
-  border-radius: 0.375rem;
-  padding: 1rem;
-  background: #f9fafb; /* gray-50 */
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 1.25rem;
+  background: #ffffff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  transition: border-color 0.2s ease;
 }
 
-/* Item name */
-.repair-status-item p:first-child {
-  font-weight: 500;
-  color: #1f2937; /* gray-800 */
-  margin-bottom: 0.25rem;
+.repair-status-item:hover {
+  border-color: #d1d5db;
 }
 
-/* Problem description */
-.repair-status-item p:nth-child(2) {
-  font-size: 0.875rem;
-  color: #4b5563; /* gray-600 */
+/* Text Styling */
+.item-name {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #1e3a8a; /* Deep blue to match header */
 }
 
-/* Status badge */
+.problem-text {
+  font-size: 0.9rem;
+  color: #4b5563;
+  margin: 0;
+}
+
+/* Footer Area (Date) */
+.request-footer {
+  margin-top: 0.5rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid #f3f4f6;
+}
+
+.request-date {
+  font-size: 0.75rem;
+  color: #9ca3af;
+}
+
+/* Status badge base */
 .status-badge {
   display: inline-block;
-  margin-top: 0.5rem;
-  padding: 0.25rem 0.5rem;
+  align-self: flex-start; /* Keeps badge from stretching */
+  padding: 0.35rem 0.75rem;
   font-size: 0.75rem;
-  border-radius: 0.25rem;
+  font-weight: 700;
+  border-radius: 20px;
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
 }
 
-/* Status colors */
+/* ✅ Status colors matching your code logic */
 .status-completed {
-  background: #d1fae5; /* green-100 */
-  color: #047857; /* green-700 */
+  background: #dcfce7;
+  color: #166534;
 }
 
-.status-progress {
-  background: #fef3c7; /* yellow-100 */
-  color: #b45309; /* yellow-700 */
+.status-repairing {
+  background: #dbeafe;
+  color: #1e40af;
 }
 
 .status-pending {
-  background: #e5e7eb; /* gray-200 */
-  color: #374151; /* gray-700 */
+  background: #fef3c7;
+  color: #92400e;
 }
+
+/* Mobile Adjustment */
+@media (min-width: 640px) {
+  .repair-status-item {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .repair-info {
+    flex: 1;
+  }
+}
+

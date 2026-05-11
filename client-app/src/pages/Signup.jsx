@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { supabase } from "../supabaseClient";
-import "./login.css"; // Reuse your login styles
+import "./Signup.css"; // Reuse your login styles
 
 function Signup() {
   const navigate = useNavigate();

@@ -3,15 +3,20 @@ import "./RepairStatus.css";
 export default function RepairStatus({ requests }) {
   return (
     <div className="repair-status">
-      <h3>Repair Status</h3>
       {(!requests || requests.length === 0) ? (
-        <p className="repair-status-empty">No repair requests yet.</p>
+        <p className="repair-status-empty">No active repair requests found.</p>
       ) : (
         <ul className="repair-status-list">
-          {requests.map((req, idx) => (
-            <li key={idx} className="repair-status-item">
-              <p>{req.itemName}</p>
-              <p>{req.problem}</p>
+          {requests.map((req) => (
+            <li key={req.id} className="repair-status-item">
+              <div className="repair-info">
+                {/* ✅ Matches your Supabase column name */}
+                <strong className="item-name">{req.item_name}</strong>
+                
+                {/* ✅ Matches your Supabase column name */}
+                <p className="problem-text">{req.problem_description}</p>
+              </div>
+
               <span
                 className={`status-badge ${
                   req.status === "Completed"
@@ -21,8 +26,12 @@ export default function RepairStatus({ requests }) {
                     : "status-pending"
                 }`}
               >
-                {req.status}
+                {req.status || "Pending"}
               </span>
+              
+              <small className="request-date">
+                Submitted: {new Date(req.created_at).toLocaleDateString()}
+              </small>
             </li>
           ))}
         </ul>

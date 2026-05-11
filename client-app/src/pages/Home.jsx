@@ -1,6 +1,6 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { supabase } from "./supabaseClient"; // Ensure this path is correct
+import { supabase } from "../supabaseClient"; // Ensure this path is correct
 import "./home.css";
 
 function Home() {

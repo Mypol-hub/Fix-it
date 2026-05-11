@@ -1,41 +1,54 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect } from "react";
-import { supabase } from "../supabaseClient"; // ✅ Import your supabase client
+import { supabase } from "../supabaseClient";
 import "./Login.css";
 
 function Login() {
   const navigate = useNavigate();
   const location = useLocation();
   const params = new URLSearchParams(location.search);
+  
+  // Get both parameters
   const selectedItem = params.get("item");
+  const redirectTarget = params.get("redirect"); // "request" or null
 
   useEffect(() => {
-    // ✅ Check if a real Supabase session exists instead of just an email
     const checkUser = async () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (session) {
-        navigate(`/dashboard?item=${encodeURIComponent(selectedItem || "")}`);
+        handleNavigation();
       }
     };
     checkUser();
-  }, [navigate, selectedItem]);
+  }, [navigate]);
+
+  // Helper function to decide where to go
+  const handleNavigation = () => {
+    const itemParam = selectedItem ? `&item=${encodeURIComponent(selectedItem)}` : "";
+    
+    if (redirectTarget === "request") {
+      // If they came to repair something, send them to the request page/section
+      navigate(`/dashboard?action=new_request${itemParam}`);
+    } else {
+      // Otherwise, just go to the standard dashboard
+      navigate(`/dashboard?${itemParam}`);
+    }
+  };
 
   async function handleLogin(e) {
     e.preventDefault();
     const email = e.target.email.value;
     const password = e.target.password.value;
 
-    // ✅ Actually log in to Supabase
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email: email,
-      password: password,
+    const { error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
     });
 
     if (error) {
       alert("Login failed: " + error.message);
     } else {
-      // ✅ Success! Supabase handles localStorage for you automatically
-      navigate(`/dashboard?item=${encodeURIComponent(selectedItem || "")}`);
+      handleNavigation();
     }
   }
 
@@ -46,17 +59,17 @@ function Login() {
 
         {selectedItem && (
           <p className="login-item">
-            You are logging in for: <span>{selectedItem}</span>
+            Logging in to repair: <span>{selectedItem}</span>
           </p>
         )}
 
         <form onSubmit={handleLogin} className="login-form">
-          <div>
+          <div className="form-group">
             <label>Email</label>
             <input type="email" name="email" placeholder="Enter your email" required />
           </div>
 
-          <div>
+          <div className="form-group">
             <label>Password</label>
             <input type="password" name="password" placeholder="Enter your password" required />
           </div>

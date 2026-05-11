@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { supabase } from "../supabaseClient";
+import Request from "./Request.css";
 
 function Request() {
   const [customerName, setCustomerName] = useState("");

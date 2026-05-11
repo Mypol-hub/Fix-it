@@ -4,8 +4,6 @@ import RequestForm from "../components/RequestForm";
 import RepairStatus from "../components/RepairStatus";
 import ItemCard from "../components/ItemCard";
 import { supabase } from "../supabaseClient";
-
-// ✅ Import your CSS file
 import "./dashboard.css";
 
 function Dashboard() {
@@ -13,132 +11,120 @@ function Dashboard() {
   const [feedbacks, setFeedbacks] = useState([]);
   const [requests, setRequests] = useState([]);
   const [items, setItems] = useState([]);
-  const [feedbackEmail, setFeedbackEmail] = useState("");
   const [feedbackText, setFeedbackText] = useState("");
   const [itemName, setItemName] = useState("");
   const [uploadMessage, setUploadMessage] = useState("");
   const [loading, setLoading] = useState(false);
+  const [user, setUser] = useState(null);
 
   const location = useLocation();
   const params = new URLSearchParams(location.search);
   const selectedItem = params.get("item");
-  const clientEmail = params.get("email") || localStorage.getItem("clientEmail");
 
   useEffect(() => {
-    const email = localStorage.getItem("clientEmail");
-    if (!email) navigate("/");
+    // Check for real Supabase session instead of localStorage
+    const checkUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        navigate("/login");
+      } else {
+        setUser(user);
+        fetchAllData();
+      }
+    };
+    checkUser();
   }, [navigate]);
 
-  function handleLogout() {
-    localStorage.removeItem("clientEmail");
-    navigate("/");
+  async function fetchAllData() {
+    // 1. Fetch Requests
+    const { data: reqData } = await supabase.from("requests").select("*");
+    setRequests(reqData || []);
+
+    // 2. Fetch Feedbacks
+    const { data: fbData } = await supabase.from("feedbacks").select("*");
+    setFeedbacks(fbData || []);
+
+    // 3. Fetch Items
+    const { data: itemData } = await supabase.from("items").select("*");
+    setItems(itemData || []);
   }
 
-  async function fetchRequests() {
-    const { data } = await supabase.from("requests").select("*");
-    setRequests(data || []);
-  }
-  async function fetchFeedbacks() {
-    const { data } = await supabase.from("feedbacks").select("*");
-    setFeedbacks(data || []);
-  }
-  async function fetchItems() {
-    const { data } = await supabase.from("items").select("*");
-    setItems(data || []);
-  }
+  async function handleUploadItem(e) {
+    const file = e.target.files[0];
+    if (!file || !itemName) {
+      setUploadMessage("Please enter an item name and select a file.");
+      return;
+    }
+    setLoading(true);
 
-  useEffect(() => {
-    fetchFeedbacks();
-    fetchRequests();
-    fetchItems();
-  }, []);
+    const filePath = `items/${Date.now()}-${file.name}`;
+    const { error: uploadError } = await supabase.storage
+      .from("item-images")
+      .upload(filePath, file, { upsert: true });
 
-async function handleUploadItem(e) {
-  const file = e.target.files[0];
-  if (!file || !itemName) {
-    setUploadMessage("Please enter an item name and select a file.");
-    return;
-  }
-  setLoading(true);
+    if (uploadError) {
+      setUploadMessage("Upload failed.");
+      setLoading(false);
+      return;
+    }
 
-  // ✅ Upload with unique filename and upsert enabled
-  const filePath = `items/${Date.now()}-${file.name}`;
-  const { error } = await supabase.storage
-    .from("item-images")
-    .upload(filePath, file, { upsert: true });
+    const { data: urlData } = supabase.storage.from("item-images").getPublicUrl(filePath);
+    const publicURL = urlData?.publicUrl;
 
-  if (error) {
-    setUploadMessage("Upload failed.");
+    // Save with user_id so it shows up for you
+    await supabase.from("items").insert([
+      { item_name: itemName, image_url: publicURL, user_id: user.id }
+    ]);
+
+    setUploadMessage("Item uploaded successfully!");
+    fetchAllData();
+    setItemName("");
     setLoading(false);
-    return;
   }
-
-  // ✅ Get public URL for the uploaded file
-  const { data: urlData } = supabase.storage
-    .from("item-images")
-    .getPublicUrl(filePath);
-
-  const publicURL = urlData?.publicUrl;
-
-  // ✅ Save record in items table
-  await supabase.from("items").insert([{ item_name: itemName, image_url: publicURL }]);
-
-  setUploadMessage("Item uploaded successfully!");
-  fetchItems();
-  setItemName("");
-  setLoading(false);
-}
 
   async function handleSubmitFeedback(e) {
     e.preventDefault();
-    await supabase.from("feedbacks").insert([{ email: feedbackEmail || clientEmail, feedback: feedbackText }]);
+    await supabase.from("feedbacks").insert([
+      { email: user.email, feedback: feedbackText, user_id: user.id }
+    ]);
     setUploadMessage("Feedback submitted!");
-    fetchFeedbacks();
-    setFeedbackEmail("");
     setFeedbackText("");
+    fetchAllData();
   }
 
   return (
     <div className="dashboard">
-      {/* Header */}
       <div className="dashboard-header">
-        <h1>Your Dashboard works!</h1>
-        <button onClick={handleLogout} className="button logout">
-          Logout
-        </button>
+        <h1>Repair Dashboard</h1>
+        <p className="welcome-text">
+          Logged in as: <span className="highlight">{user?.email}</span>
+        </p>
       </div>
-      <p className="welcome-text">
-        Welcome, <span className="highlight">{clientEmail}</span>
-      </p>
 
-      {/* Repair Request */}
+      {/* Repair Request Section */}
       <div className="card">
-        <h3>Repair Request</h3>
-        <RequestForm
-          onRequestSubmitted={fetchRequests}
-          prefilledItem={selectedItem}
-          prefilledEmail={clientEmail}
+        <h3>Submit a Repair Request</h3>
+        <RequestForm 
+          onRequestSubmitted={fetchAllData} 
+          prefilledItem={selectedItem} 
+          prefilledEmail={user?.email}
         />
       </div>
 
-      {/* Repair Status */}
+      {/* Repair Status Section */}
       <div className="card">
-        <h3>Repair Status</h3>
+        <h3>Your Active Repairs</h3>
         <RepairStatus requests={requests} />
       </div>
 
-      {/* Item Upload */}
+      {/* Item Upload Gallery */}
       <div className="card">
         <h3>Upload Item Pictures</h3>
-        {items.length === 0 ? (
-          <p className="muted">No items uploaded yet.</p>
-        ) : (
-          <div className="item-grid">
-            {items.map((item) => (
-              <ItemCard key={item.id} itemName={item.item_name} imageUrl={item.image_url} />
-            ))}
-          </div>
-        )}
+        <div className="item-grid">
+          {items.map((item) => (
+            <ItemCard key={item.id} itemName={item.item_name} imageUrl={item.image_url} />
+          ))}
+        </div>
         <div className="form-group">
           <input
             type="text"
@@ -152,41 +138,27 @@ async function handleUploadItem(e) {
         </div>
       </div>
 
-      {/* Feedback */}
+      {/* Feedback Section */}
       <div className="card">
-        <h3>Your Feedback</h3>
+        <h3>Feedback History</h3>
         <form onSubmit={handleSubmitFeedback} className="form-group">
-          <input
-            type="email"
-            placeholder="Your email"
-            value={feedbackEmail || clientEmail || ""}
-            onChange={(e) => setFeedbackEmail(e.target.value)}
-            required
-          />
           <textarea
-            placeholder={selectedItem ? `Issue with ${selectedItem}` : "Your feedback"}
+            placeholder="Tell us what you think..."
             value={feedbackText}
             onChange={(e) => setFeedbackText(e.target.value)}
             rows="3"
             required
           />
-          <button type="submit" className="button">
-            Submit Feedback
-          </button>
+          <button type="submit" className="button">Submit Feedback</button>
         </form>
-
-        {feedbacks.length === 0 ? (
-          <p className="muted">No feedback submitted yet.</p>
-        ) : (
-          <ul className="feedback-list">
-            {feedbacks.map((fb) => (
-              <li key={fb.id} className="feedback-item">
-                <p>{fb.feedback}</p>
-                <span>{fb.email}</span>
-              </li>
-            ))}
-          </ul>
-        )}
+        <ul className="feedback-list">
+          {feedbacks.map((fb) => (
+            <li key={fb.id} className="feedback-item">
+              <p>{fb.feedback}</p>
+              <span>{fb.email}</span>
+            </li>
+          ))}
+        </ul>
       </div>
     </div>
   );

@@ -1,0 +1,104 @@
+/* Container Background */
+body {
+  background-color: #f8fafc; /* Light slate background */
+}
+
+/* Grid layout - Smart & Responsive */
+.home-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 2rem;
+  padding: 3rem 2rem;
+  max-width: 1300px;
+  margin: 0 auto;
+}
+
+/* Card styling - Premium Look */
+.home-card {
+  border: 1px solid #f1f5f9;
+  border-radius: 16px;
+  background: #ffffff;
+  text-align: center;
+  padding: 1.5rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.home-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  border-color: #dbeafe;
+}
+
+/* Image - Centered and Crisp */
+.home-image {
+  width: 140px;
+  height: 140px;
+  object-fit: contain;
+  margin: 0 auto 1.25rem;
+  filter: drop-shadow(0 4px 3px rgba(0, 0, 0, 0.07));
+  transition: transform 0.3s ease;
+}
+
+.home-card:hover .home-image {
+  transform: scale(1.05);
+}
+
+/* Title - Bold and Readable */
+.home-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #1e3a8a; /* Deep blue-900 */
+  margin-bottom: 1.25rem;
+  min-height: 2.5rem; /* Keeps buttons aligned if text wraps */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Button - Matches Login/Dashboard Theme */
+.home-card .button {
+  background: #2563eb; /* Primary Blue */
+  color: #ffffff;
+  padding: 0.75rem 1rem;
+  border: none;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  width: 100%;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.2);
+}
+
+.home-card .button:hover {
+  background: #1d4ed8;
+  box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.3);
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .home-grid {
+    grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+    gap: 1rem;
+    padding: 1.5rem 1rem;
+  }
+  .home-image {
+    width: 110px;
+    height: 110px;
+  }
+  .home-title {
+    font-size: 0.95rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .home-grid {
+    grid-template-columns: 1fr; /* Single column on tiny screens */
+  }
+  .home-card {
+    padding: 1.25rem;
+  }
+}

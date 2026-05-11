@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { supabase } from "./supabaseClient";
+import { supabase } from "../supabaseClient";
 import "./login.css"; // Reuse your login styles
 
 function Signup() {

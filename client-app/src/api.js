@@ -75,7 +75,7 @@ export async function uploadItem(itemName, imageUrl) {
       .insert([{ 
         user_id: userId,
         item_name: itemName, 
-        image_url: imageUrl 
+        image_url: imageUrl  // This now matches your new column!
       }]);
 
     if (error) throw error;
@@ -84,4 +84,6 @@ export async function uploadItem(itemName, imageUrl) {
     console.error("Upload Error:", err.message);
     return { error: err.message };
   }
+}
+
 }

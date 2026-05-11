@@ -1,6 +1,7 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect } from "react";
-import "./login.css";   // ✅ Import CSS
+import { supabase } from "./supabaseClient"; // ✅ Import your supabase client
+import "./login.css";
 
 function Login() {
   const navigate = useNavigate();
@@ -9,21 +10,33 @@ function Login() {
   const selectedItem = params.get("item");
 
   useEffect(() => {
-    const savedEmail = localStorage.getItem("clientEmail");
-    if (savedEmail) {
-      navigate(
-        `/dashboard?item=${encodeURIComponent(selectedItem || "")}&email=${encodeURIComponent(savedEmail)}`
-      );
-    }
+    // ✅ Check if a real Supabase session exists instead of just an email
+    const checkUser = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session) {
+        navigate(`/dashboard?item=${encodeURIComponent(selectedItem || "")}`);
+      }
+    };
+    checkUser();
   }, [navigate, selectedItem]);
 
   async function handleLogin(e) {
     e.preventDefault();
     const email = e.target.email.value;
-    localStorage.setItem("clientEmail", email);
-    navigate(
-      `/dashboard?item=${encodeURIComponent(selectedItem || "")}&email=${encodeURIComponent(email)}`
-    );
+    const password = e.target.password.value;
+
+    // ✅ Actually log in to Supabase
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email: email,
+      password: password,
+    });
+
+    if (error) {
+      alert("Login failed: " + error.message);
+    } else {
+      // ✅ Success! Supabase handles localStorage for you automatically
+      navigate(`/dashboard?item=${encodeURIComponent(selectedItem || "")}`);
+    }
   }
 
   return (
@@ -50,7 +63,7 @@ function Login() {
 
           <div className="login-buttons">
             <button type="submit" className="button login">Login</button>
-            <button type="reset" className="button clear">Clear</button>
+            <button type="button" className="button clear" onClick={() => navigate('/signup')}>Sign Up</button>
           </div>
         </form>
       </div>

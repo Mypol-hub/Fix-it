@@ -1,4 +1,6 @@
-import { Routes, Route } from "react-router-dom"; // No Router import needed here if it's in main.jsx
+import { Routes, Route, Navigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { supabase } from "./supabaseClient";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import Home from "./pages/Home";
@@ -8,17 +10,65 @@ import Dashboard from "./pages/Dashboard";
 import Request from "./pages/Request";
 import Feedback from "./pages/Feedback";
 
+// 1. A wrapper to protect pages from logged-out users
+const ProtectedRoute = ({ session, children }) => {
+  if (!session) {
+    return <Navigate to="/login" replace />;
+  }
+  return children;
+};
+
 function App() {
+  const [session, setSession] = useState(null);
+
+  // 2. Listen for Login/Logout changes
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+    });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
   return (
     <>
-      <Navbar />
+      {/* Pass session to Navbar so it can show Login or Logout button */}
+      <Navbar session={session} />
+      
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/request" element={<Request />} />
-        <Route path="/feedback" element={<Feedback />} />
+        
+        {/* 3. Protect these routes */}
+        <Route 
+          path="/dashboard" 
+          element={
+            <ProtectedRoute session={session}>
+              <Dashboard />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/request" 
+          element={
+            <ProtectedRoute session={session}>
+              <Request />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/feedback" 
+          element={
+            <ProtectedRoute session={session}>
+              <Feedback />
+            </ProtectedRoute>
+          } 
+        />
       </Routes>
       <Footer />
     </>

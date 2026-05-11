@@ -1,0 +1,76 @@
+/* Request.css */
+.request-container {
+  max-width: 600px;
+  margin: 40px auto;
+  padding: 2rem;
+  background: #ffffff;
+  border-radius: 15px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+}
+
+.request-form {
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* Two columns */
+  gap: 1.5rem;
+}
+
+.request-form h2 {
+  grid-column: span 2;
+  color: #1e3a8a;
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Make Name, Email, and Item full width on small screens */
+.full-width {
+  grid-column: span 2;
+}
+
+.request-form label {
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: #4b5563;
+}
+
+.request-form input, 
+.request-form textarea {
+  padding: 0.75rem;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 8px;
+  font-family: inherit;
+}
+
+.request-form textarea {
+  height: 120px;
+  resize: none;
+}
+
+.request-form .button {
+  grid-column: span 2;
+  background: #2563eb;
+  color: white;
+  padding: 1rem;
+  border: none;
+  border-radius: 10px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.request-form .button:hover {
+  background: #1d4ed8;
+}
+
+@media (max-width: 600px) {
+  .request-form {
+    grid-template-columns: 1fr;
+  }
+  .request-form h2, .full-width, .request-form .button {
+    grid-column: span 1;
+  }
+}

@@ -2,13 +2,11 @@ import { supabase } from "./supabaseClient";
 
 /**
  * Robust helper to get the user ID.
- * Throws an error if the user isn't authenticated.
  */
 async function getUserId() {
   const { data: { user }, error } = await supabase.auth.getUser();
   
   if (error || !user) {
-    // This will trigger the 'catch' blocks in your export functions
     throw new Error("Authentication required: Please log in to continue.");
   }
   
@@ -43,16 +41,16 @@ export async function submitRequest(customerName, email, itemName, problemDescri
 /**
  * Submit client feedback
  */
-export async function submitFeedback(email, feedback) {
+export async function submitFeedback(email, feedbackText) {
   try {
     const userId = await getUserId();
 
     const { data, error } = await supabase
-      .from("feedbacks")
+      .from("feedback") // Check if this is 'feedback' or 'feedbacks' in Supabase
       .insert([{ 
         user_id: userId,
         email, 
-        feedback 
+        feedback: feedbackText 
       }]);
 
     if (error) throw error;
@@ -75,7 +73,7 @@ export async function uploadItem(itemName, imageUrl) {
       .insert([{ 
         user_id: userId,
         item_name: itemName, 
-        image_url: imageUrl  // This now matches your new column!
+        image_url: imageUrl 
       }]);
 
     if (error) throw error;
@@ -84,6 +82,4 @@ export async function uploadItem(itemName, imageUrl) {
     console.error("Upload Error:", err.message);
     return { error: err.message };
   }
-}
-
 }

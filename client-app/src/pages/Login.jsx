@@ -1,6 +1,6 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect } from "react";
-import { supabase } from "./supabaseClient"; // ✅ Import your supabase client
+import { supabase } from "../supabaseClient"; // ✅ Import your supabase client
 import "./login.css";
 
 function Login() {

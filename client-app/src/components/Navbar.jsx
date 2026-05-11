@@ -1,27 +1,26 @@
 import { Link, useNavigate } from "react-router-dom";
-import { supabase } from "../supabaseClient"; // Adjust path if needed
+import { supabase } from "../supabaseClient";
 import "./Navbar.css";
 
 export default function Navbar({ session }) {
   const navigate = useNavigate();
 
-    const handleLogout = async () => {
+  // --- REPLACE YOUR OLD handleLogout WITH THIS ---
+  const handleLogout = async () => {
     await supabase.auth.signOut();
-    // This forces a hard refresh to the home page, 
-    // clearing all auth states and ensuring you land on Home.
+    
+    // Use the absolute path for your GitHub Pages site
+    // This ensures that when the session clears, you are forced to Home
     window.location.href = "/Fix-it/"; 
   };
+  // -----------------------------------------------
 
   return (
     <nav className="navbar">
-      {/* Logo / Title */}
       <h1>Khalil Electronics</h1>
-
-      {/* Navigation Links */}
       <div className="navbar-links">
         <Link to="/">Home</Link>
         
-        {/* If user is logged in, show Dashboard and Logout. Otherwise, show Login */}
         {session ? (
           <>
             <Link to="/dashboard">Dashboard</Link>

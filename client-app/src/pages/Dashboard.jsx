@@ -22,29 +22,32 @@ function Dashboard() {
   const selectedItem = params.get("item");
 
   useEffect(() => {
-    // Check for real Supabase session instead of localStorage
     const checkUser = async () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
         navigate("/login");
       } else {
         setUser(user);
-        fetchAllData();
       }
     };
     checkUser();
   }, [navigate]);
 
+  // Fetch data only after the user state is set
+  useEffect(() => {
+    if (user) {
+      fetchAllData();
+    }
+  }, [user]);
+
   async function fetchAllData() {
-    // 1. Fetch Requests
+    // RLS policies (auth.uid() = user_id) will handle the filtering automatically
     const { data: reqData } = await supabase.from("requests").select("*");
     setRequests(reqData || []);
 
-    // 2. Fetch Feedbacks
     const { data: fbData } = await supabase.from("feedbacks").select("*");
     setFeedbacks(fbData || []);
 
-    // 3. Fetch Items
     const { data: itemData } = await supabase.from("items").select("*");
     setItems(itemData || []);
   }
@@ -57,10 +60,10 @@ function Dashboard() {
     }
     setLoading(true);
 
-    const filePath = `items/${Date.now()}-${file.name}`;
+    const filePath = `items/${user.id}/${Date.now()}-${file.name}`;
     const { error: uploadError } = await supabase.storage
       .from("item-images")
-      .upload(filePath, file, { upsert: true });
+      .upload(filePath, file);
 
     if (uploadError) {
       setUploadMessage("Upload failed.");
@@ -69,11 +72,13 @@ function Dashboard() {
     }
 
     const { data: urlData } = supabase.storage.from("item-images").getPublicUrl(filePath);
-    const publicURL = urlData?.publicUrl;
-
-    // Save with user_id so it shows up for you
+    
     await supabase.from("items").insert([
-      { item_name: itemName, image_url: publicURL, user_id: user.id }
+      { 
+        item_name: itemName, 
+        image_url: urlData.publicUrl, 
+        user_id: user.id 
+      }
     ]);
 
     setUploadMessage("Item uploaded successfully!");
@@ -84,66 +89,70 @@ function Dashboard() {
 
   async function handleSubmitFeedback(e) {
     e.preventDefault();
-    await supabase.from("feedbacks").insert([
-      { email: user.email, feedback: feedbackText, user_id: user.id }
+    const { error } = await supabase.from("feedbacks").insert([
+      { 
+        email: user.email, 
+        feedback: feedbackText, 
+        user_id: user.id 
+      }
     ]);
-    setUploadMessage("Feedback submitted!");
-    setFeedbackText("");
-    fetchAllData();
+
+    if (!error) {
+      setUploadMessage("Feedback submitted!");
+      setFeedbackText("");
+      fetchAllData();
+    }
   }
 
   return (
     <div className="dashboard">
       <div className="dashboard-header">
-        <h1>Repair Dashboard</h1>
+        <h1>Control Panel</h1>
         <p className="welcome-text">
           Logged in as: <span className="highlight">{user?.email}</span>
         </p>
       </div>
 
-      {/* Repair Request Section */}
       <div className="card">
-        <h3>Submit a Repair Request</h3>
+        <h3>New Repair Request</h3>
+        {/* Pass the user object to the form so it can save the user_id */}
         <RequestForm 
           onRequestSubmitted={fetchAllData} 
           prefilledItem={selectedItem} 
-          prefilledEmail={user?.email}
+          user={user} 
         />
       </div>
 
-      {/* Repair Status Section */}
       <div className="card">
-        <h3>Your Active Repairs</h3>
+        <h3>My Repair Status</h3>
         <RepairStatus requests={requests} />
       </div>
 
-      {/* Item Upload Gallery */}
       <div className="card">
-        <h3>Upload Item Pictures</h3>
+        <h3>My Uploaded Items</h3>
         <div className="item-grid">
           {items.map((item) => (
             <ItemCard key={item.id} itemName={item.item_name} imageUrl={item.image_url} />
           ))}
         </div>
-        <div className="form-group">
+        <div className="form-group upload-section">
           <input
             type="text"
-            placeholder="Item Name"
+            placeholder="Item Name (e.g. Sony TV)"
             value={itemName}
             onChange={(e) => setItemName(e.target.value)}
           />
           <input type="file" accept="image/*" onChange={handleUploadItem} />
-          {loading && <p className="info">Uploading...</p>}
-          {uploadMessage && <p className="success">{uploadMessage}</p>}
+          {loading && <p>Uploading...</p>}
+          {uploadMessage && <p className="status-msg">{uploadMessage}</p>}
         </div>
       </div>
 
-      {/* Feedback Section */}
       <div className="card">
-        <h3>Feedback History</h3>
+        <h3>My Feedback</h3>
         <form onSubmit={handleSubmitFeedback} className="form-group">
           <textarea
-            placeholder="Tell us what you think..."
+            placeholder="Leave a comment about our service..."
             value={feedbackText}
             onChange={(e) => setFeedbackText(e.target.value)}
             rows="3"
@@ -155,7 +164,7 @@ function Dashboard() {
           {feedbacks.map((fb) => (
             <li key={fb.id} className="feedback-item">
               <p>{fb.feedback}</p>
-              <span>{fb.email}</span>
+              <small>{new Date(fb.created_at).toLocaleDateString()}</small>
             </li>
           ))}
         </ul>

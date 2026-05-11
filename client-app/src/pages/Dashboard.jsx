@@ -9,7 +9,7 @@ import ItemCard from "../components/ItemCard";
 import ItemUpload from "../components/ItemUpload";
 import FeedbackForm from "../components/FeedbackForm";
 
-import "./dashboard.css";
+import "./Dashboard.css";
 
 function Dashboard() {
   const navigate = useNavigate();

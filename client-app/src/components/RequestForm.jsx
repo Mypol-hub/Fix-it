@@ -1,9 +1,10 @@
 import { useState } from "react";
-import { supabase } from "../supabaseClient"; // ✅ Import Supabase instead of api
+import { supabase } from "../supabaseClient"; 
 import "./RequestForm.css";
 
-export default function RequestForm({ onRequestSubmitted, user }) {
-  const [itemName, setItemName] = useState("");
+export default function RequestForm({ onRequestSubmitted, user, prefilledItem }) {
+  // Use the prefilledItem if the user clicked "Repair" from the Home page
+  const [itemName, setItemName] = useState(prefilledItem || "");
   const [problemDescription, setProblemDescription] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -11,54 +12,46 @@ export default function RequestForm({ onRequestSubmitted, user }) {
     e.preventDefault();
     
     if (!user) {
-      alert("You must be logged in to submit a request.");
+      alert("Please log in to submit a request.");
       return;
     }
 
     setLoading(true);
 
-    // ✅ Insert directly into Supabase with user_id
+    // Insert into Supabase using the user's real ID
     const { error } = await supabase.from("requests").insert([
       {
-        customer_name: user.user_metadata?.full_name || "Customer", // Pull from profile if available
-        email: user.email,           // Use the logged-in user's email
+        customer_name: user.email.split('@')[0], // Simple way to get a name from email
+        email: user.email,
         item_name: itemName,
         problem_description: problemDescription,
-        user_id: user.id,            // 🔑 This links the request to the user
-        status: "Pending",           // Default status
+        user_id: user.id, // THE IMPORTANT PART
+        status: "Pending",
       },
     ]);
 
     setLoading(false);
 
     if (error) {
-      console.error("Submission error:", error.message);
-      alert("Error submitting request: " + error.message);
+      alert("Error: " + error.message);
     } else {
-      alert("Request submitted successfully!");
+      alert("Repair request sent!");
       setItemName("");
       setProblemDescription("");
-      
-      // Refresh the list on the Dashboard
-      if (onRequestSubmitted) onRequestSubmitted();
+      if (onRequestSubmitted) onRequestSubmitted(); // This refreshes the Dashboard list
     }
   };
 
   return (
     <form onSubmit={handleSubmit} className="request-form">
-      <h2>Submit Repair Request</h2>
-
-      {/* Email and Name are now automatic based on the logged-in user */}
-      <p className="user-info-hint">
-        Submitting as: <strong>{user?.email}</strong>
-      </p>
+      <p>Logged in as: <strong>{user?.email}</strong></p>
 
       <div className="form-group">
         <label>Item Name</label>
         <input
           value={itemName}
           onChange={(e) => setItemName(e.target.value)}
-          placeholder="e.g., iPhone 13, Sony TV, Blender"
+          placeholder="What needs fixing?"
           required
         />
       </div>
@@ -68,14 +61,14 @@ export default function RequestForm({ onRequestSubmitted, user }) {
         <textarea
           value={problemDescription}
           onChange={(e) => setProblemDescription(e.target.value)}
-          placeholder="What's wrong with the item?"
+          placeholder="Tell us what's wrong..."
           rows="4"
           required
         />
       </div>
 
       <button type="submit" disabled={loading}>
-        {loading ? "Submitting..." : "Submit Request"}
+        {loading ? "Sending..." : "Submit Repair Request"}
       </button>
     </form>
   );

@@ -90,6 +90,37 @@ select:focus {
   border-color: transparent;
 }
 
+.admin-message-bubble {
+  background: #f0f2f5;
+  padding: 8px;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  margin-top: 5px;
+  font-style: italic;
+}
+
+.thumb-img {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 4px;
+  margin-top: 5px;
+  border: 1px solid #ddd;
+}
+
+.admin-feedback-box {
+  margin-top: 10px;
+  border-top: 1px dashed #ccc;
+  padding-top: 5px;
+  font-size: 0.8rem;
+  color: #555;
+}
+
+.admin-table th, .admin-table td {
+  vertical-align: top; /* Keeps everything aligned to the top of the row */
+  padding: 12px;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
   .admin-nav {

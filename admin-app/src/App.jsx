@@ -90,7 +90,7 @@ function App() {
                     <br />
                     <small>{req.email}</small>
                     <div className="admin-message-bubble">
-                      "{req.description || req.message || 'No description provided'}"
+                      "{req.problem_description || req.message || 'No description provided'}"
                     </div>
                   </td>
                   <td>

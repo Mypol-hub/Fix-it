@@ -97,9 +97,15 @@ function App() {
                   <small>📞 {req.phone || "No phone"}</small><br />
                   <small>✉️ {req.email}</small>
                   <div className="admin-message-bubble">"{req.problem_description}"</div>
-                </td>
-                <td>{req.item_name}</td>
                 <td>
+                  {req.item_name}
+                  {req.image_url && (
+                <div className="admin-photo-preview">
+                  <img src={req.image_url} alt="Item" className="thumb-img" />
+                </div>
+                  )}
+                </td>
+
                   <select 
                     className={`status-select ${req.status.toLowerCase()}`}
                     value={req.status}

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { supabase } from "./supabaseClient"; // Ensure you copied this file from client-app
+import { api } from "./api"; 
 import "./App.css";
 
 function App() {
@@ -7,46 +7,39 @@ function App() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchRequests();
+    loadDashboard();
   }, []);
 
-  async function fetchRequests() {
-    const { data, error } = await supabase
-      .from("requests")
-      .select("*")
-      .order("created_at", { ascending: false });
-
-    if (error) {
-      console.error("Error fetching requests:", error);
-    } else {
+  async function loadDashboard() {
+    try {
+      const data = await api.getAllRequests();
       setRequests(data);
-    }
-    setLoading(false);
-  }
-
-  async function updateStatus(id, newStatus) {
-    const { error } = await supabase
-      .from("requests")
-      .update({ status: newStatus })
-      .eq("id", id);
-
-    if (error) {
-      alert("Update failed: " + error.message);
-    } else {
-      // Update local state so UI refreshes immediately
-      setRequests(requests.map(r => r.id === id ? { ...r, status: newStatus } : r));
+    } catch (err) {
+      console.error("Load failed:", err);
+    } finally {
+      setLoading(false);
     }
   }
 
-  if (loading) return <div className="loading">Loading Dashboard...</div>;
+  async function handleStatusChange(id, newStatus) {
+    try {
+      await api.updateRequestStatus(id, newStatus);
+      // Optimistic UI update: change state locally so it's instant
+      setRequests(prev => 
+        prev.map(r => r.id === id ? { ...r, status: newStatus } : r)
+      );
+    } catch (err) {
+      alert("Update failed: " + err.message);
+    }
+  }
+
+  if (loading) return <div className="loading">Loading Admin Panel...</div>;
 
   return (
     <div className="admin-wrapper">
       <header className="admin-nav">
         <h1>Fix-it Admin</h1>
-        <div className="stats">
-          Total Requests: {requests.length}
-        </div>
+        <div className="stats">Total: {requests.length}</div>
       </header>
 
       <main className="admin-content">
@@ -76,11 +69,11 @@ function App() {
                 <td>
                   <select 
                     value={req.status}
-                    onChange={(e) => updateStatus(req.id, e.target.value)}
+                    onChange={(e) => handleStatusChange(req.id, e.target.value)}
                   >
-                    <option value="Pending">Set Pending</option>
-                    <option value="Repairing">Set Repairing</option>
-                    <option value="Completed">Set Completed</option>
+                    <option value="Pending">Pending</option>
+                    <option value="Repairing">Repairing</option>
+                    <option value="Completed">Completed</option>
                   </select>
                 </td>
               </tr>

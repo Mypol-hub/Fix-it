@@ -93,18 +93,21 @@ function App() {
             {filteredRequests.map((req) => (
               <tr key={req.id}>
                 <td>
-                  <strong>{req.customer_name}</strong><br />
-                  <small>📞 {req.phone || "No phone"}</small><br />
-                  <small>✉️ {req.email}</small>
-                  <div className="admin-message-bubble">"{req.problem_description}"</div>
-                <td>
-                  {req.item_name}
-                  {req.image_url && (
-                <div className="admin-photo-preview">
-                  <img src={req.image_url} alt="Item" className="thumb-img" />
-                </div>
-                  )}
-                </td>
+  {req.item_name}
+  {req.image_url && (
+    <div className="admin-photo-preview">
+      {/* Clicking the image opens it in a new window for full magnification */}
+      <a href={req.image_url} target="_blank" rel="noreferrer">
+        <img 
+          src={req.image_url} 
+          alt="Item" 
+          className="thumb-img magnifying-glass" 
+          title="Click to enlarge"
+        />
+      </a>
+    </div>
+  )}
+</td>
 
                   <select 
                     className={`status-select ${req.status.toLowerCase()}`}

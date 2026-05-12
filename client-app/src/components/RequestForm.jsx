@@ -18,17 +18,23 @@ export default function RequestForm({ onRequestSubmitted, user, prefilledItem })
 
     setLoading(true);
 
-    // Insert into Supabase using the user's real ID
-    const { error } = await supabase.from("requests").insert([
-      {
-        customer_name: user.email.split('@')[0], // Simple way to get a name from email
-        email: user.email,
-        item_name: itemName,
-        problem_description: problemDescription,
-        user_id: user.id, // THE IMPORTANT PART
-        status: "Pending",
-      },
-    ]);
+    // Inside RequestForm.jsx -> handleSubmit function
+
+const { error } = await supabase.from("requests").insert([
+  {
+    // 1. Pull the real Full Name from Metadata
+    customer_name: user.user_metadata?.full_name || user.email.split('@')[0], 
+    
+    // 2. Pull the Phone Number we just added to Signup
+    phone: user.user_metadata?.phone || "No Phone Provided", 
+    
+    email: user.email,
+    item_name: itemName,
+    problem_description: problemDescription,
+    user_id: user.id,
+    status: "Pending",
+  },
+]);
 
     setLoading(false);
 

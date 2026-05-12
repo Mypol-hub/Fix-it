@@ -1,11 +1,12 @@
+// admin-app/src/api.js
 import { createClient } from '@supabase/supabase-js'
 
 const supabaseUrl = "https://grfbratwsbjgfevtymac.supabase.co";
-const supabaseKey = "sb_publishable_vO6B1olb8cXsaqJQliKRZQ_2eflMa0o"; // from Supabase dashboard → Project Settings → API
+const supabaseKey = "sb_publishable_vO6B1olb8cXsaqJQliKRZQ_2eflMa0o"; 
+
 export const supabase = createClient(supabaseUrl, supabaseKey);
 
 export const api = {
-  // Fetch all repair requests for the admin table
   async getAllRequests() {
     const { data, error } = await supabase
       .from('requests')
@@ -15,12 +16,12 @@ export const api = {
     return data;
   },
 
-  // Update the status of a specific repair
   async updateRequestStatus(id, newStatus) {
     const { data, error } = await supabase
       .from('requests')
       .update({ status: newStatus })
-      .eq('id', id);
+      .eq('id', id)
+      .select(); // 👈 Add this to get the updated row back
     if (error) throw error;
     return data;
   }

@@ -5,40 +5,35 @@ import "./AdminDashboard.css";
 export default function AdminDashboard() {
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState(""); // Added Search State
 
   useEffect(() => {
     fetchRequests();
   }, []);
 
-async function fetchRequests() {
-  setLoading(true);
-  
-  // This query tells Supabase to get the request, 
-  // find the matching item image, and find the matching feedback.
-  const { data, error } = await supabase
-    .from("requests")
-    .select(`
-      *,
-      items (image_url),
-      feedbacks (feedback)
-    `)
-    .order("created_at", { ascending: false });
+  async function fetchRequests() {
+    setLoading(true);
+    const { data, error } = await supabase
+      .from("requests")
+      .select(`
+        *,
+        items (image_url),
+        feedbacks (feedback)
+      `)
+      .order("created_at", { ascending: false });
 
-  if (error) {
-    console.error("Error fetching data:", error);
-  } else {
-    // We "flatten" the data so your table can read it easily
-    const mergedData = data.map(req => ({
-      ...req,
-      // req.items is an array because one request could technically have many items
-      image_url: req.items?.[0]?.image_url || null,
-      feedback: req.feedbacks?.[0]?.feedback || null
-    }));
-    
-    setRequests(mergedData);
+    if (error) {
+      console.error("Error fetching data:", error);
+    } else {
+      const mergedData = data.map(req => ({
+        ...req,
+        image_url: req.image_url || req.items?.[0]?.image_url || null,
+        feedback: req.feedbacks?.[0]?.feedback || null
+      }));
+      setRequests(mergedData);
+    }
+    setLoading(false);
   }
-  setLoading(false);
-}
 
   async function handleStatusChange(id, newStatus) {
     const { error } = await supabase
@@ -51,14 +46,45 @@ async function fetchRequests() {
     }
   }
 
+  // --- ADDED DELETE LOGIC ---
+  async function handleDelete(id) {
+    if (window.confirm("Delete this request forever to save storage?")) {
+      const { error } = await supabase.from('requests').delete().eq('id', id);
+      if (!error) {
+        setRequests(prev => prev.filter(req => req.id !== id));
+      } else {
+        alert("Delete failed: " + error.message);
+      }
+    }
+  }
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+  };
+
+  // --- ADDED SEARCH LOGIC ---
+  const filteredRequests = requests.filter(req => 
+    req.customer_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    req.item_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    req.phone?.includes(searchTerm)
+  );
+
   return (
     <div className="admin-container">
       <header className="admin-header">
         <div className="header-left">
           <h1>Admin Control Panel</h1>
-          <span className="badge">Total: {requests.length}</span>
+          {/* --- ADDED SEARCH BAR --- */}
+          <input 
+            type="text" 
+            placeholder="Search name, phone, or item..." 
+            className="admin-search-bar"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+          <span className="badge">Total: {filteredRequests.length}</span>
         </div>
-        <button onClick={() => supabase.auth.signOut()} className="logout-btn">Logout</button>
+        <button onClick={handleLogout} className="logout-btn-clean">Logout</button>
       </header>
 
       {loading ? <p className="loading-text">Loading repair requests...</p> : (
@@ -66,33 +92,39 @@ async function fetchRequests() {
           <table className="admin-table">
             <thead>
               <tr>
-                <th>Customer & Message</th>
+                <th>Customer & Contact</th>
                 <th>Item & Media</th>
                 <th>Status & Feedback</th>
                 <th>Actions</th>
               </tr>
             </thead>
             <tbody>
-              {requests.map((req) => (
+              {filteredRequests.map((req) => (
                 <tr key={req.id}>
-                  {/* 1. Customer Info + Client Message */}
+                  {/* 1. Customer Info + Phone + Description */}
                   <td>
                     <div className="cust-info">
-                      <strong>{req.customer_name}</strong>
-                      <small>{req.email}</small>
+                      <strong>{req.customer_name}</strong><br />
+                      <small>📞 {req.phone || "No phone"}</small><br />
+                      <small>✉️ {req.email}</small>
                     </div>
-                    <div className="msg-preview">
-                       "{req.problem_description || "No description provided"}"
+                    <div className="admin-message-bubble">
+                       "{req.problem_description || "No description"}"
                     </div>
                   </td>
 
-                  {/* 2. Item Name + Image Upload */}
+                  {/* 2. Item Name + Magnified Photo */}
                   <td>
                     <span className="item-name">{req.item_name}</span>
                     {req.image_url ? (
                       <div className="img-container">
                         <a href={req.image_url} target="_blank" rel="noreferrer">
-                          <img src={req.image_url} alt="Item" className="admin-thumb" />
+                          <img 
+                            src={req.image_url} 
+                            alt="Item" 
+                            className="admin-thumb magnifying-glass" 
+                            title="Click to enlarge"
+                          />
                         </a>
                       </div>
                     ) : (
@@ -100,7 +132,7 @@ async function fetchRequests() {
                     )}
                   </td>
 
-                  {/* 3. Status + Feedback/Rating */}
+                  {/* 3. Status Display */}
                   <td>
                     <span className={`status-pill ${req.status.toLowerCase()}`}>
                       {req.status}
@@ -113,8 +145,8 @@ async function fetchRequests() {
                     )}
                   </td>
 
-                  {/* 4. Action Dropdown */}
-                  <td>
+                  {/* 4. Action: Change Status & DELETE BIN */}
+                  <td className="action-cell-flex">
                     <select 
                       value={req.status} 
                       onChange={(e) => handleStatusChange(req.id, e.target.value)}
@@ -124,6 +156,14 @@ async function fetchRequests() {
                       <option value="Repairing">Repairing</option>
                       <option value="Completed">Completed</option>
                     </select>
+                    
+                    <button 
+                      className="bin-btn" 
+                      onClick={() => handleDelete(req.id)}
+                      title="Delete forever"
+                    >
+                      🗑️
+                    </button>
                   </td>
                 </tr>
               ))}

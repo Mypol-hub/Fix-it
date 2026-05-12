@@ -10,8 +10,11 @@ export default function AdminDashboard() {
     fetchRequests();
   }, []);
 
-  async function fetchRequests() {
-  // This performs a "Join" to get data from related tables
+async function fetchRequests() {
+  setLoading(true);
+  
+  // This query tells Supabase to get the request, 
+  // find the matching item image, and find the matching feedback.
   const { data, error } = await supabase
     .from("requests")
     .select(`
@@ -24,13 +27,15 @@ export default function AdminDashboard() {
   if (error) {
     console.error("Error fetching data:", error);
   } else {
-    // Mapping the data so it fits your existing table structure
-    const formattedData = data.map(req => ({
+    // We "flatten" the data so your table can read it easily
+    const mergedData = data.map(req => ({
       ...req,
-      image_url: req.items?.[0]?.image_url, // Takes the first image found
-      feedback: req.feedbacks?.[0]?.feedback // Takes the first feedback found
+      // req.items is an array because one request could technically have many items
+      image_url: req.items?.[0]?.image_url || null,
+      feedback: req.feedbacks?.[0]?.feedback || null
     }));
-    setRequests(formattedData);
+    
+    setRequests(mergedData);
   }
   setLoading(false);
 }

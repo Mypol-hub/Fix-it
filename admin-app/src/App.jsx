@@ -7,23 +7,16 @@ function App() {
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
   const [session, setSession] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-    });
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
-    });
-
+    supabase.auth.getSession().then(({ data: { session } }) => setSession(session));
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => setSession(session));
     return () => subscription.unsubscribe();
   }, []);
 
   useEffect(() => {
-    if (session) {
-      loadDashboard();
-    }
+    if (session) loadDashboard();
   }, [session]);
 
   async function loadDashboard() {
@@ -40,11 +33,20 @@ function App() {
   async function handleStatusChange(id, newStatus) {
     try {
       await api.updateRequestStatus(id, newStatus);
-      setRequests(prev => 
-        prev.map(r => r.id === id ? { ...r, status: newStatus } : r)
-      );
+      setRequests(prev => prev.map(r => r.id === id ? { ...r, status: newStatus } : r));
     } catch (err) {
       alert("Update failed: " + err.message);
+    }
+  }
+
+  async function handleDelete(id) {
+    if (window.confirm("Delete this request forever to save storage?")) {
+      const { error } = await supabase.from('requests').delete().eq('id', id);
+      if (!error) {
+        setRequests(prev => prev.filter(req => req.id !== id));
+      } else {
+        alert("Delete failed: " + error.message);
+      }
     }
   }
 
@@ -53,80 +55,66 @@ function App() {
     setSession(null);
   };
 
-  if (!session) {
-    return <AdminLogin onLoginSuccess={(userSession) => setSession(userSession)} />;
-  }
+  const filteredRequests = requests.filter(req => 
+    req.customer_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    req.item_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    req.phone?.includes(searchTerm)
+  );
 
-  if (loading) return <div className="loading">Loading Admin Panel...</div>;
+  if (!session) return <AdminLogin onLoginSuccess={(s) => setSession(s)} />;
+  if (loading) return <div className="loading">Loading...</div>;
 
   return (
     <div className="admin-wrapper">
       <header className="admin-nav">
         <div className="nav-left">
           <h1>Fix-it Admin</h1>
-          <div className="stats">Total: {requests.length}</div>
+          <input 
+            type="text" 
+            placeholder="Search name, phone, or item..." 
+            className="search-bar"
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
         </div>
-        <button className="logout-btn" onClick={handleLogout}>Logout</button>
+        <button className="logout-btn-clean" onClick={handleLogout}>Logout</button>
       </header>
 
       <main className="admin-content">
         <table className="admin-table">
           <thead>
             <tr>
-              <th>Customer & Description</th>
+              <th>Customer & Contact</th>
               <th>Item & Photo</th>
-              <th>Status & Feedback</th>
-              <th>Action</th>
+              <th>Status</th>
+              <th>Actions</th>
             </tr>
           </thead>
           <tbody>
-            {requests.length === 0 ? (
-              <tr><td colSpan="4" style={{textAlign: 'center'}}>No requests found.</td></tr>
-            ) : (
-              requests.map((req) => (
-                <tr key={req.id}>
-                  <td>
-                    <strong>{req.customer_name}</strong>
-                    <br />
-                    <small>{req.email}</small>
-                    <div className="admin-message-bubble">
-                      "{req.problem_description || req.message || 'No description provided'}"
-                    </div>
-                  </td>
-                  <td>
-                    {req.item_name}
-                    {req.image_url && (
-                      <div className="admin-photo-preview">
-                        <a href={req.image_url} target="_blank" rel="noreferrer">
-                          <img src={req.image_url} alt="Item" className="thumb-img" />
-                        </a>
-                      </div>
-                    )}
-                  </td>
-                  <td>
-                    <span className={`status-pill ${req.status.toLowerCase()}`}>
-                      {req.status}
-                    </span>
-                    {req.feedback && (
-                      <div className="admin-feedback-box">
-                        <strong>Rating: {req.rating}/5</strong>
-                        <p>{req.feedback}</p>
-                      </div>
-                    )}
-                  </td>
-                  <td>
-                    <select 
-                      value={req.status}
-                      onChange={(e) => handleStatusChange(req.id, e.target.value)}
-                    >
-                      <option value="Pending">Pending</option>
-                      <option value="Repairing">Repairing</option>
-                      <option value="Completed">Completed</option>
-                    </select>
-                  </td>
-                </tr>
-              ))
-            )}
+            {filteredRequests.map((req) => (
+              <tr key={req.id}>
+                <td>
+                  <strong>{req.customer_name}</strong><br />
+                  <small>📞 {req.phone || "No phone"}</small><br />
+                  <small>✉️ {req.email}</small>
+                  <div className="admin-message-bubble">"{req.problem_description}"</div>
+                </td>
+                <td>{req.item_name}</td>
+                <td>
+                  <select 
+                    className={`status-select ${req.status.toLowerCase()}`}
+                    value={req.status}
+                    onChange={(e) => handleStatusChange(req.id, e.target.value)}
+                  >
+                    <option value="Pending">Pending</option>
+                    <option value="Repairing">Repairing</option>
+                    <option value="Completed">Completed</option>
+                  </select>
+                </td>
+                <td className="action-cell">
+                  <button className="bin-btn" onClick={() => handleDelete(req.id)}>🗑️</button>
+                </td>
+              </tr>
+            ))}
           </tbody>
         </table>
       </main>

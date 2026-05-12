@@ -11,15 +11,29 @@ export default function AdminDashboard() {
   }, []);
 
   async function fetchRequests() {
-    const { data, error } = await supabase
-      .from("requests")
-      .select("*")
-      .order("created_at", { ascending: false });
+  // This performs a "Join" to get data from related tables
+  const { data, error } = await supabase
+    .from("requests")
+    .select(`
+      *,
+      items (image_url),
+      feedbacks (feedback)
+    `)
+    .order("created_at", { ascending: false });
 
-    if (error) console.error("Error:", error);
-    else setRequests(data);
-    setLoading(false);
+  if (error) {
+    console.error("Error fetching data:", error);
+  } else {
+    // Mapping the data so it fits your existing table structure
+    const formattedData = data.map(req => ({
+      ...req,
+      image_url: req.items?.[0]?.image_url, // Takes the first image found
+      feedback: req.feedbacks?.[0]?.feedback // Takes the first feedback found
+    }));
+    setRequests(formattedData);
   }
+  setLoading(false);
+}
 
   async function handleStatusChange(id, newStatus) {
     const { error } = await supabase

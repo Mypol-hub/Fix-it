@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { api, supabase } from "./api"; // Ensure supabase is exported from api.js
+import { api, supabase } from "./api"; 
 import AdminLogin from "./pages/AdminLogin";
 import "./App.css";
 
@@ -8,7 +8,6 @@ function App() {
   const [loading, setLoading] = useState(true);
   const [session, setSession] = useState(null);
 
-  // 1. Check for active session on load
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
@@ -21,7 +20,6 @@ function App() {
     return () => subscription.unsubscribe();
   }, []);
 
-  // 2. Load data only when session exists
   useEffect(() => {
     if (session) {
       loadDashboard();
@@ -55,7 +53,6 @@ function App() {
     setSession(null);
   };
 
-  // 3. Conditional Rendering
   if (!session) {
     return <AdminLogin onLoginSuccess={(userSession) => setSession(userSession)} />;
   }
@@ -76,9 +73,9 @@ function App() {
         <table className="admin-table">
           <thead>
             <tr>
-              <th>Customer</th>
-              <th>Item</th>
-              <th>Status</th>
+              <th>Customer & Description</th>
+              <th>Item & Photo</th>
+              <th>Status & Feedback</th>
               <th>Action</th>
             </tr>
           </thead>
@@ -92,12 +89,30 @@ function App() {
                     <strong>{req.customer_name}</strong>
                     <br />
                     <small>{req.email}</small>
+                    <div className="admin-message-bubble">
+                      "{req.description || req.message || 'No description provided'}"
+                    </div>
                   </td>
-                  <td>{req.item_name}</td>
+                  <td>
+                    {req.item_name}
+                    {req.image_url && (
+                      <div className="admin-photo-preview">
+                        <a href={req.image_url} target="_blank" rel="noreferrer">
+                          <img src={req.image_url} alt="Item" className="thumb-img" />
+                        </a>
+                      </div>
+                    )}
+                  </td>
                   <td>
                     <span className={`status-pill ${req.status.toLowerCase()}`}>
                       {req.status}
                     </span>
+                    {req.feedback && (
+                      <div className="admin-feedback-box">
+                        <strong>Rating: {req.rating}/5</strong>
+                        <p>{req.feedback}</p>
+                      </div>
+                    )}
                   </td>
                   <td>
                     <select 

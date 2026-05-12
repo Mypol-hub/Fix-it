@@ -1,8 +1,8 @@
-// admin-app/src/api.js
 import { createClient } from '@supabase/supabase-js'
 
-const supabaseUrl = "https://grfbratwsbjgfevtymac.supabase.co";
-const supabaseKey = "sb_publishable_vO6B1olb8cXsaqJQliKRZQ_2eflMa0o"; 
+// Vite uses import.meta.env to access .env variables
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
 export const supabase = createClient(supabaseUrl, supabaseKey);
 
@@ -21,7 +21,7 @@ export const api = {
       .from('requests')
       .update({ status: newStatus })
       .eq('id', id)
-      .select(); // 👈 Add this to get the updated row back
+      .select(); 
     if (error) throw error;
     return data;
   }

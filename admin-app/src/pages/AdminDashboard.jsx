@@ -1,4 +1,3 @@
-// admin-app/src/pages/AdminDashboard.jsx
 import { useEffect, useState } from "react";
 import { supabase } from "../supabaseClient";
 import "./AdminDashboard.css";
@@ -36,33 +35,66 @@ export default function AdminDashboard() {
   return (
     <div className="admin-container">
       <header className="admin-header">
-        <h1>Admin Control Panel</h1>
+        <div className="header-left">
+          <h1>Admin Control Panel</h1>
+          <span className="badge">Total: {requests.length}</span>
+        </div>
         <button onClick={() => supabase.auth.signOut()} className="logout-btn">Logout</button>
       </header>
 
-      {loading ? <p>Loading requests...</p> : (
+      {loading ? <p className="loading-text">Loading repair requests...</p> : (
         <div className="admin-table-wrapper">
           <table className="admin-table">
             <thead>
               <tr>
-                <th>Customer</th>
-                <th>Item</th>
-                <th>Description</th>
-                <th>Status</th>
-                <th>Date</th>
+                <th>Customer & Message</th>
+                <th>Item & Media</th>
+                <th>Status & Feedback</th>
+                <th>Actions</th>
               </tr>
             </thead>
             <tbody>
               {requests.map((req) => (
                 <tr key={req.id}>
+                  {/* 1. Customer Info + Client Message */}
                   <td>
                     <div className="cust-info">
                       <strong>{req.customer_name}</strong>
-                      <span>{req.email}</span>
+                      <small>{req.email}</small>
+                    </div>
+                    <div className="msg-preview">
+                       "{req.problem_description || "No description provided"}"
                     </div>
                   </td>
-                  <td>{req.item_name}</td>
-                  <td><p className="truncate">{req.problem_description}</p></td>
+
+                  {/* 2. Item Name + Image Upload */}
+                  <td>
+                    <span className="item-name">{req.item_name}</span>
+                    {req.image_url ? (
+                      <div className="img-container">
+                        <a href={req.image_url} target="_blank" rel="noreferrer">
+                          <img src={req.image_url} alt="Item" className="admin-thumb" />
+                        </a>
+                      </div>
+                    ) : (
+                      <div className="no-img">No photo</div>
+                    )}
+                  </td>
+
+                  {/* 3. Status + Feedback/Rating */}
+                  <td>
+                    <span className={`status-pill ${req.status.toLowerCase()}`}>
+                      {req.status}
+                    </span>
+                    {req.feedback && (
+                      <div className="feedback-section">
+                        <div className="stars">{"⭐".repeat(req.rating || 0)}</div>
+                        <p className="feedback-text">{req.feedback}</p>
+                      </div>
+                    )}
+                  </td>
+
+                  {/* 4. Action Dropdown */}
                   <td>
                     <select 
                       value={req.status} 
@@ -74,7 +106,6 @@ export default function AdminDashboard() {
                       <option value="Completed">Completed</option>
                     </select>
                   </td>
-                  <td>{new Date(req.created_at).toLocaleDateString()}</td>
                 </tr>
               ))}
             </tbody>

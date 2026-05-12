@@ -1,9 +1,11 @@
+import { useState } from "react"; // Added useState
 import { useNavigate } from "react-router-dom";
 import { supabase } from "../supabaseClient";
-import "./Signup.css"; // Reuse your login styles
+import "./Signup.css";
 
 function Signup() {
   const navigate = useNavigate();
+  const [phone, setPhone] = useState(""); // State to track phone input
 
   async function handleSignup(e) {
     e.preventDefault();
@@ -15,9 +17,16 @@ function Signup() {
       return alert("Passwords do not match!");
     }
 
+    // UPDATED: Added options object with user_metadata
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
+      options: {
+        data: {
+          phone: phone, // Saving phone to metadata
+          full_name: e.target.fullName.value, // Recommended to grab name too
+        },
+      },
     });
 
     if (error) {
@@ -33,10 +42,30 @@ function Signup() {
       <div className="login-card">
         <h2>Create Account</h2>
         <form onSubmit={handleSignup} className="login-form">
+          {/* NEW: Full Name Field */}
+          <div>
+            <label>Full Name</label>
+            <input type="text" name="fullName" placeholder="Enter your full name" required />
+          </div>
+
           <div>
             <label>Email</label>
             <input type="email" name="email" placeholder="Enter your email" required />
           </div>
+
+          {/* NEW: Phone Number Field */}
+          <div>
+            <label>Phone Number</label>
+            <input 
+              type="tel" 
+              name="phone" 
+              placeholder="e.g. +961 70 123 456" 
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              required 
+            />
+          </div>
+
           <div>
             <label>Password</label>
             <input type="password" name="password" placeholder="Create a password" required />

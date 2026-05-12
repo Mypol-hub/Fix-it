@@ -166,3 +166,9 @@
 .logout-btn:hover {
   background: #dc2626;
 }
+
+.msg-preview {
+  max-height: 100px;
+  overflow-y: auto;
+  /* existing styles... */
+}

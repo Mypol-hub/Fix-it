@@ -10,8 +10,16 @@ function App() {
   const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => setSession(session));
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => setSession(session));
+    // Check active sessions and sets the listener
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+      if (!session) setLoading(false);
+    });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+    });
+
     return () => subscription.unsubscribe();
   }, []);
 
@@ -21,6 +29,7 @@ function App() {
 
   async function loadDashboard() {
     try {
+      setLoading(true);
       const data = await api.getAllRequests();
       setRequests(data || []);
     } catch (err) {
@@ -62,7 +71,7 @@ function App() {
   );
 
   if (!session) return <AdminLogin onLoginSuccess={(s) => setSession(s)} />;
-  if (loading) return <div className="loading">Loading...</div>;
+  if (loading) return <div className="loading">Loading Dashboard...</div>;
 
   return (
     <div className="admin-wrapper">
@@ -73,6 +82,7 @@ function App() {
             type="text" 
             placeholder="Search name, phone, or item..." 
             className="search-bar"
+            value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
@@ -90,40 +100,62 @@ function App() {
             </tr>
           </thead>
           <tbody>
-            {filteredRequests.map((req) => (
-              <tr key={req.id}>
-                <td>
-  {req.item_name}
-  {req.image_url && (
-    <div className="admin-photo-preview">
-      {/* Clicking the image opens it in a new window for full magnification */}
-      <a href={req.image_url} target="_blank" rel="noreferrer">
-        <img 
-          src={req.image_url} 
-          alt="Item" 
-          className="thumb-img magnifying-glass" 
-          title="Click to enlarge"
-        />
-      </a>
-    </div>
-  )}
-</td>
+            {filteredRequests.length > 0 ? (
+              filteredRequests.map((req) => (
+                <tr key={req.id}>
+                  {/* Column 1: Customer Info */}
+                  <td>
+                    <div className="cust-info">
+                      <strong>{req.customer_name}</strong>
+                      <p>{req.phone}</p>
+                    </div>
+                  </td>
 
-                  <select 
-                    className={`status-select ${req.status.toLowerCase()}`}
-                    value={req.status}
-                    onChange={(e) => handleStatusChange(req.id, e.target.value)}
-                  >
-                    <option value="Pending">Pending</option>
-                    <option value="Repairing">Repairing</option>
-                    <option value="Completed">Completed</option>
-                  </select>
-                </td>
-                <td className="action-cell">
-                  <button className="bin-btn" onClick={() => handleDelete(req.id)}>🗑️</button>
+                  {/* Column 2: Item Info & Image */}
+                  <td>
+                    <div className="item-cell">
+                      <span>{req.item_name}</span>
+                      {req.image_url && (
+                        <div className="admin-photo-preview">
+                          <a href={req.image_url} target="_blank" rel="noreferrer">
+                            <img 
+                              src={req.image_url} 
+                              alt="Item" 
+                              className="thumb-img magnifying-glass" 
+                              title="Click to enlarge"
+                            />
+                          </a>
+                        </div>
+                      )}
+                    </div>
+                  </td>
+
+                  {/* Column 3: Status Selector */}
+                  <td>
+                    <select 
+                      className={`status-select ${req.status?.toLowerCase()}`}
+                      value={req.status}
+                      onChange={(e) => handleStatusChange(req.id, e.target.value)}
+                    >
+                      <option value="Pending">Pending</option>
+                      <option value="Repairing">Repairing</option>
+                      <option value="Completed">Completed</option>
+                    </select>
+                  </td>
+
+                  {/* Column 4: Delete */}
+                  <td className="action-cell">
+                    <button className="bin-btn" onClick={() => handleDelete(req.id)}>🗑️</button>
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan="4" style={{ textAlign: 'center', padding: '2rem' }}>
+                  No requests found matching your search.
                 </td>
               </tr>
-            ))}
+            )}
           </tbody>
         </table>
       </main>
@@ -132,3 +164,4 @@ function App() {
 }
 
 export default App;
+

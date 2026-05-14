@@ -1,6 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
 
-// Vite uses import.meta.env to access .env variables
+// Must match your .env variable names
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
@@ -12,6 +12,7 @@ export const api = {
       .from('requests')
       .select('*')
       .order('created_at', { ascending: false });
+    
     if (error) throw error;
     return data;
   },
@@ -22,6 +23,7 @@ export const api = {
       .update({ status: newStatus })
       .eq('id', id)
       .select(); 
+    
     if (error) throw error;
     return data;
   }

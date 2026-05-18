@@ -5,31 +5,49 @@ import "./Navbar.css";
 export default function Navbar({ session }) {
   const navigate = useNavigate();
 
-  // --- REPLACE YOUR OLD handleLogout WITH THIS ---
   const handleLogout = async () => {
-    await supabase.auth.signOut();
-    
-    // Use the absolute path for your GitHub Pages site
-    // This ensures that when the session clears, you are forced to Home
-    window.location.href = "/Fix-it/"; 
+    try {
+      await supabase.auth.signOut();
+      navigate("/");
+    } catch (err) {
+      console.error("Logout execution error:", err);
+    }
   };
-  // -----------------------------------------------
 
   return (
     <nav className="navbar">
-      <h1>Khalil Electronics</h1>
+      {/* 🌟 MATCHES YOUR BRAND GROUPING CSS */}
+      <div className="navbar-brand-container">
+        <Link to="/" style={{ textDecoration: "none" }}>
+          <h1 className="navbar-title">Khalil Electronics Repair</h1>
+        </Link>
+        
+        {/* 📍 MATCHES YOUR META-INFO ELEMENT RULES */}
+        <div className="navbar-shop-info">
+          <p>📍 Lebanon, Main Street</p>
+          <span className="navbar-info-divider">|</span>
+          <p>
+            📞 <a href="tel:+96103660068">03660068</a>
+            </p>
+            <p>
+            📞 <a href="tel:+96109215171">09215171</a>
+          </p>
+        </div>
+      </div>
+      
+      {/* 💎 MATCHES YOUR LINKS WRAPPER CSS */}
       <div className="navbar-links">
-        <Link to="/">Home</Link>
+        <Link to="/" className="nav-link">Home</Link>
         
         {session ? (
           <>
-            <Link to="/dashboard">Dashboard</Link>
+            <Link to="dashboard" className="nav-link">Dashboard</Link>
             <button onClick={handleLogout} className="logout-button">
-              Logout
+              Sign Out
             </button>
           </>
         ) : (
-          <Link to="/login">Login</Link>
+          <Link to="login" className="nav-link login-cta">Login</Link>
         )}
       </div>
     </nav>

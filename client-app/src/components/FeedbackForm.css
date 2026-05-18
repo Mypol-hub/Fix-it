@@ -1,52 +1,127 @@
-.feedback-form {
+/* ==========================================================================
+   1. FEEDBACK INPUT FORM STYLING (.feedback-form-component)
+   ========================================================================== */
+
+.feedback-form-component {
   max-width: 500px;
-  margin: 2rem auto;
-  background: #fff;
+  margin: 1.5rem auto;
+  background: #ffffff;
   border-radius: 12px;
-  box-shadow: rgba(0,0,0,0.1) 0 4px 12px;
+  box-shadow: rgba(0, 0, 0, 0.05) 0 4px 12px;
   padding: 1.5rem;
   display: flex;
   flex-direction: column;
   gap: 1rem;
 }
 
-/* Inputs and textarea */
-.feedback-form input,
-.feedback-form textarea {
+/* Textarea styling for high-contrast typing feedback */
+.feedback-form-component textarea {
   width: 100%;
-  border: 1px solid #d1d5db;
+  border: 2px solid #cbd5e1;
   border-radius: 8px;
   padding: 0.75rem;
   font-size: 1rem;
   box-sizing: border-box;
+  color: #1e293b; /* Sharp, deep text color when typing */
+  background-color: #ffffff;
+  font-family: inherit;
+  resize: vertical;
 }
 
-.feedback-form input:focus,
-.feedback-form textarea:focus {
+.feedback-form-component textarea:focus {
   outline: none;
   border-color: #2563eb;
-  box-shadow: 0 0 0 2px rgba(37,99,235,0.3);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
 }
 
-/* Button */
-.feedback-form button {
+/* Premium blue submission button */
+.feedback-form-component .button {
   background: #2563eb;
-  color: #fff;
+  color: #ffffff;
   padding: 0.75rem;
   border: none;
   border-radius: 8px;
   font-weight: 600;
   cursor: pointer;
-  transition: background 0.2s ease;
+  font-size: 1rem;
+  transition: background 0.2s ease, transform 0.1s ease;
 }
 
-.feedback-form button:hover {
+.feedback-form-component .button:hover {
   background: #1d4ed8;
 }
 
-/* Responsive */
+.feedback-form-component .button:active {
+  transform: scale(0.98);
+}
+
+.feedback-form-component .button:disabled {
+  background: #94a3b8;
+  cursor: not-allowed;
+}
+
+
+/* ==========================================================================
+   2. 💬 SUPPORT CHAT HISTORY BUBBLES FIX (High Contrast)
+   ========================================================================== */
+
+/* This targets the container holding your past messages list directly following the form */
+.feedback-form-component + div,
+.support-chat-history-container {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 20px auto;
+  max-width: 500px;
+  padding: 0 4px;
+}
+
+/* Fixes the light-blue message bubble cards */
+.feedback-form-component + div > div,
+.support-chat-history-container > div,
+.chat-message-bubble {
+  background-color: #e0f2fe !important; /* Premium soft sky blue backdrop */
+  border-left: 5px solid #0284c7 !important; /* Vivid blue structural anchor strip */
+  padding: 14px 16px !important;
+  border-radius: 8px !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.03) !important;
+  box-sizing: border-box;
+  width: 100%;
+  
+  /* 🔥 CRITICAL CONTRAST CORRECTION: Force dark visible text over the blue background */
+  color: #0f172a !important; 
+  font-weight: 500 !important;
+  font-size: 0.95rem !important;
+  line-height: 1.4 !important;
+  text-align: left !important;
+}
+
+/* Fixes the dates/timestamps hidden underneath your messages */
+.feedback-form-component + div > div small,
+.support-chat-history-container small,
+.chat-message-bubble small {
+  display: block !important;
+  margin-top: 6px !important;
+  
+  /* 🔥 CRITICAL CONTRAST CORRECTION: Change from invisible white to legible charcoal slate */
+  color: #64748b !important; 
+  font-size: 0.8rem !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.02em !important;
+}
+
+
+/* ==========================================================================
+   3. RESPONSIVE DESIGN (Mobile View Optimization)
+   ========================================================================== */
+
 @media (max-width: 480px) {
-  .feedback-form {
+  .feedback-form-component {
     padding: 1rem;
+    margin: 1rem auto;
+  }
+  
+  .feedback-form-component + div {
+    padding: 0 16px;
   }
 }

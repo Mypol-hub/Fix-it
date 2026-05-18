@@ -29,7 +29,6 @@ function Home() {
     "Voltage Regulator", "Washing Board", "Wired Phone", "Wood Shower Heater"
   ];
 
-  // ✅ Relative paths for GitHub Pages (no leading slash)
   const images = {
     "AC Board": "images/ac-board.jpg",
     "APS": "images/aps.png",
@@ -67,12 +66,13 @@ function Home() {
     "Wired Phone": "images/wired-phone.jpg",
     "Wood Shower Heater": "images/wood-shower-heater.jpg"
   };
-
+  
   const handleRepairClick = (item) => {
     if (session) {
-      navigate(`/request?item=${encodeURIComponent(item)}`);
+      // ✅ REMOVED leading slash to keep it relative to the HashRouter current folder structure
+      navigate(`dashboard?item=${encodeURIComponent(item)}`);
     } else {
-      navigate(`/login?redirect=request&item=${encodeURIComponent(item)}`);
+      navigate(`login?item=${encodeURIComponent(item)}`);
     }
   };
 
@@ -84,7 +84,6 @@ function Home() {
             src={images[item] || "https://via.placeholder.com/150?text=No+Image"}
             alt={item}
             className="home-image"
-            // Handles missing files gracefully
             onError={(e) => { e.target.src = "https://via.placeholder.com/150?text=Missing+File"; }}
           />
           <h3 className="home-title">{item}</h3>

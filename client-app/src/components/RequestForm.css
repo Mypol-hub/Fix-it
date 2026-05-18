@@ -1,74 +1,123 @@
+/* Container Card */
 .request-form {
   display: flex;
   flex-direction: column;
-  gap: 15px;
   background: #ffffff;
-  padding: 20px;
-  border-radius: 12px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  padding: 28px;
+  border-radius: 16px;
+  /* Soft layered shadow for depth */
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.02);
+  border: 1px solid #f0f0f5;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
-.request-form p {
-  font-size: 0.9rem;
-  color: #666;
-  margin-bottom: 5px;
-  border-bottom: 1px solid #eee;
-  padding-bottom: 10px;
-}
-
+/* Form Group Wrapper */
 .form-group {
   display: flex;
   flex-direction: column;
-  gap: 5px;
+  gap: 8px;
+  margin-bottom: 20px;
 }
 
+/* Reusable Label Styling */
 .form-group label {
   font-weight: 600;
-  font-size: 0.85rem;
-  color: #444;
+  font-size: 0.88rem;
+  color: #33334d; /* Subtle dark slate */
+  letter-spacing: 0.2px;
 }
 
-/* Styles both text inputs and the phone (tel) input */
+/* Inputs & Textareas unified styling */
 .request-form input,
 .request-form textarea {
-  padding: 12px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  font-size: 1rem;
+  padding: 14px 16px;
+  border: 1.5px solid #e2e2ec;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  color: #1a1a2e;
+  background-color: #fafafc;
   outline: none;
-  transition: border-color 0.2s;
+  font-family: inherit;
+  transition: all 0.25s ease;
+}
+
+/* Input Placeholders */
+.request-form input::placeholder,
+.request-form textarea::placeholder {
+  color: #a0a0b0;
+}
+
+/* Interactive States: Hover & Focus */
+.request-form input:hover,
+.request-form textarea:hover {
+  border-color: #cbd5e1;
+  background-color: #ffffff;
 }
 
 .request-form input:focus,
 .request-form textarea:focus {
-  border-color: #007bff; /* Highlights blue when typing */
+  border-color: #4f46e5; /* Modern Indigo/Blue Accent */
+  background-color: #ffffff;
+  box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1); /* Soft glow effect */
 }
 
-/* Submit Button styling */
+/* Textarea specific adjustment */
+.request-form textarea {
+  resize: vertical;
+  min-height: 110px;
+  line-height: 1.5;
+}
+
+/* Premium Submit Button */
 .request-form button {
-  background-color: #28a745; /* Professional Green */
-  color: white;
-  padding: 14px;
+  background-color: #1e1e2f; /* Deep professional slate/black */
+  color: #ffffff;
+  padding: 15px;
   border: none;
-  border-radius: 8px;
-  font-weight: bold;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 600;
   cursor: pointer;
   margin-top: 10px;
-  transition: background 0.3s;
+  letter-spacing: 0.3px;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
 }
 
-.request-form button:hover {
-  background-color: #218838;
+/* Button Hover State */
+.request-form button:hover:not(:disabled) {
+  background-color: #2d2d44;
+  transform: translateY(-1px); /* Subtle click-me lift */
+  box-shadow: 0 4px 12px rgba(30, 30, 47, 0.15);
 }
 
+/* Button Active/Click State */
+.request-form button:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+/* Button Disabled State (Loading or Missing Data) */
 .request-form button:disabled {
-  background-color: #ccc;
+  background-color: #e2e2ec;
+  color: #94a3b8;
   cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
 }
 
-/* Mobile responsive tweak */
+/* Mobile Responsiveness Tweak */
 @media (max-width: 480px) {
   .request-form {
-    padding: 15px;
+    padding: 20px;
+    border-radius: 12px;
+  }
+  
+  .request-form input,
+  .request-form textarea {
+    padding: 12px 14px;
+    font-size: 0.92rem;
   }
 }

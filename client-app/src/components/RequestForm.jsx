@@ -1,80 +1,87 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { supabase } from "../supabaseClient"; 
-import "./RequestForm.css";
+import "./RequestForm.css"; 
 
 export default function RequestForm({ onRequestSubmitted, user, prefilledItem }) {
-  // Use the prefilledItem if the user clicked "Repair" from the Home page
   const [itemName, setItemName] = useState(prefilledItem || "");
   const [problemDescription, setProblemDescription] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = async (e) => {
+  // 🔥 FIX: Sync input state if prefilledItem changes from home page parameters
+  useEffect(() => {
+    if (prefilledItem) {
+      setItemName(prefilledItem);
+    }
+  }, [prefilledItem]);
+
+   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    if (!user) {
+    if (!user?.id) {
       alert("Please log in to submit a request.");
       return;
     }
 
     setLoading(true);
 
-    // Inside RequestForm.jsx -> handleSubmit function
+    // Normalize phone formatting before sending data rows to Supabase
+    let rawPhone = user.phone || user.user_metadata?.display_phone || "";
+    let cleanPhone = rawPhone.trim().replace(/\D/g, "");
+    if (cleanPhone.startsWith("0")) {
+      cleanPhone = "961" + cleanPhone.substring(1);
+    }
 
-const { error } = await supabase.from("requests").insert([
-  {
-    // 1. Pull the real Full Name from Metadata
-    customer_name: user.user_metadata?.full_name || user.email.split('@')[0], 
-    
-    // 2. Pull the Phone Number we just added to Signup
-    phone: user.user_metadata?.phone || "No Phone Provided", 
-    
-    email: user.email,
-    item_name: itemName,
-    problem_description: problemDescription,
-    user_id: user.id,
-    status: "Pending",
-  },
-]);
+    const { error } = await supabase.from("requests").insert([
+      {
+        customer_name: user.user_metadata?.full_name || "Valued Customer", 
+        phone: cleanPhone || "No Phone Provided", // Perfectly formatted bridge key
+        item_name: itemName,
+        problem_description: problemDescription,
+        user_id: user.id,
+        status: "Pending",
+      },
+    ]);
 
     setLoading(false);
 
     if (error) {
       alert("Error: " + error.message);
     } else {
-      alert("Repair request sent!");
+      alert("Repair request sent successfully!");
       setItemName("");
       setProblemDescription("");
-      if (onRequestSubmitted) onRequestSubmitted(); // This refreshes the Dashboard list
+      
+      if (onRequestSubmitted) onRequestSubmitted(); 
     }
   };
 
+
   return (
     <form onSubmit={handleSubmit} className="request-form">
-      <p>Logged in as: <strong>{user?.email}</strong></p>
-
       <div className="form-group">
-        <label>Item Name</label>
+        <label>Item to Repair</label>
         <input
           value={itemName}
           onChange={(e) => setItemName(e.target.value)}
-          placeholder="What needs fixing?"
+          placeholder="e.g., Samsung TV or AC Board"
           required
         />
       </div>
 
       <div className="form-group">
-        <label>Problem Description</label>
+        <label>Problem Details</label>
         <textarea
           value={problemDescription}
           onChange={(e) => setProblemDescription(e.target.value)}
-          placeholder="Tell us what's wrong..."
+          placeholder="What's wrong with it?"
           rows="4"
           required
         />
       </div>
 
-      <button type="submit" disabled={loading}>
-        {loading ? "Sending..." : "Submit Repair Request"}
+      {/* Changed class to "submit-btn" to match your premium modern CSS file */}
+      <button type="submit" className="submit-btn" disabled={loading || !user}>
+        {loading ? "Submitting..." : "Send Request"}
       </button>
     </form>
   );

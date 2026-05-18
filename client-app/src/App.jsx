@@ -8,8 +8,6 @@ import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import Dashboard from "./pages/Dashboard";
-import Request from "./pages/Request";
-import Feedback from "./pages/Feedback";
 
 // ✅ Intelligent ProtectedRoute
 const ProtectedRoute = ({ session, loading, children }) => {
@@ -51,28 +49,12 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         
-        {/* Protected Action Routes */}
+        {/* Unified Protected Dashboard Route */}
         <Route 
           path="/dashboard" 
           element={
             <ProtectedRoute session={session} loading={loading}>
               <Dashboard />
-            </ProtectedRoute>
-          } 
-        />
-        <Route 
-          path="/request" 
-          element={
-            <ProtectedRoute session={session} loading={loading}>
-              <Request />
-            </ProtectedRoute>
-          } 
-        />
-        <Route 
-          path="/feedback" 
-          element={
-            <ProtectedRoute session={session} loading={loading}>
-              <Feedback />
             </ProtectedRoute>
           } 
         />

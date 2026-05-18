@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom"; 
 import { supabase } from "../supabaseClient";
 
-// ✅ All modular components integrated
+// Components
 import RequestForm from "../components/RequestForm";
 import RepairStatus from "../components/RepairStatus";
 import ItemCard from "../components/ItemCard";
@@ -13,69 +13,124 @@ import "./Dashboard.css";
 
 function Dashboard() {
   const navigate = useNavigate();
+  const location = useLocation(); 
+
   const [user, setUser] = useState(null);
+  const [authLoading, setAuthLoading] = useState(true);
   const [requests, setRequests] = useState([]);
   const [feedbacks, setFeedbacks] = useState([]);
   const [items, setItems] = useState([]);
+  const [isDataLoading, setIsDataLoading] = useState(false);
 
-  const location = useLocation();
+  // Extract item name directly from URL params safely
   const params = new URLSearchParams(location.search);
-  const selectedItem = params.get("item");
+  const selectedItem = params.get("item") || "";
 
+  // 1. Safe Auth Guard & Session Sync
   useEffect(() => {
-    // 1. Verify Authentication
-    const checkUser = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
-        navigate("/login");
+    let mounted = true;
+
+    const initializeAuth = async () => {
+      const { data: { session }, error } = await supabase.auth.getSession();
+      
+      if (!mounted) return;
+
+      if (error || !session) {
+        setAuthLoading(false);
+        navigate("/login"); 
       } else {
-        setUser(user);
+        setUser(session.user);
+        setAuthLoading(false);
       }
     };
-    checkUser();
+
+    initializeAuth();
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (!mounted) return;
+      
+      if (event === "SIGNED_OUT") {
+        setUser(null);
+        navigate("/login");
+      } else if (session) {
+        setUser(session.user);
+      }
+    });
+
+    return () => {
+      mounted = false;
+      subscription.unsubscribe();
+    };
   }, [navigate]);
 
-  // 2. Fetch all user-specific data once user is identified
+  // 2. Fetch data automatically whenever user profile initializes
   useEffect(() => {
     if (user) {
       fetchAllData();
     }
   }, [user]);
 
+  // 3. Centralized Data Fetcher
   async function fetchAllData() {
-    // RLS (auth.uid() = user_id) ensures privacy on the DB level
-    const { data: reqData } = await supabase.from("requests").select("*");
-    setRequests(reqData || []);
+    if (!user) return;
+    setIsDataLoading(true);
 
-    const { data: fbData } = await supabase.from("feedbacks").select("*");
-    setFeedbacks(fbData || []);
+    try {
+      const { data: reqData } = await supabase
+        .from("requests")
+        .select("*")
+        .eq("user_id", user.id)
+        .order('created_at', { ascending: false });
+      setRequests(reqData || []);
 
-    const { data: itemData } = await supabase.from("items").select("*");
-    setItems(itemData || []);
+      const { data: fbData } = await supabase
+        .from("feedbacks")
+        .select("*")
+        .eq("user_id", user.id)
+        .order('created_at', { ascending: false });
+      setFeedbacks(fbData || []);
+
+      const { data: itemData } = await supabase
+        .from("items")
+        .select("*")
+        .eq("user_id", user.id);
+      setItems(itemData || []);
+
+    } catch (err) {
+      console.error("Dashboard engine data fetch error:", err);
+    } finally {
+      setIsDataLoading(false);
+    }
   }
 
-  const handleLogout = async () => {
-    await supabase.auth.signOut();
-    navigate("/login");
-  };
+  if (authLoading) {
+    return (
+      <div className="loading-screen">
+        <div className="spinner"></div>
+        <p>Verifying secure session...</p>
+      </div>
+    );
+  }
+
+  if (!user) return null;
 
   return (
     <div className="dashboard-container">
       <header className="dashboard-header">
-        <div className="header-content">
+        <div className="header-brand">
           <h1>Customer Portal</h1>
-          <p>Logged in as: <span className="user-email">{user?.email}</span></p>
+          <p className="user-tag">
+            Account: <strong>{user.phone || user.user_metadata?.phone || user.email || "Active User"}</strong>
+          </p>
         </div>
-        <button onClick={handleLogout} className="logout-btn">Logout</button>
+        {/* 🚨 SIGN OUT BUTTON REMOVED FROM HERE - DELEGATED TO NAVBAR */}
       </header>
 
       <main className="dashboard-grid">
         
-        {/* SECTION 1: SUBMIT NEW REPAIR */}
+        {/* NEW REPAIR SECTION */}
         <section className="dashboard-card">
-          <div className="card-header">
-            <h3>New Repair Request</h3>
-          </div>
+          <div className="card-header"><h3>Start a New Repair</h3></div>
           <RequestForm 
             user={user} 
             onRequestSubmitted={fetchAllData} 
@@ -83,51 +138,48 @@ function Dashboard() {
           />
         </section>
 
-        {/* SECTION 2: REPAIR STATUS TRACKING */}
+        {/* ACTIVE REPAIRS SECTION */}
         <section className="dashboard-card">
-          <div className="card-header">
-            <h3>My Active Repairs</h3>
-          </div>
-          <RepairStatus requests={requests} />
+          <div className="card-header"><h3>Active Trackings</h3></div>
+          {isDataLoading && requests.length === 0 ? (
+            <p className="loading-text">Updating repair status...</p>
+          ) : (
+            <RepairStatus requests={requests} />
+          )}
         </section>
 
-        {/* SECTION 3: ITEM GALLERY & IMAGE UPLOADS */}
+        {/* GALLERY SECTION */}
         <section className="dashboard-card gallery-section">
-          <div className="card-header">
-            <h3>My Item Gallery</h3>
-          </div>
+          <div className="card-header"><h3>My Electronic Gallery</h3></div>
           <div className="item-grid">
-            {items.map((item) => (
-              <ItemCard 
-                key={item.id} 
-                itemName={item.item_name} 
-                imageUrl={item.image_url} 
-              />
-            ))}
+            {items.length === 0 && !isDataLoading ? (
+              <p className="empty-msg">No items uploaded yet.</p>
+            ) : (
+              items.map((item) => (
+                <ItemCard 
+                  key={item.id} 
+                  itemName={item.item_name} 
+                  imageUrl={item.image_url} 
+                />
+              ))
+            )}
           </div>
-          <div className="upload-container">
-            <ItemUpload user={user} onUploadSuccess={fetchAllData} />
-          </div>
+          <ItemUpload user={user} onUploadSuccess={fetchAllData} />
         </section>
 
-        {/* SECTION 4: ADMIN COMMUNICATION (FEEDBACK) */}
+        {/* FEEDBACK/COMMUNICATION SECTION */}
         <section className="dashboard-card feedback-section">
-          <div className="card-header">
-            <h3>Communication with Admin</h3>
-            <p className="card-subtitle">Report complaints or check item availability</p>
-          </div>
+          <div className="card-header"><h3>Support Chat</h3></div>
           <FeedbackForm user={user} onFeedbackSubmitted={fetchAllData} />
           
           <div className="feedback-history">
-            <h4>History</h4>
-            {feedbacks.length === 0 ? <p className="empty-msg">No messages yet.</p> : (
+            <h4>Message History</h4>
+            {feedbacks.length === 0 ? <p className="empty-msg">No messages.</p> : (
               <ul className="feedback-list">
                 {feedbacks.map((fb) => (
                   <li key={fb.id} className="feedback-bubble">
-                    <p className="feedback-text">{fb.feedback}</p>
-                    <span className="feedback-date">
-                      {new Date(fb.created_at).toLocaleDateString()}
-                    </span>
+                    <p>{fb?.feedback || ""}</p>
+                    <span>{fb?.created_at ? new Date(fb.created_at).toLocaleDateString() : ""}</span>
                   </li>
                 ))}
               </ul>

@@ -1,68 +1,90 @@
 .footer {
-  margin-top: 4rem;
-  margin-bottom: 1.5rem;
-  border: 2px solid #1d4ed8; /* blue-700 */
-  border-radius: 0.5rem;
-  background: linear-gradient(to right, #1e3a8a, #1e40af, #1e3a8a); /* blue-900 → blue-800 → blue-900 */
-  color: #fff;
-  text-align: center;
-  padding: 1.5rem;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  background-color: #1e1e2f; /* Dark slate theme to match your buttons */
+  color: #94a3b8;
+  padding: 24px 16px;
+  margin-top: auto; /* Pushes footer to the absolute bottom of the viewport */
+  border-top: 1px solid #2d2d44;
+  font-family: inherit;
 }
 
 .footer-container {
-  max-width: 72rem; /* 6xl */
-  margin: 0 auto;
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  align-items: center;
+  gap: 16px;
+  max-width: 1200px;
+  margin: 0 auto;
+  text-align: center;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #2d2d44;
 }
 
+.footer-business h2 {
+  color: #ffffff;
+  font-size: 1.2rem;
+  margin: 0 0 4px 0;
+  font-weight: 600;
+}
+
+.footer-business p {
+  font-size: 0.85rem;
+  margin: 0;
+  color: #94a3b8;
+}
+
+.footer-contact {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.9rem;
+}
+
+.footer-contact a,
+.dev-contact a {
+  color: #38bdf8; /* Sleek light blue link colour */
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+.footer-contact a:hover,
+.dev-contact a:hover {
+  color: #7dd3fc;
+}
+
+.footer-contact .divider {
+  color: #475569;
+  margin: 0 4px;
+}
+
+.footer-bottom {
+  padding-top: 16px;
+  text-align: center;
+  font-size: 0.75rem;
+  color: #64748b;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.footer-bottom p {
+  margin: 0;
+}
+
+.dev-contact {
+  font-size: 0.8rem;
+}
+
+/* Desktop spacing adjustment */
 @media (min-width: 768px) {
   .footer-container {
     flex-direction: row;
     justify-content: space-between;
-    align-items: center;
+    text-align: left;
   }
-}
-
-/* Business Info */
-.footer-business h2 {
-  font-weight: 600;
-  font-size: 0.875rem; /* text-sm */
-}
-.footer-business p {
-  font-size: 0.7rem; /* text-[11px] */
-}
-
-/* Contact Info */
-.footer-contact {
-  font-size: 0.7rem;
-}
-.footer-contact a {
-  margin: 0 0.25rem;
-  color: #fff;
-  text-decoration: none;
-  transition: color 0.2s ease;
-}
-.footer-contact a:hover {
-  color: #93c5fd; /* blue-300 */
-}
-
-/* Copyright + GSM */
-.footer-bottom {
-  border-top: 1px solid #1d4ed8; /* blue-700 */
-  margin-top: 1rem;
-  padding-top: 0.5rem;
-  font-size: 0.625rem; /* text-[10px] */
-  color: #d1d5db; /* gray-300 */
-}
-.footer-bottom a {
-  margin: 0 0.25rem;
-  color: #fff;
-  text-decoration: none;
-  transition: color 0.2s ease;
-}
-.footer-bottom a:hover {
-  color: #93c5fd; /* blue-300 */
+  
+  .footer-bottom {
+    flex-direction: row;
+    justify-content: space-between;
+  }
 }

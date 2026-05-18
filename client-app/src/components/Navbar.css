@@ -1,42 +1,154 @@
+/* Container Base Styles */
 .navbar {
-  background-color: #1e3a8a; /* blue-900 */
-  color: #fff;
-  padding: 1rem 1.5rem;
   display: flex;
+  flex-direction: column;
   justify-content: space-between;
   align-items: center;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  background-color: #1e1e2f; /* Dark slate base matches button themes */
+  padding: 16px 24px;
+  border-bottom: 1px solid #2d2d44;
+  gap: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
-/* Logo / Title */
-.navbar h1 {
-  font-size: 1.25rem; /* text-xl */
-  font-weight: 700;
-  letter-spacing: 0.05em; /* tracking-wide */
+/* Brand Grouping */
+.navbar-brand-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
 }
 
-/* Navigation Links */
-.navbar-links {
+/* 🌟 Highly Visible Brand Title */
+.navbar-title {
+  color: #38bdf8; /* Sleek vibrant electric blue/cyan - stands out instantly */
+  font-size: 1.5rem;
+  font-weight: 800;
+  margin: 0;
+  letter-spacing: 0.5px;
+}
+
+/* Sub-text Store Meta Info */
+.navbar-shop-info {
   display: flex;
   align-items: center;
-  gap: 1.5rem;
+  gap: 6px;
+  font-size: 0.8rem;
+  color: #94a3b8; /* Muted contrast slate gray */
+  margin-top: 4px;
 }
 
-.navbar-links a {
+.navbar-shop-info p {
+  margin: 0;
+}
+
+.navbar-shop-info a {
+  color: #94a3b8;
   text-decoration: none;
-  color: #fff;
   transition: color 0.2s ease;
 }
 
-.navbar-links a:hover {
-  color: #bfdbfe; /* blue-200 */
+.navbar-shop-info a:hover {
+  color: #38bdf8;
 }
 
-/* Responsive */
-@media (max-width: 640px) {
+.navbar-info-divider {
+  color: #475569;
+}
+
+/* Links Group Wrapper */
+.navbar-links {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+/* 💎 Modern Navigation Link Styling */
+.nav-link {
+  color: #f1f5f9; /* Bright off-white for crisp readability */
+  text-decoration: none;
+  font-size: 0.95rem;
+  font-weight: 600;
+  position: relative;
+  padding: 4px 0;
+  transition: color 0.2s ease;
+}
+
+.nav-link:hover {
+  color: #38bdf8;
+}
+
+/* Micro-interaction: Animated underline effect on link hover */
+.nav-link::after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  transform: scaleX(0);
+  height: 2px;
+  bottom: 0;
+  left: 0;
+  background-color: #38bdf8;
+  transform-origin: bottom right;
+  transition: transform 0.25s ease-out;
+}
+
+.nav-link:hover::after {
+  transform: scaleX(1);
+  transform-origin: bottom left;
+}
+
+/* 🟥 Beautiful Premium Sign Out Button */
+.logout-button {
+  background-color: rgba(239, 68, 68, 0.1); /* Soft transparent red */
+  color: #ef4444; /* Clean crimson red alert color */
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.logout-button:hover {
+  background-color: #ef4444; /* Solid color change on hover */
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2);
+  transform: translateY(-1px);
+}
+
+.logout-button:active {
+  transform: translateY(0);
+}
+
+/* Unique Login Link Accent (If logged out) */
+.login-cta {
+  background-color: #38bdf8;
+  color: #1e1e2f !important;
+  padding: 6px 14px;
+  border-radius: 6px;
+}
+.login-cta::after {
+  display: none; /* Hide standard underline on button layout */
+}
+.login-cta:hover {
+  background-color: #7dd3fc;
+}
+
+/* 📱 Responsive Adaptability for Desktop viewports */
+@media (min-width: 768px) {
   .navbar {
-    flex-direction: column;
-    gap: 0.75rem;
-    text-align: center;
+    flex-direction: row; /* Sideways layout on large screens */
+    padding: 16px 40px;
+    gap: 0;
+  }
+
+  .navbar-brand-container {
+    align-items: flex-start;
+    text-align: left;
+  }
+
+  .navbar-title {
+    font-size: 1.7rem;
   }
 }

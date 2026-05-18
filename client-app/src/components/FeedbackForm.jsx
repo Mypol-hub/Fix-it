@@ -7,24 +7,41 @@ export default function FeedbackForm({ user, onFeedbackSubmitted }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!user) return;
+    
+    // Safety check for user.id
+    if (!user?.id) {
+      alert("Please log in to send a message.");
+      return;
+    }
 
     setLoading(true);
+
+    // 🔍 EXTRA SAFE PHONE PARSING & CLEANING
+    let rawPhone = user.phone || user.user_metadata?.phone || user.user_metadata?.display_phone || "";
+    let cleanPhone = rawPhone.trim().replace(/\D/g, "");
+    if (cleanPhone.startsWith("0")) {
+      cleanPhone = "961" + cleanPhone.substring(1);
+    }
+
     const { error } = await supabase.from("feedbacks").insert([
       { 
-        email: user.email, 
         feedback: feedback,
-        user_id: user.id 
+        user_id: user.id,
+        phone: cleanPhone || "No Phone Provided" // 🚨 FIXED: Links the feedback text straight to your phone number bridge!
       }
     ]);
+    
     setLoading(false);
 
     if (error) {
       alert("Error: " + error.message);
     } else {
-      alert("Feedback sent to Khalil Electronics!");
+      alert("Message sent to Khalil Electronics!");
       setFeedback("");
-      if (onFeedbackSubmitted) onFeedbackSubmitted(); // Refreshes the list in Dashboard
+      
+      if (onFeedbackSubmitted) {
+        onFeedbackSubmitted(); 
+      }
     }
   };
 
@@ -32,13 +49,13 @@ export default function FeedbackForm({ user, onFeedbackSubmitted }) {
     <form onSubmit={handleSubmit} className="feedback-form-component">
       <textarea
         value={feedback}
-        onChange={(e) => setFeedback(e.target.value)}
-        placeholder="Did the repair work? Let us know if you have any complaints."
+        onChange={(e) => setFeedback(e.target.value || "")}
+        placeholder="Questions about a repair? Or just want to say hi? Type here..."
         rows="3"
         required
       />
-      <button type="submit" className="button" disabled={loading}>
-        {loading ? "Sending..." : "Submit Feedback"}
+      <button type="submit" className="button" disabled={loading || !user}>
+        {loading ? "Sending..." : "Submit Message"}
       </button>
     </form>
   );

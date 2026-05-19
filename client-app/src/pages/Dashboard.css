@@ -187,6 +187,72 @@
   color: #166534; /* Green */
 }
 
+/* Container rules to anchor absolute/flex delete setups */
+.card-delete-container {
+  position: relative;
+  display: inline-block;
+}
+
+/* Floating red '×' overlay right over your gallery image cards */
+.gallery-x-overlay {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: rgba(255, 77, 77, 0.9);
+  color: white;
+  border: none;
+  font-size: 18px;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  transition: transform 0.2s, background-color 0.2s;
+}
+.gallery-x-overlay:hover {
+  background: #ff1a1a;
+  transform: scale(1.1);
+}
+
+/* Flex rows to line up tracking lines with their respective tracking actions */
+.row-delete-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  background: #111;
+  border-radius: 6px;
+  padding-right: 12px;
+}
+
+.feedback-bubble-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+/* Base style for text-row '×' buttons */
+.dashboard-x-btn {
+  background: transparent;
+  border: none;
+  color: #ff4d4d;
+  font-size: 24px;
+  cursor: pointer;
+  font-weight: bold;
+  padding: 4px;
+  transition: color 0.2s, transform 0.2s;
+}
+.dashboard-x-btn:hover {
+  color: #ff1a1a;
+  transform: scale(1.2);
+}
+
 /* Responsive (Mobile) */
 @media (max-width: 900px) {
   .dashboard-grid {

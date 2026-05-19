@@ -103,6 +103,48 @@ function Dashboard() {
     }
   }
 
+  // 🗑️ DELETE HANDLER 1: Items (Wipes from DB and Storage Bucket)
+  const handleDeleteItem = async (itemId, storagePath) => {
+    if (!window.confirm("Are you sure you want to delete this gallery item?")) return;
+    
+    try {
+      if (storagePath) {
+        await supabase.storage.from("item-images").remove([storagePath]);
+      }
+      const { error } = await supabase.from("items").delete().eq("id", itemId);
+      if (error) throw error;
+      fetchAllData(); // Refresh UI lists
+    } catch (err) {
+      alert("Failed to delete item: " + err.message);
+    }
+  };
+
+  // 🗑️ DELETE HANDLER 2: Active Tracking
+  const handleDeleteTracking = async (requestId) => {
+    if (!window.confirm("Are you sure you want to delete this active tracking request?")) return;
+    
+    try {
+      const { error } = await supabase.from("requests").delete().eq("id", requestId);
+      if (error) throw error;
+      fetchAllData();
+    } catch (err) {
+      alert("Failed to delete tracking: " + err.message);
+    }
+  };
+
+  // 🗑️ DELETE HANDLER 3: Messages
+  const handleDeleteMessage = async (messageId) => {
+    if (!window.confirm("Are you sure you want to delete this message from your history?")) return;
+    
+    try {
+      const { error } = await supabase.from("feedbacks").delete().eq("id", messageId);
+      if (error) throw error;
+      fetchAllData();
+    } catch (err) {
+      alert("Failed to delete message: " + err.message);
+    }
+  };
+
   if (authLoading) {
     return (
       <div className="loading-screen">
@@ -123,7 +165,6 @@ function Dashboard() {
             Account: <strong>{user.phone || user.user_metadata?.phone || user.email || "Active User"}</strong>
           </p>
         </div>
-        {/* 🚨 SIGN OUT BUTTON REMOVED FROM HERE - DELEGATED TO NAVBAR */}
       </header>
 
       <main className="dashboard-grid">
@@ -144,7 +185,21 @@ function Dashboard() {
           {isDataLoading && requests.length === 0 ? (
             <p className="loading-text">Updating repair status...</p>
           ) : (
-            <RepairStatus requests={requests} />
+            <div className="tracking-list-wrapper">
+              {requests.map((req) => (
+                <div key={req.id} className="row-delete-container">
+                  {/* Custom wrappers around components allow layout alignment of buttons */}
+                  <RepairStatus requests={[req]} />
+                  <button 
+                    className="dashboard-x-btn"
+                    onClick={() => handleDeleteTracking(req.id)}
+                    title="Delete tracking"
+                  >
+                    &times;
+                  </button>
+                </div>
+              ))}
+            </div>
           )}
         </section>
 
@@ -156,11 +211,19 @@ function Dashboard() {
               <p className="empty-msg">No items uploaded yet.</p>
             ) : (
               items.map((item) => (
-                <ItemCard 
-                  key={item.id} 
-                  itemName={item.item_name} 
-                  imageUrl={item.image_url} 
-                />
+                <div key={item.id} className="card-delete-container">
+                  <ItemCard 
+                    itemName={item.item_name} 
+                    imageUrl={item.image_url} 
+                  />
+                  <button 
+                    className="gallery-x-overlay"
+                    onClick={() => handleDeleteItem(item.id, item.storage_path)}
+                    title="Delete item"
+                  >
+                    &times;
+                  </button>
+                </div>
               ))
             )}
           </div>
@@ -177,9 +240,18 @@ function Dashboard() {
             {feedbacks.length === 0 ? <p className="empty-msg">No messages.</p> : (
               <ul className="feedback-list">
                 {feedbacks.map((fb) => (
-                  <li key={fb.id} className="feedback-bubble">
-                    <p>{fb?.feedback || ""}</p>
-                    <span>{fb?.created_at ? new Date(fb.created_at).toLocaleDateString() : ""}</span>
+                  <li key={fb.id} className="feedback-bubble-wrapper">
+                    <div className="feedback-bubble">
+                      <p>{fb?.feedback || ""}</p>
+                      <span>{fb?.created_at ? new Date(fb.created_at).toLocaleDateString() : ""}</span>
+                    </div>
+                    <button 
+                      className="dashboard-x-btn msg-x-btn"
+                      onClick={() => handleDeleteMessage(fb.id)}
+                      title="Delete message"
+                    >
+                      &times;
+                    </button>
                   </li>
                 ))}
               </ul>

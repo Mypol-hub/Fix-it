@@ -24,7 +24,7 @@ export default function Navbar({ session }) {
         
         {/* 📍 MATCHES YOUR META-INFO ELEMENT RULES */}
         <div className="navbar-shop-info">
-          <p>📍 Lebanon, Main Street</p>
+          <p>📍 Presidence Street-Sarba</p>
           <span className="navbar-info-divider">|</span>
           <p>
             📞 <a href="tel:+96103660068">03660068</a>

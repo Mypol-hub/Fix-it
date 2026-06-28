@@ -1,0 +1,4 @@
+create policy "Users can delete their own tracking requests"
+on public.requests
+for delete
+using ( auth.uid() = user_id );

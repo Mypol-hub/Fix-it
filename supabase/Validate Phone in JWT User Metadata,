@@ -1,0 +1,2 @@
+-- Alternative check if phone is hidden inside user metadata fields
+USING ((auth.jwt() -> 'user_metadata' ->> 'phone') = '+9613660068')

@@ -1,0 +1,4 @@
+create policy "Users can delete their own items"
+on public.items
+for delete
+using ( auth.uid() = user_id );

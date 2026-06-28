@@ -11,3 +11,5 @@ USING (
 WITH CHECK (
   auth.jwt() ->> 'email' = 'khalil_repair@gmail.com'
 );
+
+NOTIFY pgrst, 'reload schema';

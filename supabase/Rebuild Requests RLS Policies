@@ -1,0 +1,16 @@
+-- 1. Ensure RLS is active on your core tracking table
+ALTER TABLE public.requests ENABLE ROW LEVEL SECURITY;
+
+-- 2. Drop any outdated policy restrictions
+DROP POLICY IF EXISTS "Allow public updates for requests" ON public.requests;
+DROP POLICY IF EXISTS "Unrestricted requests select" ON public.requests;
+
+-- 3. Rebuild clean, unblocked policies for the admin panel to read and update
+CREATE POLICY "Unrestricted requests select"
+ON public.requests FOR SELECT
+USING (true);
+
+CREATE POLICY "Allow public updates for requests"
+ON public.requests FOR UPDATE
+USING (true)
+WITH CHECK (true);

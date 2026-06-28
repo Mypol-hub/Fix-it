@@ -1,0 +1,13 @@
+-- Remove old policies to prevent check conflicts
+DROP POLICY IF EXISTS "Khalil full access override" ON public.requests;
+
+-- Recreate using email identification criteria
+CREATE POLICY "Khalil full access override"
+ON public.requests FOR ALL
+TO authenticated
+USING (
+  auth.jwt() ->> 'email' = 'khalil_repair@gmail.com'
+)
+WITH CHECK (
+  auth.jwt() ->> 'email' = 'khalil_repair@gmail.com'
+);

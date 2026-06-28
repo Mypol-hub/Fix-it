@@ -1,0 +1,59 @@
+--
+============================================================
+-- 1. DROP PREVIOUS INSTANCES TO AVOID DUPLICATES
+--
+============================================================
+DROP POLICY IF EXISTS "Khalil full access override" ON public.requests;
+DROP POLICY IF EXISTS "Admin delete items" ON public.items;
+DROP POLICY IF EXISTS "Admin read feedback" ON public.feedbacks;
+
+--
+============================================================
+
+
+-- 2. APPLY THE EXACT MATCH POLICY (NO PLUS, NO SPACES)
+--
+============================================================
+
+
+-- Rule A: Requests Table Master Pass
+CREATE POLICY "Khalil full access override"
+ON public.requests FOR ALL
+TO authenticated
+USING (
+  auth.jwt() ->> 'phone' = '9613660068'
+  OR
+  (auth.jwt() -> 'user_metadata' ->> 'phone') = '9613660068'
+)
+WITH CHECK (
+  auth.jwt() ->> 'phone' = '9613660068'
+  OR
+  (auth.jwt() -> 'user_metadata' ->> 'phone') = '9613660068'
+);
+
+-- Rule B: Items (Gallery) Table Master Pass
+CREATE POLICY "Admin delete items"
+ON public.items FOR DELETE
+TO authenticated
+USING (
+  auth.jwt() ->> 'phone' = '9613660068'
+  OR
+  (auth.jwt() -> 'user_metadata' ->> 'phone') = '9613660068'
+);
+
+-- Rule C: Feedbacks Table Master Pass
+CREATE POLICY "Admin read feedback"
+ON public.feedbacks FOR SELECT
+TO authenticated
+USING (
+  auth.jwt() ->> 'phone' = '9613660068'
+  OR
+  (auth.jwt() -> 'user_metadata' ->> 'phone') = '9613660068'
+);
+
+--
+============================================================
+-- 3. RELOAD SCHEMA TO APPLY IMMEDIATELY
+--
+============================================================
+NOTIFY pgrst, 'reload schema';

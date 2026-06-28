@@ -1,0 +1,75 @@
+-- ============================================================
+-- 1. CLEANING UP OLD/CONFLICTING POLICIES
+-- ============================================================
+DROP POLICY IF EXISTS "Admin absolute control" ON public.requests;
+DROP POLICY IF EXISTS "Allow admin read all requests" ON public.requests;
+DROP POLICY IF EXISTS "Allow admin update requests" ON public.requests;
+DROP POLICY IF EXISTS "Allow public updates for requests" ON public.requests;
+DROP POLICY IF EXISTS "Unrestricted requests select" ON public.requests;
+DROP POLICY IF EXISTS "Unrestricted requests insert" ON public.requests;
+DROP POLICY IF EXISTS "Allow admin read all items" ON public.items;
+DROP POLICY IF EXISTS "Public completely open select items" ON public.items;
+
+-- ============================================================
+-- 2. SECURING THE "REQUESTS" TABLE
+-- ============================================================
+
+-- Rule A: Anyone (logged in or guest) can create a new ticket
+CREATE POLICY "Public creation access"
+ON public.requests FOR INSERT
+TO anon, authenticated
+WITH CHECK (true);
+
+-- Rule B: Authenticated clients can view only their own requests
+CREATE POLICY "Customers view own requests"
+ON public.requests FOR SELECT
+TO authenticated
+USING (auth.uid() = user_id);
+
+-- Rule C: Khalil absolute control over all rows (Read, Update, Delete)
+CREATE POLICY "Khalil full access override"
+ON public.requests FOR ALL
+TO authenticated
+USING (auth.jwt() ->> 'email' = 'khalil_repair@gmail.com')
+WITH CHECK (auth.jwt() ->> 'email' = 'khalil_repair@gmail.com');
+
+-- ============================================================
+-- 3. SECURING THE "ITEMS" (GALLERY) TABLE
+-- ============================================================
+
+-- Rule A: Public can read all items (so the dashboard can render links)
+CREATE POLICY "Public read items"
+ON public.items FOR SELECT
+TO public
+USING (true);
+
+-- Rule B: Anyone can upload asset image logs
+CREATE POLICY "Public upload items"
+ON public.items FOR INSERT
+TO public
+WITH CHECK (true);
+
+-- Rule C: Admin can remove images if needed
+CREATE POLICY "Admin delete items"
+ON public.items FOR DELETE
+TO authenticated
+USING (auth.jwt() ->> 'email' = 'khalil_repair@gmail.com');
+
+-- ============================================================
+-- 4. SECURING THE "FEEDBACKS" TABLE
+-- ============================================================
+
+-- Rule A: Anyone can submit feedback messages
+CREATE POLICY "Public submit feedback"
+ON public.feedbacks FOR INSERT
+TO public
+WITH CHECK (true);
+
+-- Rule B: Only Khalil can read customer feedback entries
+CREATE POLICY "Admin read feedback"
+ON public.feedbacks FOR SELECT
+TO authenticated
+USING (auth.jwt() ->> 'email' = 'khalil_repair@gmail.com');
+
+-- Force PostgREST schema cache reset
+NOTIFY pgrst, 'reload schema';

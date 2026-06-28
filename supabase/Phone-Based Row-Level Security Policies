@@ -1,0 +1,54 @@
+-- ============================================================
+-- 1. WIPING OUT THE OLD EMAIL-BASED POLICIES
+-- ============================================================
+DROP POLICY IF EXISTS "Public creation access" ON public.requests;
+DROP POLICY IF EXISTS "Customers view own requests" ON public.requests;
+DROP POLICY IF EXISTS "Khalil full access override" ON public.requests;
+DROP POLICY IF EXISTS "Admin delete items" ON public.items;
+DROP POLICY IF EXISTS "Admin read feedback" ON public.feedbacks;
+
+-- ============================================================
+-- 2. NEW PHONE-BASED REQUESTS POLICIES
+-- ============================================================
+
+-- Rule A: Clients or guests can create repair tickets
+CREATE POLICY "Public creation access"
+ON public.requests FOR INSERT
+TO anon, authenticated
+WITH CHECK (true);
+
+-- Rule B: Normal clients can only read their own tickets
+CREATE POLICY "Customers view own requests"
+ON public.requests FOR SELECT
+TO authenticated
+USING (auth.uid() = user_id);
+
+-- Rule C: Admin full access override based on phone number!
+CREATE POLICY "Khalil full access override"
+ON public.requests FOR ALL
+TO authenticated
+USING (auth.jwt() ->> 'phone' = '+961XXXXXXXX') -- 👈 REPLACE WITH YOUR ADMIN PHONE
+WITH CHECK (auth.jwt() ->> 'phone' = '+961XXXXXXXX'); -- 👈 REPLACE WITH YOUR ADMIN PHONE
+
+-- ============================================================
+-- 3. NEW PHONE-BASED ITEMS (GALLERY) POLICY
+-- ============================================================
+
+-- Admin can delete items from the gallery table using phone validation
+CREATE POLICY "Admin delete items"
+ON public.items FOR DELETE
+TO authenticated
+USING (auth.jwt() ->> 'phone' = '+961XXXXXXXX'); -- 👈 REPLACE WITH YOUR ADMIN PHONE
+
+-- ============================================================
+-- 4. NEW PHONE-BASED FEEDBACKS POLICY
+-- ============================================================
+
+-- Only the admin phone number can fetch and read customer feedback rows
+CREATE POLICY "Admin read feedback"
+ON public.feedbacks FOR SELECT
+TO authenticated
+USING (auth.jwt() ->> 'phone' = '+9613660068'); -- 👈 REPLACE WITH YOUR ADMIN PHONE
+
+-- Refresh cache
+NOTIFY pgrst, 'reload schema';

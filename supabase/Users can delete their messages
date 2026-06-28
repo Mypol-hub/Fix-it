@@ -1,0 +1,4 @@
+create policy "Users can delete their own messages"
+on public.feedbacks
+for delete
+using ( auth.uid() = user_id );

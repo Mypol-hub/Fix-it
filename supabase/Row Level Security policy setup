@@ -1,0 +1,66 @@
+-- ============================================================
+-- 1. DROP THE TEMPORARY POLICIES
+-- ============================================================
+DROP POLICY IF EXISTS "Public creation access" ON public.requests;
+DROP POLICY IF EXISTS "Customers view own requests" ON public.requests;
+DROP POLICY IF EXISTS "Khalil full access override" ON public.requests;
+DROP POLICY IF EXISTS "Admin delete items" ON public.items;
+DROP POLICY IF EXISTS "Admin read feedback" ON public.feedbacks;
+
+-- ============================================================
+-- 2. REQUESTS TABLE: OVERRIDE FOR YOUR REAL ADMIN PHONE
+-- ============================================================
+
+-- Rule A: Anyone can create repair tickets
+CREATE POLICY "Public creation access"
+ON public.requests FOR INSERT
+TO anon, authenticated
+WITH CHECK (true);
+
+-- Rule B: Normal customers can view rows they personally submitted
+CREATE POLICY "Customers view own requests"
+ON public.requests FOR SELECT
+TO authenticated
+USING (auth.uid() = user_id);
+
+-- Rule C: Full Admin bypass using your correct phone number (+9613660068)
+CREATE POLICY "Khalil full access override"
+ON public.requests FOR ALL
+TO authenticated
+USING (
+  auth.jwt() ->> 'phone' = '+9613660068'
+  OR
+  (auth.jwt() -> 'user_metadata' ->> 'phone') = '+9613660068'
+)
+WITH CHECK (
+  auth.jwt() ->> 'phone' = '+9613660068'
+  OR
+  (auth.jwt() -> 'user_metadata' ->> 'phone') = '+9613660068'
+);
+
+-- ============================================================
+-- 3. GALLERY (ITEMS) & FEEDBACK BYPASS FOR +9613660068
+-- ============================================================
+
+-- Admin can delete gallery entries
+CREATE POLICY "Admin delete items"
+ON public.items FOR DELETE
+TO authenticated
+USING (
+  auth.jwt() ->> 'phone' = '+9613660068'
+  OR
+  (auth.jwt() -> 'user_metadata' ->> 'phone') = '+9613660068'
+);
+
+-- Only your admin phone can view customer messages
+CREATE POLICY "Admin read feedback"
+ON public.feedbacks FOR SELECT
+TO authenticated
+USING (
+  auth.jwt() ->> 'phone' = '+9613660068'
+  OR
+  (auth.jwt() -> 'user_metadata' ->> 'phone') = '+9613660068'
+);
+
+-- Sync schema cache instantly
+NOTIFY pgrst, 'reload schema';

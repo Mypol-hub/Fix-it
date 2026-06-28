@@ -1,0 +1,42 @@
+-- Remove old target checkpoints
+DROP POLICY IF EXISTS "Khalil full access override" ON public.requests;
+DROP POLICY IF EXISTS "Admin delete items" ON public.items;
+DROP POLICY IF EXISTS "Admin read feedback" ON public.feedbacks;
+
+-- 1. Requests Table Override (Accepts both spaced and unspaced variants!)
+CREATE POLICY "Khalil full access override"
+ON public.requests FOR ALL
+TO authenticated
+USING (
+  auth.jwt() ->> 'phone' IN ('+961 3 660 068', '+9613660068')
+  OR
+  (auth.jwt() -> 'user_metadata' ->> 'phone') IN ('+961 3 660 068', '+9613660068')
+)
+WITH CHECK (
+  auth.jwt() ->> 'phone' IN ('+961 3 660 068', '+9613660068')
+  OR
+  (auth.jwt() -> 'user_metadata' ->> 'phone') IN ('+961 3 660 068', '+9613660068')
+);
+
+-- 2. Items Table Override
+CREATE POLICY "Admin delete items"
+ON public.items FOR DELETE
+TO authenticated
+USING (
+  auth.jwt() ->> 'phone' IN ('+961 3 660 068', '+9613660068')
+  OR
+  (auth.jwt() -> 'user_metadata' ->> 'phone') IN ('+961 3 660 068', '+9613660068')
+);
+
+-- 3. Feedbacks Table Override
+CREATE POLICY "Admin read feedback"
+ON public.feedbacks FOR SELECT
+TO authenticated
+USING (
+  auth.jwt() ->> 'phone' IN ('+961 3 660 068', '+9613660068')
+  OR
+  (auth.jwt() -> 'user_metadata' ->> 'phone') IN ('+961 3 660 068', '+9613660068')
+);
+
+-- Reset Schema Cache
+NOTIFY pgrst, 'reload schema';

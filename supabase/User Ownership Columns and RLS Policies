@@ -1,0 +1,58 @@
+ALTER TABLE public.items ADD COLUMN IF NOT EXISTS user_id uuid REFERENCES auth.users(id) DEFAULT auth.uid();
+
+-- ==========================================
+-- 2. ENABLE ROW LEVEL SECURITY (RLS)
+-- ==========================================
+-- This "locks the doors" so nobody can access data without a policy
+ALTER TABLE public.requests ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.feedbacks ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.items ENABLE ROW LEVEL SECURITY;
+
+-- ==========================================
+-- 3. CREATE POLICIES FOR REQUESTS
+-- ==========================================
+-- Clients can only see and add their own repair requests
+CREATE POLICY "Users can manage own requests"
+ON public.requests FOR ALL
+TO authenticated
+USING (auth.uid() = user_id)
+WITH CHECK (auth.uid() = user_id);
+
+-- ==========================================
+-- 4. CREATE POLICIES FOR FEEDBACK
+-- ==========================================
+-- Clients can send feedback (Insert), but maybe they don't need to see everyone's feedback
+CREATE POLICY "Users can insert own feedback"
+ON public.feedbacks FOR INSERT
+TO authenticated
+WITH CHECK (auth.uid() = user_id);
+
+-- ==========================================
+-- 5. CREATE POLICIES FOR ITEMS (Client Uploads)
+-- ==========================================
+-- Clients can upload images of their items and view their own uploads
+CREATE POLICY "Users can manage own item uploads"
+ON public.items FOR ALL
+TO authenticated
+USING (auth.uid() = user_id)
+WITH CHECK (auth.uid() = user_id);
+
+-- ==========================================
+-- 6. ADMIN VIEW (FOR YOU)
+-- ==========================================
+-- This allows YOU to see everything across all tables
+-- IMPORTANT: Replace 'your-admin-email@example.com' with your actual login email
+CREATE POLICY "Admin view all requests"
+ON public.requests FOR SELECT
+TO authenticated
+USING (auth.jwt() ->> 'email' = 'your-admin-email@example.com');
+
+CREATE POLICY "Admin view all feedbacks"
+ON public.feedbacks FOR SELECT
+TO authenticated
+USING (auth.jwt() ->> 'email' = 'your-admin-email@example.com');
+
+CREATE POLICY "Admin view all items"
+ON public.items FOR SELECT
+TO authenticated
+USING (auth.jwt() ->> 'email' = 'your-admin-email@example.com');

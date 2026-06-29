@@ -1,0 +1,29 @@
+-- Create pure lowercase rules matching your active bucket environment
+CREATE POLICY "Allow public inserts lowercase"
+ON storage.objects FOR INSERT
+TO anon, authenticated
+WITH CHECK (bucket_id = 'item-images');
+
+CREATE POLICY "Allow public viewing lowercase"
+ON storage.objects FOR SELECT
+TO anon, authenticated
+USING (bucket_id = 'item-images');
+
+UPDATE storage.buckets SET public = true WHERE id = 'item-images';
+
+------------------------------------------------------------------------
+-- 3. UNIFY REPAIR STATUS UPDATES CASE PERMISSIONS
+------------------------------------------------------------------------
+
+ALTER TABLE public.requests DROP CONSTRAINT IF EXISTS check_status;
+
+ALTER TABLE public.requests ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "Allow public updates for requests" ON public.requests;
+DROP POLICY IF EXISTS "Unrestricted requests select" ON public.requests;
+
+CREATE POLICY "Unrestricted requests select"
+ON public.requests FOR SELECT USING (true);
+
+CREATE POLICY "Allow public updates for requests"
+ON public.requests FOR UPDATE USING (true) WITH CHECK (true);

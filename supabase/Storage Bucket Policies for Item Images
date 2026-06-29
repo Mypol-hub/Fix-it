@@ -1,0 +1,16 @@
+-- First, cleanly wipe any broken storage hooks so we don't duplicate them
+DO $$
+DECLARE
+  pol RECORD;
+BEGIN
+  FOR pol IN
+    SELECT policyname FROM
+    pg_policies WHERE tablename =
+    'objects' AND schemaname =
+    'storage'
+  LOOP
+    EXECUTE format('DROP POLICY %I
+    ON storage.objects', pol.
+    policyname);
+  END LOOP;
+END $$;

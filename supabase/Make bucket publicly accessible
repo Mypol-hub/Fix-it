@@ -1,0 +1,4 @@
+-- Run this right after or in a new query window to force public access
+UPDATE storage.buckets
+SET public = true
+WHERE id = 'ITEM-IMAGES';

@@ -1,0 +1,40 @@
+-- 1. UNLOCK THE ITEMS TABLE FOR ADMIN READS
+ALTER TABLE public.items ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "Allow admin read all items" ON public.items;
+DROP POLICY IF EXISTS "Enable read access for all users" ON public.items;
+
+-- This policy allows anyone (including your admin dashboard) to read all items
+CREATE POLICY "Allow admin read all items"
+ON public.items FOR SELECT
+USING (true);
+
+
+-- 2. UNLOCK THE FEEDBACKS TABLE FOR ADMIN READS
+ALTER TABLE public.feedbacks ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "Allow admin read all feedbacks" ON public.feedbacks;
+DROP POLICY IF EXISTS "Enable read access for all users" ON public.feedbacks;
+
+-- This policy allows anyone (including your admin dashboard) to read all feedback
+CREATE POLICY "Allow admin read all feedbacks"
+ON public.feedbacks FOR SELECT
+USING (true);
+
+
+-- 3. UNLOCK THE REQUESTS TABLE FOR SELECT AND UPDATES
+ALTER TABLE public.requests ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "Allow admin read all requests" ON public.requests;
+DROP POLICY IF EXISTS "Allow admin update requests" ON public.requests;
+
+-- Allows reading all repair orders
+CREATE POLICY "Allow admin read all requests"
+ON public.requests FOR SELECT
+USING (true);
+
+-- Allows the admin dashboard dropdowns to change statuses successfully
+CREATE POLICY "Allow admin update requests"
+ON public.requests FOR UPDATE
+USING (true)
+WITH CHECK (true);

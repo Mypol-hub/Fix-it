@@ -1,0 +1,20 @@
+-- 1. Ensure RLS is enabled but completely unblocked for Admin adjustments
+ALTER TABLE public.requests ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "Allow public updates for requests" ON public.requests;
+DROP POLICY IF EXISTS "Unrestricted requests select" ON public.requests;
+DROP POLICY IF EXISTS "Unrestricted requests insert" ON public.requests;
+
+-- Create completely open policies for your admin dashboard to read and update statuses
+CREATE POLICY "Unrestricted requests select"
+ON public.requests FOR SELECT
+USING (true);
+
+CREATE POLICY "Unrestricted requests insert"
+ON public.requests FOR INSERT
+WITH CHECK (true);
+
+CREATE POLICY "Allow public updates for requests"
+ON public.requests FOR UPDATE
+USING (true)
+WITH CHECK (true);

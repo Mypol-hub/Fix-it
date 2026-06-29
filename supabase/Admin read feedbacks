@@ -1,0 +1,4 @@
+ALTER POLICY "Admin read feedback" ON "public"."feedbacks"
+USING (
+  (auth.jwt() -> 'app_metadata' ->> 'role') = 'admin'
+);

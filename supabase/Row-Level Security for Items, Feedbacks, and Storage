@@ -1,0 +1,65 @@
+---------------------------------------------------------
+-- 1. SECURING THE ITEMS TABLE
+---------------------------------------------------------
+
+ALTER TABLE public.items ENABLE ROW LEVEL SECURITY;
+
+-- Customers can only look up their own registered repair items
+CREATE POLICY "Users read own items"
+ON public.items FOR SELECT TO authenticated
+USING (auth.uid() = user_id);
+
+-- Customers can append new items during submission
+CREATE POLICY "Users insert own items"
+ON public.items FOR INSERT TO anon, authenticated
+WITH CHECK (true);
+
+-- Admin has master access to manage all repair items globally
+CREATE POLICY "Admin manage all items"
+ON public.items FOR ALL TO authenticated
+USING ((auth.jwt() ->> 'email') = 'khalil_repair@gmail.com')
+WITH CHECK ((auth.jwt() ->> 'email') = 'khalil_repair@gmail.com');
+
+
+---------------------------------------------------------
+-- 2. SECURING THE FEEDBACKS TABLE
+---------------------------------------------------------
+
+ALTER TABLE public.feedbacks ENABLE ROW LEVEL SECURITY;
+
+-- Anyone can see store ratings and reviews publicly on the landing portal
+CREATE POLICY "Public read feedbacks"
+ON public.feedbacks FOR SELECT TO anon, authenticated
+USING (true);
+
+-- Logged-in customers can leave a review for their completed jobs
+CREATE POLICY "Users insert own feedback"
+ON public.feedbacks FOR INSERT TO authenticated
+WITH CHECK (auth.uid() = user_id);
+
+-- Admin can moderate, look up, or delete toxic/spam reviews
+CREATE POLICY "Admin manage all feedback"
+ON public.feedbacks FOR ALL TO authenticated
+USING ((auth.jwt() ->> 'email') = 'khalil_repair@gmail.com')
+WITH CHECK ((auth.jwt() ->> 'email') = 'khalil_repair@gmail.com');
+
+
+---------------------------------------------------------
+-- 3. FORCING STORAGE PERMISSIONS SYSTEM TO RE-INDEX
+---------------------------------------------------------
+
+-- This safely resets the physical connection hooks for your bucket assets
+ALTER TABLE storage.objects ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Storage read link"
+ON storage.objects FOR SELECT TO anon, authenticated
+USING (bucket_id = 'ITEM-IMAGES');
+
+CREATE POLICY "Storage upload link"
+ON storage.objects FOR INSERT TO anon, authenticated
+WITH CHECK (bucket_id = 'ITEM-IMAGES');
+
+CREATE POLICY "Storage admin link"
+ON storage.objects FOR ALL TO authenticated
+USING (bucket_id = 'ITEM-IMAGES' AND (auth.jwt() ->> 'email') = 'khalil_repair@gmail.com')
+WITH CHECK (bucket_id = 'ITEM-IMAGES' AND (auth.jwt() ->> 'email') = 'khalil_repair@gmail.com');

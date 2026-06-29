@@ -1,0 +1,26 @@
+-- 1. Wipe out any old conflicting storage policies
+DROP POLICY IF EXISTS "Allow public inserts" ON storage.objects;
+DROP POLICY IF EXISTS "Allow public viewing" ON storage.objects;
+DROP POLICY IF EXISTS "Allow public inserts hyphen" ON storage.objects;
+DROP POLICY IF EXISTS "Allow public viewing hyphen" ON storage.objects;
+DROP POLICY IF EXISTS "Allow public inserts final" ON storage.objects;
+DROP POLICY IF EXISTS "Allow public viewing final" ON storage.objects;
+
+-- 2. Create an INSERT policy that allows files AND folders inside 'item-images'
+CREATE POLICY "Allow public inserts lowercase"
+ON storage.objects
+FOR INSERT
+TO anon, authenticated
+WITH CHECK (bucket_id = 'item-images');
+
+-- 3. Create a SELECT policy so everyone can view files and folders
+CREATE POLICY "Allow public viewing lowercase"
+ON storage.objects
+FOR SELECT
+TO anon, authenticated
+USING (bucket_id = 'item-images');
+
+-- 4. Double check that the bucket is explicitly public
+UPDATE storage.buckets
+SET public = true
+WHERE id = 'item-images';

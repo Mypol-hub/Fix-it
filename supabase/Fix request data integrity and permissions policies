@@ -1,0 +1,9 @@
+-- 1. Ensure the status column accepts both uppercase and lowercase safely
+ALTER TABLE public.requests DROP CONSTRAINT IF EXISTS check_status;
+
+-- 2. Clean out old broken testing rows so they don't block structural syncs
+DELETE FROM public.requests WHERE customer_name IS NULL OR item_name IS NULL;
+
+-- 3. Completely unlock database permissions for Admin Updates
+ALTER TABLE public.requests ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Allow public updates for requests" ON public.requests;

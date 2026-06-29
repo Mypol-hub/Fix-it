@@ -1,0 +1,8 @@
+-- 1. Completely remove the old policy using exact case-matching
+DROP POLICY IF EXISTS "Admin delete items" ON public.items;
+
+-- 2. Re-create it fresh with the secure role check
+CREATE POLICY "Admin delete items" ON public.items
+  FOR DELETE
+  TO authenticated
+  USING ((auth.jwt() -> 'app_metadata' ->> 'role') = 'admin');

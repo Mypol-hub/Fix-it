@@ -1,0 +1,29 @@
+-- 1. PUBLIC READ: Allow both public (anon) and signed-in users to view files in ITEM-IMAGES
+-- This fixes the missing dashboard pictures by letting getPublicUrl() work correctly!
+CREATE POLICY "Give public read access to ITEM-IMAGES"
+ON storage.objects
+FOR SELECT
+TO anon, authenticated
+USING (bucket_id = 'ITEM-IMAGES');
+
+-- 2. CLIENT UPLOAD: Allow anonymous and logged-in customers to upload repair photos
+CREATE POLICY "Allow client upload to ITEM-IMAGES"
+ON storage.objects
+FOR INSERT
+TO anon, authenticated
+WITH CHECK (bucket_id = 'ITEM-IMAGES');
+
+-- 3. ADMIN DELETE OVERRIDE: Give your exact admin email absolute power to delete images
+-- This ensures that when you click the trash bin icon, the linked storage file is deleted too!
+CREATE POLICY "Allow admin to manage and delete files"
+ON storage.objects
+FOR ALL
+TO authenticated
+USING (
+    bucket_id = 'ITEM-IMAGES'
+    AND (auth.jwt() ->> 'email'::text) = 'khalil_repair@gmail.com'
+)
+WITH CHECK (
+    bucket_id = 'ITEM-IMAGES'
+    AND (auth.jwt() ->> 'email'::text) = 'khalil_repair@gmail.com'
+);

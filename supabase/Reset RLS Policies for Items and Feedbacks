@@ -1,0 +1,26 @@
+-- 1. Force Reset the items table RLS state
+ALTER TABLE public.items ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "Public completely open insert items" ON public.items;
+CREATE POLICY "Public completely open insert items"
+ON public.items FOR INSERT
+WITH CHECK (true);
+
+DROP POLICY IF EXISTS "Public completely open select items" ON public.items;
+CREATE POLICY "Public completely open select items"
+ON public.items FOR SELECT
+USING (true);
+
+
+-- 2. Force Reset the feedbacks table RLS state
+ALTER TABLE public.feedbacks ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "Public completely open insert feedbacks" ON public.feedbacks;
+CREATE POLICY "Public completely open insert feedbacks"
+ON public.feedbacks FOR INSERT
+WITH CHECK (true);
+
+DROP POLICY IF EXISTS "Public completely open select feedbacks" ON public.feedbacks;
+CREATE POLICY "Public completely open select feedbacks"
+ON public.feedbacks FOR SELECT
+USING (true);

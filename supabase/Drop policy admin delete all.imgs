@@ -1,0 +1,9 @@
+-- ==========================================
+-- UPDATE IMAGE STORAGE/GALLERY ADMIN POLICIES (If applicable)
+-- ==========================================
+DROP POLICY IF EXISTS "Admin delete all images" ON public.items; -- fallback check
+
+-- If you have a separate messages or logs table that admins moderate:
+-- DROP POLICY IF EXISTS "Admin view all messages" ON public.messages;
+-- CREATE POLICY "Admin view all messages" ON public.messages 
+--   FOR SELECT TO authenticated USING ((auth.jwt() -> 'app_metadata' ->> 'role') = 'admin');

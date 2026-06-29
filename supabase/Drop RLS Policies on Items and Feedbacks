@@ -1,0 +1,28 @@
+DO $$
+DECLARE
+  pol RECORD;
+BEGIN
+  -- Wipe items table policies
+  FOR pol IN
+    SELECT policyname FROM
+    pg_policies WHERE tablename =
+    'items' AND schemaname =
+    'public'
+  LOOP
+    EXECUTE format('DROP POLICY %I
+    ON public.items', pol.
+    policyname);
+  END LOOP;
+
+  -- Wipe feedbacks table policies
+  FOR pol IN
+    SELECT policyname FROM
+    pg_policies WHERE tablename =
+    'feedbacks' AND schemaname =
+    'public'
+  LOOP
+    EXECUTE format('DROP POLICY %I
+    ON public.feedbacks', pol.
+    policyname);
+  END LOOP;
+END $$;

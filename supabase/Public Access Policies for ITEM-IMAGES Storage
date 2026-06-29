@@ -1,0 +1,19 @@
+-- 1. Obliterate any potentially corrupted or mismatched storage policy names
+DROP POLICY IF EXISTS "Allow public inserts" ON storage.objects;
+DROP POLICY IF EXISTS "Allow public viewing" ON storage.objects;
+DROP POLICY IF EXISTS "Allow public uploads to ITEM-IMAGES" ON storage.objects;
+DROP POLICY IF EXISTS "Allow public viewing of ITEM-IMAGES" ON storage.objects;
+
+-- 2. Create the bulletproof INSERT policy using standard PostgreSQL types
+CREATE POLICY "Allow public inserts"
+ON storage.objects
+FOR INSERT
+TO anon, authenticated
+WITH CHECK (bucket_id = 'ITEM-IMAGES');
+
+-- 3. Create the bulletproof SELECT policy using standard PostgreSQL types
+CREATE POLICY "Allow public viewing"
+ON storage.objects
+FOR SELECT
+TO anon, authenticated
+USING (bucket_id = 'ITEM-IMAGES');

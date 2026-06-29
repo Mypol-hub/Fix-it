@@ -1,0 +1,5 @@
+-- Safely inject the admin role into app_metadata for khalil_repair@gmail.com
+UPDATE auth.users
+SET raw_app_meta_data = 
+  coalesce(raw_app_meta_data, '{}'::jsonb) || '{"role": "admin"}'::jsonb
+WHERE email = 'khalil_repair@gmail.com';

@@ -1,0 +1,28 @@
+------------------------------------------------------------------------
+-- 1. CLEANING & RE-SECURING THE ITEMS TABLE
+------------------------------------------------------------------------
+
+-- Remove old restricted insert hooks on the items table
+DROP POLICY IF EXISTS "Users insert own items" ON public.items;
+
+-- Create a truly open insert rule so guest browsers can save item fields
+CREATE POLICY "Allow public item insertion"
+ON public.items
+FOR INSERT
+WITH CHECK (true);
+
+------------------------------------------------------------------------
+-- 2. FIXING THE STORAGE UPLOAD CONTROLS (ITEM-IMAGES)
+------------------------------------------------------------------------
+
+-- Drop any restrictive or conflicting storage targets
+DROP POLICY IF EXISTS "Storage public upload link" ON storage.objects;
+DROP POLICY IF EXISTS "Allow client upload to ITEM-IMAGES" ON storage.objects;
+
+-- Grant explicit, unrestricted INSERT rights to the ITEM-IMAGES bucket
+CREATE POLICY "Allow anyone to upload items images"
+ON storage.objects
+FOR INSERT
+WITH CHECK (
+  bucket_id = 'ITEM-IMAGES'
+);

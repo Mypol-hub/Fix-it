@@ -1,0 +1,10 @@
+-- Add the missing phone column to your items table safely
+ALTER TABLE public.items
+ADD COLUMN IF NOT EXISTS phone text;
+
+-- Add the missing phone column to your feedbacks table just in case!
+ALTER TABLE public.feedbacks
+ADD COLUMN IF NOT EXISTS phone text;
+
+-- Crucial: Tell Supabase to refresh its API cache so it notices the new columns instantly
+NOTIFY pgrst, 'reload schema';

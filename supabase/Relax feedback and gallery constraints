@@ -1,0 +1,17 @@
+-- 1. Drop the strict constraint blocking client feedback submissions
+ALTER TABLE public.feedbacks DROP CONSTRAINT IF EXISTS fk_feedbacks_requests;
+
+-- 2. Drop the strict constraint blocking client gallery image uploads
+ALTER TABLE public.items DROP CONSTRAINT IF EXISTS fk_items_requests;
+
+-- 3. Fully unlock global select/update permissions on requests table
+ALTER TABLE public.requests ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "Allow public updates for requests" ON public.requests;
+DROP POLICY IF EXISTS "Unrestricted requests select" ON public.requests;
+
+CREATE POLICY "Unrestricted requests select" ON public.requests FOR SELECT
+USING (true);
+
+CREATE POLICY "Allow public updates for requests" ON public.requests FOR UPDATE
+USING (true) WITH CHECK (true);

@@ -1,0 +1,19 @@
+-- 1. Fill in descriptions
+UPDATE requests SET problem_description = 'No cold air' WHERE item_name = 'AC';
+UPDATE requests SET problem_description = 'No steam' WHERE item_name = 'Steamer';
+
+-- 2. Clear unlinked data
+TRUNCATE TABLE items CASCADE;
+TRUNCATE TABLE feedbacks CASCADE;
+
+-- 3. Link items to the specific Request ID instead of User ID
+ALTER TABLE items
+ADD CONSTRAINT fk_items_requests
+FOREIGN KEY (id) REFERENCES requests(id)
+ON DELETE CASCADE;
+
+-- 4. Link feedbacks to the specific Request ID instead of User ID
+ALTER TABLE feedbacks
+ADD CONSTRAINT fk_feedbacks_requests
+FOREIGN KEY (id) REFERENCES requests(id)
+ON DELETE CASCADE;

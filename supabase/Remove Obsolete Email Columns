@@ -1,0 +1,12 @@
+-- Remove the old email column
+ALTER TABLE requests DROP COLUMN IF EXISTS email CASCADE;
+
+-- Ensure necessary columns exist for your metadata-driven insert
+ALTER TABLE requests ADD COLUMN IF NOT EXISTS customer_name TEXT;
+ALTER TABLE requests ADD COLUMN IF NOT EXISTS phone TEXT;
+ALTER TABLE requests ADD COLUMN IF NOT EXISTS status TEXT DEFAULT 'Pending';
+
+-- Re-verify RLS Policy
+ALTER TABLE requests ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "User personal access" ON requests;
+CREATE POLICY "User personal access" ON requests FOR ALL USING (auth.uid() = user_id);

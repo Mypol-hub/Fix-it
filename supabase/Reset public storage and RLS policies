@@ -1,0 +1,67 @@
+------------------------------------------------------------------------
+-- 1. RESET & REBUILD STORAGE POLICIES (Strictly Lowercase 'item-images')
+------------------------------------------------------------------------
+
+-- Wipe out all previous test policies to avoid conflicts
+DROP POLICY IF EXISTS "Allow public inserts" ON storage.objects;
+DROP POLICY IF EXISTS "Allow public viewing" ON storage.objects;
+DROP POLICY IF EXISTS "Allow public inserts unified" ON storage.objects;
+DROP POLICY IF EXISTS "Allow public viewing unified" ON storage.objects;
+DROP POLICY IF EXISTS "Allow public inserts final" ON storage.objects;
+DROP POLICY IF EXISTS "Allow public viewing final" ON storage.objects;
+DROP POLICY IF EXISTS "Allow public inserts hyphen" ON storage.objects;
+DROP POLICY IF EXISTS "Allow public viewing hyphen" ON storage.objects;
+DROP POLICY IF EXISTS "Allow public inserts lowercase" ON storage.objects;
+DROP POLICY IF EXISTS "Allow public viewing lowercase" ON storage.objects;
+
+-- Create the clean, definitive rules for item-images
+CREATE POLICY "Allow public inserts lowercase"
+ON storage.objects
+FOR INSERT
+TO anon, authenticated
+WITH CHECK (bucket_id = 'item-images');
+
+CREATE POLICY "Allow public viewing lowercase"
+ON storage.objects
+FOR SELECT
+TO anon, authenticated
+USING (bucket_id = 'item-images');
+
+-- Ensure the bucket is globally public
+UPDATE storage.buckets SET public = true WHERE id = 'item-images';
+
+
+------------------------------------------------------------------------
+-- 2. RE-VERIFY DATABASE TABLE POLICIES (items & feedbacks)
+------------------------------------------------------------------------
+
+-- Clear and reset items table rules
+ALTER TABLE public.items ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Public completely open insert items" ON public.items;
+DROP POLICY IF EXISTS "Public anonymous insert items" ON public.items;
+DROP POLICY IF EXISTS "Unrestricted items insert" ON public.items;
+DROP POLICY IF EXISTS "Unrestricted items select" ON public.items;
+
+CREATE POLICY "Unrestricted items insert"
+ON public.items FOR INSERT
+WITH CHECK (true);
+
+CREATE POLICY "Unrestricted items select"
+ON public.items FOR SELECT
+USING (true);
+
+
+-- Clear and reset feedbacks table rules
+ALTER TABLE public.feedbacks ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Public completely open insert feedbacks" ON public.feedbacks;
+DROP POLICY IF EXISTS "Public anonymous insert feedbacks" ON public.feedbacks;
+DROP POLICY IF EXISTS "Unrestricted feedbacks insert" ON public.feedbacks;
+DROP POLICY IF EXISTS "Unrestricted feedbacks select" ON public.feedbacks;
+
+CREATE POLICY "Unrestricted feedbacks insert"
+ON public.feedbacks FOR INSERT
+WITH CHECK (true);
+
+CREATE POLICY "Unrestricted feedbacks select"
+ON public.feedbacks FOR SELECT
+USING (true);
